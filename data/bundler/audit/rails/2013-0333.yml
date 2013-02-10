@@ -1,0 +1,18 @@
+---
+url: http://osvdb.org/show/osvdb/89594
+title: |
+  Ruby on Rails JSON Parser Crafted Payload YAML Subset Decoding Remote Code
+  Execution 
+
+description: |
+  Ruby on Rails contains a flaw in the JSON parser. Rails supports multiple
+  parsing backends, one of which involves transforming JSON into YAML via the
+  YAML parser. With a specially crafted payload, an attacker can subvert the
+  backend into decoding a subset of YAML. This may allow a remote attacker to
+  bypass restrictions, allowing them to bypass authentication systems, inject
+  arbitrary SQL, inject and execute arbitrary code, or perform a DoS attack on
+  a Rails application.
+
+uneffected_versions:
+  - "~> 2.3.16"
+  - ">= 3.0.20"
