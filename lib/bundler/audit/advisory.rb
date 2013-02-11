@@ -19,8 +19,7 @@ require 'yaml'
 
 module Bundler
   module Audit
-    class Advisory < Struct.new(:gem,
-                                :cve,
+    class Advisory < Struct.new(:cve,
                                 :url,
                                 :title,
                                 :description,
@@ -37,7 +36,6 @@ module Bundler
       # @api semipublic
       #
       def self.load(path)
-        gem  = File.basename(File.dirname(path))
         cve  = File.basename(path).chomp('.yml')
         data = YAML.load_file(path)
 
@@ -46,7 +44,6 @@ module Bundler
         end
 
         return new(
-          gem,
           cve,
           data['url'],
           data['title'],

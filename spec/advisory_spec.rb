@@ -13,7 +13,6 @@ describe Bundler::Audit::Advisory do
 
     subject { described_class.load(path) }
 
-    its(:gem)   { should == gem }
     its(:cve)   { should == cve }
     its(:url)   { should == data['url']   }
     its(:title) { should == data['title'] }
