@@ -79,3 +79,5 @@ You should have received a copy of the GNU General Public License
 along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
 
 [bundler]: https://github.com/carlhuda/bundler#readme
+
+[OSVDB]: http://osvdb.org/
