@@ -184,7 +184,7 @@ module Bundler
       # Enumerates over every advisory path in the database.
       #
       # @yield [path]
-      #   The given block will be passed each adviosry path.
+      #   The given block will be passed each advisory path.
       #
       # @yieldparam [String] path
       #   A path to an advisory `.yml` file.
