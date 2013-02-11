@@ -36,10 +36,10 @@ module Bundler
         database    = Database.new
         vulnerable  = false
 
-        database.check_bundle(environment) do |advisory|
+        database.check_bundle(environment) do |gem,advisory|
           vulnerable = true
 
-          print_advisory advisory
+          print_advisory gem, advisory
         end
 
         if vulnerable
@@ -59,7 +59,10 @@ module Bundler
 
       protected
 
-      def print_advisory(advisory)
+      def print_advisory(gem, advisory)
+        say "Gem: ", :red
+        say "#{gem.name}-#{gem.version}"
+
         say "CVE: ", :red
         say advisory.cve
 

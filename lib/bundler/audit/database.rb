@@ -125,9 +125,12 @@ module Bundler
       # @param [Bundle::Environment] environment
       #   The bundled gems.
       #
-      # @yield [advisory]
+      # @yield [gem, advisory]
       #   If a block is given, each advisory that effects a gem within the
       #   bundle will be passed.
+      #
+      # @yieldparam [Gem::Specification] gem
+      #   The gem effected by the advisory.
       #
       # @yieldparam [Advisory] advisory
       #   An advisory that effects a gem within the bundle.
@@ -140,7 +143,7 @@ module Bundler
 
         environment.gems.each do |gem|
           check_gem(gem) do |advisory|
-            yield advisory
+            yield gem, advisory
           end
         end
       end
