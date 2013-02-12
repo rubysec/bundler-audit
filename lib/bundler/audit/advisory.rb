@@ -52,7 +52,7 @@ module Bundler
           data['cvss_v2'],
           Array(data['patched_versions']).map { |version|
             Gem::Requirement.new(*version.split(', '))
-          },
+          }
         )
       end
 
