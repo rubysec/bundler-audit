@@ -29,7 +29,7 @@ module Bundler
       map '--version' => :version
 
       desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
-      method_option :verbose, :flag => '-v'
+      method_option :verbose, :alias => '-v'
 
       def check
         environment = Bundler.load
