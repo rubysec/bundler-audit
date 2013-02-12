@@ -19,7 +19,6 @@ require 'bundler/audit/database'
 require 'bundler/audit/version'
 
 require 'bundler/vendored_thor'
-require 'bundler'
 
 module Bundler
   module Audit
@@ -32,11 +31,10 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
 
       def check
-        environment = Bundler.load
         database    = Database.new
         vulnerable  = false
 
-        database.check_bundle(environment) do |gem,advisory|
+        database.check_bundle("Gemfile.lock") do |gem,advisory|
           vulnerable = true
 
           print_advisory gem, advisory

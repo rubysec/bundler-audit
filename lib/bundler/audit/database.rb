@@ -18,6 +18,7 @@
 require 'bundler/audit/advisory'
 
 require 'yaml'
+require 'bundler'
 
 module Bundler
   module Audit
@@ -138,10 +139,11 @@ module Bundler
       # @return [Enumerator]
       #   If no block is given, an Enumerator will be returned.
       #
-      def check_bundle(environment)
-        return enum_for(__method__,environment) unless block_given?
+      def check_bundle(lock_file)
+        gems = gems(lock_file)
+        return enum_for(__method__, gems) unless block_given?
 
-        environment.gems.each do |gem|
+        gems.each do |gem|
           check_gem(gem) do |advisory|
             yield gem, advisory
           end
@@ -179,6 +181,10 @@ module Bundler
       end
 
       protected
+
+      def gems(lock_file)
+        Bundler::LockfileParser.new(File.read(lock_file)).specs
+      end
 
       #
       # Enumerates over every advisory path in the database.
