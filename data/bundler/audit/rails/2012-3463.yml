@@ -13,7 +13,7 @@ description: >
 
 cvss_v2: 4.3
 
-patched_version:
+patched_versions:
   - ~> 3.0.17
   - ~> 3.1.8
   - ">= 3.2.8"
