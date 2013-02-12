@@ -64,9 +64,11 @@ format:
 * Must be a YAML file.
 * Must be placed in the `data/bundler/audit/$gem/` directory.
 * Must be named after the CVE number (`2013-0156.yml`):
-* Must contain a URL to the [OSVDB] advisory.
-* Must contain the `title` and `description`.
-* Must contain the versions ranges that are considered safe.
+  * Must contain a URL to the [OSVDB] advisory.
+  * Must contain the `title` and `description`.
+  * Must contain the `title` and `description`.
+  * Must contain the CVSSv2 Score.
+  * Must contain the patched versions ranges.
 
 ### Example
 
