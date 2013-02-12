@@ -91,8 +91,14 @@ module Bundler
           say advisory.title
         end
 
-        say "Patched Versions: ", :red
-        say advisory.patched_versions.join(', ')
+        unless advisory.patched_versions.empty?
+          say "Solution: upgrade to ", :red
+          say advisory.patched_versions.join(', ')
+        else
+          say "Solution: ", :red
+          say "remove or disable this gem until a patch is available!", [:red, :bold]
+        end
+
         say
       end
 
