@@ -1,0 +1,19 @@
+---
+url: http://osvdb.org/84515
+title: Ruby on Rails select_tag Helper Method prompt Value XSS 
+
+description: >
+  Ruby on Rails contains a flaw that allows a remote cross-site
+  scripting (XSS) attack. This flaw exists because input passed via the
+  prompt value is not properly sanitized by the select_tag helper method
+  before returning it to the user. This may allow a user to create a
+  specially crafted request that would execute arbitrary script code in
+  a user's browser within the trust relationship between their browser
+  and the server.
+
+cvss_v2: 4.3
+
+patched_version:
+  - ~> 3.0.17
+  - ~> 3.1.8
+  - ">= 3.2.8"

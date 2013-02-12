@@ -1,0 +1,16 @@
+---
+url: http://www.osvdb.org/show/osvdb/81631
+title: Mail Gem for Ruby File Delivery Method to Parameter Traversal Arbitrary File Manipulation 
+
+description: > 
+  Mail Gem for Ruby contains a flaw that allows a remote
+  attacker to traverse outside of a restricted path. The issue is due
+  to the program not properly sanitizing user input, specifically
+  directory traversal style attacks (e.g., ../../) supplied via the
+  'to' parameter within the delivery method. This directory traversal
+  attack would allow the attacker to modify arbitrary files.
+
+cvss_v2: 5.0
+
+patched_versions:
+  - ">= 2.4.4"

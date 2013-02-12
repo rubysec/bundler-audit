@@ -1,0 +1,15 @@
+---
+url: http://www.osvdb.org/show/osvdb/70667
+title: Mail Gem for Ruby lib/mail/network/delivery_methods/sendmail.rb Email From: Address Arbitrary Shell Command Injection 
+
+description: > 
+  Mail Gem for Ruby contains a flaw related to the failure to properly
+  sanitise input passed from an email from address in the 'deliver()'
+  function in 'lib/mail/network/delivery_methods/sendmail.rb' before
+  being used as a command line argument. This may allow a remote
+  attacker to inject arbitrary shell commands.
+
+cvss_v2: 6.8
+
+patched_versions:
+  - ">= 2.2.15"

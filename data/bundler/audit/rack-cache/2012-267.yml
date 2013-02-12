@@ -1,0 +1,14 @@
+---
+url: http://osvdb.org/83077
+title: rack-cache Rubygem Sensitive HTTP Header Caching Weakness 
+
+description: | 
+  Rack::Cache (rack-cache) contains a flaw related to the
+  rubygem caching sensitive HTTP headers. This will result in a
+  weakness that may make it easier for an attacker to gain access to a
+  user's session via a specially crafted header.
+
+cvss_v2: 7.5
+
+patched_versions:
+  - ">= 1.2"
