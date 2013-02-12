@@ -28,6 +28,14 @@ Audit a projects `Gemfile.lock`:
     Title: Rack Rack::Session::Cookie Function Timing Attack Remote Code Execution 
     Patched Versions: ~> 1.1.6, ~> 1.2.8, ~> 1.3.10, ~> 1.4.5, >= 1.5.2
     
+    Name: json
+    Version: 1.7.6
+    CVE: 2013-0269
+    Criticality: High
+    URL: http://direct.osvdb.org/show/osvdb/90074
+    Title: Ruby on Rails JSON Gem Arbitrary Symbol Creation Remote DoS
+    Patched Versions: ~> 1.5.4, ~> 1.6.7, >= 1.7.7
+    
     Name: rails
     Version: 3.2.10
     CVE: 2013-0155
@@ -45,8 +53,15 @@ Audit a projects `Gemfile.lock`:
     Remote Code Execution 
     Patched Versions: ~> 2.3.15, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
     
+    Name: rails
+    Version: 3.2.10
+    CVE: 2013-0276
+    Criticality: Medium
+    URL: http://direct.osvdb.org/show/osvdb/90072
+    Title: Ruby on Rails Active Record attr_protected Method Bypass
+    Patched Versions: ~> 2.3.17, ~> 3.1.11, >= 3.2.12
+    
     Unpatched versions found!
-
 
 ## Requirements
 
