@@ -60,8 +60,11 @@ module Bundler
       protected
 
       def print_advisory(gem, advisory)
-        say "Gem: ", :red
-        say "#{gem.name}-#{gem.version}"
+        say "Name: ", :red
+        say gem.name
+
+        say "Version: ", :red
+        say gem.version
 
         say "CVE: ", :red
         say advisory.cve
