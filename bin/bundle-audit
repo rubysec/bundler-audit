@@ -2,18 +2,8 @@
 
 require 'rubygems'
 
-root = File.expand_path(File.join(File.dirname(__FILE__),'..'))
-if File.directory?(File.join(root,'.git'))
-  Dir.chdir(root) do
-    begin
-      require 'bundler/setup'
-    rescue LoadError => e
-      warn e.message
-      warn "Run `gem install bundler` to install Bundler"
-      exit -1
-    end
-  end
-end
+lib_dir = File.expand_path(File.join(File.dirname(__FILE__),'..','lib'))
+$LOAD_PATH << lib_dir unless $LOAD_PATH.include?(lib_dir)
 
 require 'bundler/audit/cli'
 
