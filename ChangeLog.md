@@ -1,3 +1,28 @@
+### 0.1.1 / 2013-02-12
+
+* Fixed a Ruby 1.8 syntax error.
+
+### Advisories
+
+* Imported advisories from the [Ruby Advisory DB][ruby-advisory-db].
+  * [CVE-2011-0739](http://www.osvdb.org/show/osvdb/70667)
+  * [CVE-2012-2139](http://www.osvdb.org/show/osvdb/81631)
+  * [CVE-2012-2140](http://www.osvdb.org/show/osvdb/81632)
+  * [CVE-2012-267](http://osvdb.org/83077)
+  * [CVE-2012-1098](http://osvdb.org/79726)
+  * [CVE-2012-1099](http://www.osvdb.org/show/osvdb/79727)
+  * [CVE-2012-2660](http://www.osvdb.org/show/osvdb/82610)
+  * [CVE-2012-2661](http://www.osvdb.org/show/osvdb/82403)
+  * [CVE-2012-3424](http://www.osvdb.org/show/osvdb/84243)
+  * [CVE-2012-3463](http://osvdb.org/84515)
+  * [CVE-2012-3464](http://www.osvdb.org/show/osvdb/84516)
+  * [CVE-2012-3465](http://www.osvdb.org/show/osvdb/84513)
+
+### CLI
+
+* If the advisory has no `patched_versions`, recommend removing or disabling
+  the gem until a patch is made available.
+
 ### 0.1.0 / 2013-02-11
 
 * Initial release:
@@ -14,3 +39,5 @@
 * [CVE-2013-0276](http://direct.osvdb.org/show/osvdb/90072)
 * [CVE-2013-0277](http://direct.osvdb.org/show/osvdb/90073)
 * [CVE-2013-0333](http://osvdb.org/show/osvdb/89594)
+
+[ruby-advisory-db]: https://github.com/rubysec/ruby-advisory-db#readme
