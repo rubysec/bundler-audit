@@ -11,6 +11,8 @@ description: |
   "IS NULL" or empty where clauses, and forcing the query to unexpectedly check
   for NULL or eliminate a WHERE clause.
 
+cvss_v2: 10.0
+
 patched_versions:
   - "~> 3.0.19"
   - "~> 3.1.10"

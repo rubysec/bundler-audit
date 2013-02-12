@@ -10,6 +10,8 @@ description: |
   code. This attack is more practical against 'cloud' users as intra-cloud
   latencies are sufficiently low to make the attack viable.
 
+cvss_v2: 7.6
+
 patched_versions:
   - "~> 1.1.6"
   - "~> 1.2.8"

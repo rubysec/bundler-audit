@@ -69,6 +69,13 @@ module Bundler
         say "CVE: ", :red
         say advisory.cve
 
+        say "Criticality: ", :red
+        case advisory.criticality
+        when :low    then say "Low"
+        when :medium then say "Medium", :yellow
+        when :high   then say "High", [:red, :bold]
+        end
+
         say "URL: ", :red
         say advisory.url
 

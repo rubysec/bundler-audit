@@ -55,6 +55,8 @@ format:
       of parameters. This may allow a remote attacker to potentially execute
       arbitrary code.
     
+    cvss_v2: 10.0
+
     patched_versions:
       - "~> 2.3.15"
       - "~> 3.0.19"

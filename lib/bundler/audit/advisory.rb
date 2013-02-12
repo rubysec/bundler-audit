@@ -23,6 +23,7 @@ module Bundler
                                 :url,
                                 :title,
                                 :description,
+                                :cvss_v2,
                                 :patched_versions)
 
       #
@@ -48,10 +49,25 @@ module Bundler
           data['url'],
           data['title'],
           data['description'],
+          data['cvss_v2'],
           Array(data['patched_versions']).map { |version|
             Gem::Requirement.new(*version.split(', '))
           },
         )
+      end
+
+      #
+      # Determines how critical the vulnerability is.
+      #
+      # @return [:low, :medium, :high]
+      #   The criticality of the vulnerability based on the CVSSv2 score.
+      #
+      def criticality
+        case cvss_v2
+        when 0.0..3.3  then :low
+        when 3.3..6.6  then :medium
+        when 6.6..10.0 then :high
+        end
       end
 
       #
