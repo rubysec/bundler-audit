@@ -13,6 +13,6 @@ description: |
   arbitrary SQL, inject and execute arbitrary code, or perform a DoS attack on
   a Rails application.
 
-uneffected_versions:
+patched_versions:
   - "~> 2.3.16"
   - ">= 3.0.20"

@@ -18,8 +18,8 @@ describe Bundler::Audit::Advisory do
     its(:title) { should == data['title'] }
     its(:description) { should == data['description'] }
 
-    describe "#uneffected_versions" do
-      subject { described_class.load(path).uneffected_versions }
+    describe "#patched_versions" do
+      subject { described_class.load(path).patched_versions }
 
       it "should all be Gem::Requirement objects" do
         subject.all? { |version|
@@ -28,7 +28,7 @@ describe Bundler::Audit::Advisory do
       end
 
       it "should parse the versions" do
-        subject.map(&:to_s).should == data['uneffected_versions']
+        subject.map(&:to_s).should == data['patched_versions']
       end
     end
   end
@@ -36,7 +36,7 @@ describe Bundler::Audit::Advisory do
   describe "#vulnerable?" do
     subject { described_class.load(path) }
 
-    context "when passed a version that matches one uneffected_version" do
+    context "when passed a version that matches one patched_version" do
       let(:version) { Gem::Version.new('3.1.11') }
 
       it "should return false" do
@@ -44,7 +44,7 @@ describe Bundler::Audit::Advisory do
       end
     end
 
-    context "when passed a version that matches no uneffected_version" do
+    context "when passed a version that matches no patched_version" do
       let(:version) { Gem::Version.new('3.1.9') }
 
       it "should return true" do

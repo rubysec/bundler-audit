@@ -10,7 +10,7 @@ description: |
   code. This attack is more practical against 'cloud' users as intra-cloud
   latencies are sufficiently low to make the attack viable.
 
-uneffected_versions:
+patched_versions:
   - "~> 1.1.6"
   - "~> 1.2.8"
   - "~> 1.3.10"

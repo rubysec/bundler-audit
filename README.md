@@ -55,7 +55,7 @@ format:
       of parameters. This may allow a remote attacker to potentially execute
       arbitrary code.
     
-    uneffected_versions:
+    patched_versions:
       - "~> 2.3.15"
       - "~> 3.0.19"
       - "~> 3.1.10"

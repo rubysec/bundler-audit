@@ -82,7 +82,7 @@ module Bundler
         end
 
         say "Patched Versions: ", :red
-        say advisory.uneffected_versions.join(', ')
+        say advisory.patched_versions.join(', ')
         say
       end
 

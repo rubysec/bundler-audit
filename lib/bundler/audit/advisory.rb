@@ -23,7 +23,7 @@ module Bundler
                                 :url,
                                 :title,
                                 :description,
-                                :uneffected_versions)
+                                :patched_versions)
 
       #
       # Loads the advisory from a YAML file.
@@ -48,7 +48,7 @@ module Bundler
           data['url'],
           data['title'],
           data['description'],
-          Array(data['uneffected_versions']).map { |version|
+          Array(data['patched_versions']).map { |version|
             Gem::Requirement.new(*version.split(', '))
           },
         )
@@ -58,14 +58,14 @@ module Bundler
       # Checks whether the version is vulnerable to the advisory.
       #
       # @param [Gem::Version] version
-      #   The version to compare against {#uneffected_versions}.
+      #   The version to compare against {#patched_versions}.
       #
       # @return [Boolean]
       #   Specifies whether the version is vulnerable to the advisory or not.
       #
       def vulnerable?(version)
-        !uneffected_versions.any? do |uneffected_version|
-          uneffected_version === version
+        !patched_versions.any? do |patched_version|
+          patched_version === version
         end
       end
 
