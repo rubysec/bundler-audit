@@ -16,5 +16,5 @@ description: |
 cvss_v2: 9.3
 
 patched_versions:
-  - "~> 2.3.16"
+  - ~> 2.3.16
   - ">= 3.0.20"
