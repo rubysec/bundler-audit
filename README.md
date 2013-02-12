@@ -20,6 +20,33 @@ Patch-level verification for [Bundler][bundler].
 Audit a projects `Gemfile.lock`:
 
     $ bundle-audit
+    Name: rack
+    Version: 1.4.4
+    CVE: 2013-0263
+    Criticality: High
+    URL: http://osvdb.org/show/osvdb/89939
+    Title: Rack Rack::Session::Cookie Function Timing Attack Remote Code Execution 
+    Patched Versions: ~> 1.1.6, ~> 1.2.8, ~> 1.3.10, ~> 1.4.5, >= 1.5.2
+    
+    Name: rails
+    Version: 3.2.10
+    CVE: 2013-0155
+    Criticality: High
+    URL: http://osvdb.org/show/osvdb/89025
+    Title: Ruby on Rails Active Record JSON Parameter Parsing Query Bypass 
+    Patched Versions: ~> 3.0.19, ~> 3.1.10, >= 3.2.11
+    
+    Name: rails
+    Version: 3.2.10
+    CVE: 2013-0156
+    Criticality: High
+    URL: http://osvdb.org/show/osvdb/89026
+    Title: Ruby on Rails params_parser.rb Action Pack Type Casting Parameter Parsing
+    Remote Code Execution 
+    Patched Versions: ~> 2.3.15, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
+    
+    Unpatched versions found!
+
 
 ## Requirements
 
@@ -34,12 +61,12 @@ Audit a projects `Gemfile.lock`:
 For an advisory to be added to the Database, it must match the following
 format:
 
-* Be a YAML file.
-* Placed in the `data/bundler/audit/$gem/` directory.
-* Named after the CVE number (`2013-0156.yml`):
-  * Containing a URL to [OSVDB].
-  * Containing `title` and `description`.
-  * Containing the versions ranges which are not effected by the advisory.
+* Must be a YAML file.
+* Must be placed in the `data/bundler/audit/$gem/` directory.
+* Must be named after the CVE number (`2013-0156.yml`):
+* Must contain a URL to the [OSVDB] advisory.
+* Must contain the `title` and `description`.
+* Must contain the versions ranges that are considered safe.
 
 ### Example
 
