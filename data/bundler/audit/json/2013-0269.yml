@@ -1,0 +1,19 @@
+---
+url: http://direct.osvdb.org/show/osvdb/90074
+title: Ruby on Rails JSON Gem Arbitrary Symbol Creation Remote DoS
+
+description: |
+  Ruby on Rails contains a flaw that may allow a remote denial of service.
+  The issue is due to the JSON gem being tricked in to generating Ruby symbols
+  during the parsing of certain JSON documents. Since Ruby symbols are not
+  garbage collected, a remote attacker can crash a users system. This also may
+  allow the attacker to create arbitrary objects that may be used to bypass
+  certain security mechanisms and potentially allow SQL injection attacks to
+  be conducted.
+
+cvss_v2: 9.0
+
+patched_versions:
+  - "~> 1.5.4"
+  - "~> 1.6.7"
+  - ">= 1.7.7"
