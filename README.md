@@ -4,6 +4,8 @@
 * [Issues](https://github.com/postmodern/bundler-audit/issues)
 * [Documentation](http://rubydoc.info/gems/bundler-audit/frames)
 * [Email](mailto:postmodern.mod3 at gmail.com)
+* [![Build Status](https://travis-ci.org/postmodern/bundler-audit.png)](https://travis-ci.org/postmodern/bundler-audit)
+
 
 ## Description
 
