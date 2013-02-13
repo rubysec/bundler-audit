@@ -20,6 +20,7 @@ require 'bundler/audit/version'
 
 require 'bundler/vendored_thor'
 require 'bundler'
+require 'tmpdir'
 
 module Bundler
   module Audit
@@ -30,9 +31,12 @@ module Bundler
 
       desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
       method_option :verbose, :type => :boolean, :aliases => '-v'
+      method_option :live, :type => :boolean
 
       def check
-        database    = Database.new
+        path = download_advisory_db if options.live?
+
+        database    = Database.new(path)
         vulnerable  = false
         lock_file   = load_gemfile_lock('Gemfile.lock')
 
@@ -59,6 +63,14 @@ module Bundler
       end
 
       protected
+
+      def download_advisory_db
+        dir = Dir.mktmpdir
+        say "Downloading ruby-advisory-db"
+        result = `cd #{dir} && git clone git://github.com/rubysec/ruby-advisory-db.git . 2>&1`
+        raise result unless $?.success?
+        File.join(dir, "gems")
+      end
 
       def load_gemfile_lock(path)
         Bundler::LockfileParser.new(File.read(path))
