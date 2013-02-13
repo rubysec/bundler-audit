@@ -69,35 +69,6 @@ describe Bundler::Audit::Database do
     end
   end
 
-  describe "#check_bundle" do
-    let(:path) { File.join(File.dirname(__FILE__),'bundle') }
-    let(:lock_file) do
-      "spec/bundle/Gemfile.lock"
-    end
-
-    context "when given a block" do
-      it "should yield every advisory effecting the bundle" do
-        advisories = []
-
-        subject.check_bundle(lock_file) do |gem,advisory|
-          advisories << [gem, advisory]
-        end
-
-        advisories.should_not be_empty
-        advisories.all? { |gem,advisory|
-          gem.kind_of?(Bundler::LazySpecification) &&
-          advisory.kind_of?(Bundler::Audit::Advisory)
-        }.should be_true
-      end
-    end
-
-    context "when given no block" do
-      it "should return an Enumerator" do
-        subject.check_bundle(lock_file).should be_kind_of(Enumerable)
-      end
-    end
-  end
-
   describe "#size" do
     it { subject.size.should > 0 }
   end
