@@ -8,8 +8,3 @@ homepage: https://github.com/postmodern/bundler-audit#readme
 
 dependencies:
   bundler: ~> 1.0
-
-development_dependencies:
-  rspec: ~> 2.4
-  rubygems-tasks: ~> 0.2
-  yard: ~> 0.8
