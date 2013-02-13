@@ -120,35 +120,6 @@ module Bundler
       end
 
       #
-      # Verifies whether the bundled gems are effected by any advisories.
-      #
-      # @param [Bundle::Environment] environment
-      #   The bundled gems.
-      #
-      # @yield [gem, advisory]
-      #   If a block is given, each advisory that effects a gem within the
-      #   bundle will be passed.
-      #
-      # @yieldparam [Gem::Specification] gem
-      #   The gem effected by the advisory.
-      #
-      # @yieldparam [Advisory] advisory
-      #   An advisory that effects a gem within the bundle.
-      #
-      # @return [Enumerator]
-      #   If no block is given, an Enumerator will be returned.
-      #
-      def check_bundle(environment)
-        return enum_for(__method__,environment) unless block_given?
-
-        environment.gems.each do |gem|
-          check_gem(gem) do |advisory|
-            yield gem, advisory
-          end
-        end
-      end
-
-      #
       # The number of advisories within the database.
       #
       # @return [Integer]

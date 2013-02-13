@@ -69,19 +69,6 @@ describe Bundler::Audit::Database do
     end
   end
 
-  describe "#check_bundle" do
-    let(:path) { File.join(File.dirname(__FILE__),'bundle') }
-    let(:bundle) do
-      Bundler::Runtime.new(Pathname.new("."), Bundler::Definition.build(Pathname.new("Gemfile"), Pathname.new("Gemfile.lock"), true))
-    end
-
-    context "when given no block" do
-      it "should return an Enumerator" do
-        subject.check_bundle(bundle).should be_kind_of(Enumerable)
-      end
-    end
-  end
-
   describe "#size" do
     it { subject.size.should > 0 }
   end
