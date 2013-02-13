@@ -7,4 +7,4 @@ email: postmodern.mod3@gmail.com
 homepage: https://github.com/postmodern/bundler-audit#readme
 
 dependencies:
-  bundler: ~> 1.0
+  bundler: ~> 1.2
