@@ -34,9 +34,6 @@ module Bundler
       method_option :live, :type => :boolean
 
       def check
-        path = download_advisory_db if options.live?
-
-        database    = Database.new(path)
         vulnerable  = false
         lock_file   = load_gemfile_lock('Gemfile.lock')
 
@@ -56,13 +53,19 @@ module Bundler
       end
 
       desc 'version', 'Prints the bundler-audit version'
+      method_option :live, :type => :boolean
       def version
-        database = Database.new
-
         puts "#{File.basename($0)} #{VERSION} (advisories: #{database.size})"
       end
 
       protected
+
+      def database
+        @database ||= begin
+          path = download_advisory_db if options.live?
+          Database.new(path)
+        end
+      end
 
       def download_advisory_db
         dir = Dir.mktmpdir
