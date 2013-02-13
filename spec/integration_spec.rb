@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe "CLI" do
+  include Helpers
+
   it "shows vulnerable gems" do
     result = decolorize(sh("cd spec/bundle && bundle && ../../bin/bundle-audit", :fail => true))
     result.should include <<-ADVICE
@@ -15,17 +17,5 @@ ADVICE
 
   it "shows nothing when everything is fine" do
     decolorize(sh("bin/bundle-audit")).strip.should == "No unpatched versions found"
-  end
-
-  def sh(command, options={})
-    Bundler.with_clean_env do
-      result = `#{command} 2>&1`
-      raise "FAILED #{command}\n#{result}" if $?.success? == !!options[:fail]
-      result
-    end
-  end
-
-  def decolorize(string)
-    string.gsub(/\e\[\d+m/, "")
   end
 end
