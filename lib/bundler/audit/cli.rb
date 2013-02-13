@@ -34,8 +34,9 @@ module Bundler
       def check
         database    = Database.new
         vulnerable  = false
+        lock_file   = load_gemfile_lock('Gemfile.lock')
 
-        gems("Gemfile.lock").each do |gem|
+        lock_file.specs.each do |gem|
           database.check_gem(gem) do |advisory|
             vulnerable = true
             print_advisory gem, advisory
@@ -59,8 +60,8 @@ module Bundler
 
       protected
 
-      def gems(lock_file)
-        Bundler::LockfileParser.new(File.read(lock_file)).specs
+      def load_gemfile_lock(path)
+        Bundler::LockfileParser.new(File.read(path))
       end
 
       def print_advisory(gem, advisory)
