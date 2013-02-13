@@ -32,14 +32,14 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
 
       def check
-        environment = Bundler.load
         database    = Database.new
         vulnerable  = false
 
-        database.check_bundle(environment) do |gem,advisory|
-          vulnerable = true
-
-          print_advisory gem, advisory
+        gems("Gemfile.lock").each do |gem|
+          database.check_gem(gem) do |advisory|
+            vulnerable = true
+            print_advisory gem, advisory
+          end
         end
 
         if vulnerable
@@ -58,6 +58,10 @@ module Bundler
       end
 
       protected
+
+      def gems(lock_file)
+        Bundler::LockfileParser.new(File.read(lock_file)).specs
+      end
 
       def print_advisory(gem, advisory)
         say "Name: ", :red

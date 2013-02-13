@@ -4,7 +4,7 @@ describe "CLI" do
   include Helpers
 
   it "shows vulnerable gems" do
-    result = decolorize(sh("cd spec/bundle && bundle && ../../bin/bundle-audit", :fail => true))
+    result = decolorize(sh("cd spec/bundle && ../../bin/bundle-audit", :fail => true))
     result.should include <<-ADVICE
 Name: rails
 Version: 3.2.10
