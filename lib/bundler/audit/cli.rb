@@ -107,6 +107,11 @@ module Bundler
         say
       end
 
+      def say(string="", color=nil)
+        color = nil unless $stdout.tty?
+        super(string, color)
+      end
+
     end
   end
 end
