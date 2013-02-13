@@ -14,4 +14,5 @@ module Helpers
     string.gsub(/\e\[\d+m/, "")
   end
 end
+
 include Bundler::Audit
