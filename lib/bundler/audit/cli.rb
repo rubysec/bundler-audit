@@ -44,7 +44,7 @@ module Bundler
 
         if vulnerable
           say "Unpatched versions found!", :red
-          exit(1)
+          exit 1
         else
           say "No unpatched versions found", :green
         end
