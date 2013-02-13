@@ -12,9 +12,7 @@ describe "CLI" do
     let(:directory) { File.join('spec','bundle',bundle) }
 
     subject do
-      Dir.chdir(directory) do
-        decolorize(sh(command, :fail => true))
-      end
+      Dir.chdir(directory) { sh(command, :fail => true) }
     end
 
     it "should print advisory information for the vulnerable gems" do
@@ -34,9 +32,7 @@ Title: Ruby on Rails Active Record attr_protected Method Bypass
     let(:directory) { File.join('spec','bundle',bundle) }
 
     subject do
-      Dir.chdir(directory) do
-        decolorize(sh(command))
-      end
+      Dir.chdir(directory) { sh(command) }
     end
 
     it "should print nothing when everything is fine" do
