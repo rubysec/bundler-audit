@@ -85,6 +85,16 @@ module Bundler
         end
       end
 
+      #
+      # Converts the advisory to a String.
+      #
+      # @return [String]
+      #   The CVE identifier.
+      #
+      def to_s
+        "CVE-#{cve}"
+      end
+
     end
   end
 end
