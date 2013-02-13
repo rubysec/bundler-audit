@@ -27,6 +27,27 @@ require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new
 
 namespace :spec do
+  file 'spec/bundle/vuln/Gemfile.lock' do
+    Bundler.with_clean_env do
+      chdir 'spec/bundle/vuln' do
+        sh 'bundle', 'install', '--quiet'
+      end
+    end
+  end
+
+  file 'spec/bundle/secure/Gemfile.lock' do
+    Bundler.with_clean_env do
+      chdir 'spec/bundle/secure' do
+        sh 'bundle', 'install', '--quiet'
+      end
+    end
+  end
+
+  task :bundle => %w[
+    spec/bundle/vuln/Gemfile.lock
+    spec/bundle/secure/Gemfile.lock
+  ]
+
   task :validate do
     validate = lambda do |path,data,field,type|
       value = data[field]
@@ -56,7 +77,7 @@ namespace :spec do
     end
   end
 end
-task :spec => 'spec:validate'
+task :spec => ['spec:bundle', 'spec:validate']
 
 task :test    => :spec
 task :default => :spec
