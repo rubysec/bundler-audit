@@ -1,7 +1,5 @@
 require 'spec_helper'
 require 'bundler/audit/database'
-
-require 'bundler'
 require 'tmpdir'
 
 describe Bundler::Audit::Database do
@@ -74,23 +72,7 @@ describe Bundler::Audit::Database do
   describe "#check_bundle" do
     let(:path) { File.join(File.dirname(__FILE__),'bundle') }
     let(:bundle) do
-      Dir.chdir(path) { Bundler.load }
-    end
-
-    context "when given a block" do
-      it "should yield every advisory effecting the bundle" do
-        advisories = []
-
-        subject.check_bundle(bundle) do |gem,advisory|
-          advisories << [gem, advisory]
-        end
-
-        advisories.should_not be_empty
-        advisories.all? { |gem,advisory|
-          gem.kind_of?(Gem::Specification) &&
-            advisory.kind_of?(Bundler::Audit::Advisory)
-        }.should be_true
-      end
+      Bundler::Runtime.new(Pathname.new("."), Bundler::Definition.build(Pathname.new("Gemfile"), Pathname.new("Gemfile.lock"), true))
     end
 
     context "when given no block" do
