@@ -42,7 +42,8 @@ module Bundler
       # @raise [ArgumentError]
       #   The path was not a directory.
       #
-      def initialize(path=PATH)
+      def initialize(path=nil)
+        path ||= PATH
         unless File.directory?(path)
           raise(ArgumentError,"#{path.dump} is not a directory")
         end

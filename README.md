@@ -63,6 +63,11 @@ Audit a projects `Gemfile.lock`:
     
     Unpatched versions found!
 
+Audit using live data from [ruby-advisory-db](https://github.com/rubysec/ruby-advisory-db/tree/master/gems):
+
+    $ bundle-audit --live
+
+
 ## Requirements
 
 * [bundler] ~> 1.0

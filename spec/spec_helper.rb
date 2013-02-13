@@ -13,6 +13,14 @@ module Helpers
   def decolorize(string)
     string.gsub(/\e\[\d+m/, "")
   end
+
+  def executable
+    File.expand_path(File.join('..','..','bin','bundle-audit'), __FILE__)
+  end
+
+  def audit_in_directory(additions, directory)
+    Dir.chdir(directory) { decolorize(sh(executable + additions)) }
+  end
 end
 
 include Bundler::Audit
