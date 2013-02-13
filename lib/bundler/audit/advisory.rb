@@ -19,7 +19,8 @@ require 'yaml'
 
 module Bundler
   module Audit
-    class Advisory < Struct.new(:cve,
+    class Advisory < Struct.new(:path,
+                                :cve,
                                 :url,
                                 :title,
                                 :description,
@@ -45,6 +46,7 @@ module Bundler
         end
 
         return new(
+          path,
           cve,
           data['url'],
           data['title'],
