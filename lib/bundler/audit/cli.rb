@@ -79,6 +79,7 @@ module Bundler
         when :low    then say "Low"
         when :medium then say "Medium", :yellow
         when :high   then say "High", [:red, :bold]
+        else              say "Unknown"
         end
 
         say "URL: ", :red
