@@ -42,7 +42,7 @@ describe Bundler::Audit::Database do
   describe "#check_gem" do
     let(:gem) do
       Gem::Specification.new do |s|
-        s.name    = 'rails'
+        s.name    = 'actionpack'
         s.version = '3.1.9'
       end
     end

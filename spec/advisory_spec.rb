@@ -4,7 +4,7 @@ require 'bundler/audit/advisory'
 
 describe Bundler::Audit::Advisory do
   let(:root) { Bundler::Audit::Database::PATH }
-  let(:gem)  { 'rails' }
+  let(:gem)  { 'actionpack' }
   let(:cve)  { '2013-0156' }
   let(:path) { File.join(root,gem,"#{cve}.yml") }
 
