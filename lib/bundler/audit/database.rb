@@ -26,9 +26,10 @@ module Bundler
     # and CVE number.
     #
     class Database
-
       # directory containing advisories
-      PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db','gems'))
+      def self.path
+        File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db','gems'))
+      end
 
       # The path to the advisory database
       attr_reader :path
@@ -42,7 +43,7 @@ module Bundler
       # @raise [ArgumentError]
       #   The path was not a directory.
       #
-      def initialize(path=PATH)
+      def initialize(path=self.class.path)
         unless File.directory?(path)
           raise(ArgumentError,"#{path.dump} is not a directory")
         end
