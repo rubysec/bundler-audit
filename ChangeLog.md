@@ -1,3 +1,15 @@
+### 0.1.2 / 2013-02-17
+
+* Require [bundler] ~> 1.2.
+* Vendor a full copy of the [ruby-advisory-db].
+* Added {Bundler::Audit::Advisory#path} for debugging purposes.
+* Added {Bundler::Audit::Advisory#to_s} for debugging purposes.
+
+#### CLI
+
+* Simply parse the `Gemfile.lock` instead of loading the bundle (@grosser).
+* Exit with non-zero status on failure (@grosser).
+
 ### 0.1.1 / 2013-02-12
 
 * Fixed a Ruby 1.8 syntax error.
@@ -40,4 +52,5 @@
 * [CVE-2013-0277](http://direct.osvdb.org/show/osvdb/90073)
 * [CVE-2013-0333](http://osvdb.org/show/osvdb/89594)
 
+[bundler]: http://gembundler.com/
 [ruby-advisory-db]: https://github.com/rubysec/ruby-advisory-db#readme
