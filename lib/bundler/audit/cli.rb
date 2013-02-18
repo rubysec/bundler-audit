@@ -36,6 +36,8 @@ module Bundler
         vulnerable  = false
         lock_file   = load_gemfile_lock('Gemfile.lock')
 
+        check_sources(lock_file.sources)
+
         lock_file.specs.each do |gem|
           database.check_gem(gem) do |advisory|
             vulnerable = true
@@ -111,6 +113,15 @@ module Bundler
       def say(string="", color=nil)
         color = nil unless $stdout.tty?
         super(string, color)
+      end
+
+      def check_sources(sources)
+        insecure = sources.first.remotes.select {|source| source.scheme == 'http'}
+
+        if insecure.any?
+          say 'Warning: The following gem sources are not using SSL:', :yellow
+          insecure.each {|source| say(source, :yellow)}
+        end
       end
 
     end
