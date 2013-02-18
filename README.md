@@ -5,7 +5,7 @@
 * [Documentation](http://rubydoc.info/gems/bundler-audit/frames)
 * [Email](mailto:postmodern.mod3 at gmail.com)
 * [![Build Status](https://travis-ci.org/postmodern/bundler-audit.png)](https://travis-ci.org/postmodern/bundler-audit)
-
+* [![Code Climate](https://codeclimate.com/github/postmodern/bundler-audit.png)](https://codeclimate.com/github/postmodern/bundler-audit)
 
 ## Description
 
