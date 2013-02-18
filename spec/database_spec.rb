@@ -3,8 +3,8 @@ require 'bundler/audit/database'
 require 'tmpdir'
 
 describe Bundler::Audit::Database do
-  describe "PATH" do
-    subject { described_class::PATH }
+  describe ".path" do
+    subject { described_class.path }
 
     it "it should be a directory" do
       File.directory?(subject).should be_true
@@ -15,8 +15,8 @@ describe Bundler::Audit::Database do
     context "when given no arguments" do
       subject { described_class.new }
 
-      it "should default path to PATH" do
-        subject.path.should == described_class::PATH
+      it "should default path to path" do
+        subject.path.should == described_class.path
       end
     end
 

@@ -16,3 +16,19 @@ module Helpers
 end
 
 include Bundler::Audit
+
+RSpec.configure do |config|
+  config.before(:suite) do
+    unless File.exist?("spec/fixtures/ruby-advisory-db/gems")
+      FileUtils.mkdir_p("spec/fixtures")
+
+      Dir.chdir("spec/fixtures") do
+        system "git clone git://github.com/rubysec/ruby-advisory-db.git"
+      end
+    end
+  end
+
+  config.before do
+    Bundler::Audit::Database.stub(path: File.expand_path(File.join(File.dirname(__FILE__),'fixtures','ruby-advisory-db','gems')))
+  end
+end
