@@ -28,7 +28,7 @@ module Bundler
     class Database
 
       # directory containing advisories
-      PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','bundler','audit'))
+      PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db','gems'))
 
       # The path to the advisory database
       attr_reader :path
