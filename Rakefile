@@ -32,37 +32,8 @@ namespace :spec do
       chdir(path) { sh 'bundle', 'install', '--quiet' }
     end
   end
-
-  task :validate do
-    validate = lambda do |path,data,field,type|
-      value = data[field]
-
-      case value
-      when type
-        # no-op
-      when NilClass
-        warn "#{path}: #{field} is missing"
-      else
-        warn "#{path}: expected #{field} to be #{type} but was #{value.class}"
-      end
-    end
-
-    Dir.glob('data/bundler/audit/*/*.yml') do |path|
-      begin
-        data = YAML.load_file(path)
-
-        validate[path, data, 'url', String]
-        validate[path, data, 'title', String]
-        validate[path, data, 'description', String]
-        validate[path, data, 'cvss_v2', Float]
-        validate[path, data, 'patched_versions', Array]
-      rescue ArgumentError => error
-        warn "#{path}: #{error.message}"
-      end
-    end
-  end
 end
-task :spec => ['spec:bundle', 'spec:validate']
+task :spec => 'spec:bundle'
 
 task :test    => :spec
 task :default => :spec
