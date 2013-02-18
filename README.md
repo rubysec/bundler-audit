@@ -67,7 +67,7 @@ Audit a projects `Gemfile.lock`:
 
 ## Requirements
 
-* [bundler] ~> 1.0
+* [bundler] ~> 1.2
 
 ## Install
 
