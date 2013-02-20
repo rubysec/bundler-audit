@@ -3,7 +3,7 @@ require 'spec_helper'
 describe "CLI" do
   include Helpers
 
-  let(:command) do
+  let(:executable) do
     File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundle-audit'))
   end
 
@@ -12,7 +12,7 @@ describe "CLI" do
     let(:directory) { File.join('spec','bundle',bundle) }
 
     subject do
-      Dir.chdir(directory) { sh(command, :fail => true) }
+      Dir.chdir(directory) { sh(executable, :fail => true) }
     end
 
     it "should print a warning" do
@@ -46,6 +46,19 @@ Title: Ruby on Rails Active Record JSON Parameter Parsing Query Bypass
 Solution: upgrade to ~> 2.3.16, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
       }.strip)
     end
+
+    context "when ignoring warnings" do
+      it "still prints warnings that are not ignored" do
+        out = Dir.chdir(directory) { sh("#{executable} --safe 2013-0155@3.2.10", :fail => true) }
+        out.should include "CVE: 2013-0276"
+        out.should_not include "CVE: 2013-0155"
+      end
+
+      it "prints no warnings if all warnings are ignored" do
+        out = Dir.chdir(directory) { sh("#{executable} --safe 2013-0155@3.2.10 2013-0276@3.2.10 2013-0156@3.2.10") }
+        out.strip.should == "No unpatched versions found"
+      end
+    end
   end
 
   context "when auditing a secure bundle" do
@@ -53,7 +66,7 @@ Solution: upgrade to ~> 2.3.16, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
     let(:directory) { File.join('spec','bundle',bundle) }
 
     subject do
-      Dir.chdir(directory) { sh(command) }
+      Dir.chdir(directory) { sh(executable) }
     end
 
     it "should print nothing when everything is fine" do

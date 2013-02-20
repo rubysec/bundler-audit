@@ -13,6 +13,16 @@ module Helpers
   def decolorize(string)
     string.gsub(/\e\[\d+m/, "")
   end
+
+  def advisories_for_gem(gem, database_options={})
+    subject = Database.new(database_options)
+    advisories = []
+
+    subject.check_gem(gem) do |advisory|
+      advisories << advisory
+    end
+    advisories
+  end
 end
 
 include Bundler::Audit
