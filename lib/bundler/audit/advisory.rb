@@ -88,6 +88,18 @@ module Bundler
       end
 
       #
+      # Adds a patched version.
+      #
+      # @param [String] version
+      #   The version to be added
+      #
+      # @return [Array] list of all patched versions
+      #
+      def add_patched_version(version)
+        self.patched_versions << Gem::Requirement.new(version)
+      end
+
+      #
       # Converts the advisory to a String.
       #
       # @return [String]

@@ -36,18 +36,20 @@ module Bundler
       #
       # Initializes the Advisory Database.
       #
-      # @param [String] path
-      #   The path to the advisory database.
+      # @param [Hash] options
+      #   :path => The path to the advisory database.
+      #   :user_considers_safe => Array of cve@version the user considers safe.
       #
       # @raise [ArgumentError]
       #   The path was not a directory.
       #
-      def initialize(path=PATH)
+      def initialize(options={})
+        path = (options[:path] || PATH)
         unless File.directory?(path)
           raise(ArgumentError,"#{path.dump} is not a directory")
         end
-
         @path = path
+        @user_considers_safe = (options[:user_considers_safe] || [])
       end
 
       #
@@ -66,7 +68,7 @@ module Bundler
         return enum_for(__method__) unless block_given?
 
         each_advisory_path do |path|
-          yield Advisory.load(path)
+          yield load_advisory(path)
         end
       end
 
@@ -89,7 +91,7 @@ module Bundler
         return enum_for(__method__,name) unless block_given?
 
         each_advisory_path_for(name) do |path|
-          yield Advisory.load(path)
+          yield load_advisory(path)
         end
       end
 
@@ -178,6 +180,23 @@ module Bundler
       #
       def each_advisory_path_for(name,&block)
         Dir.glob(File.join(@path,name,'*.yml'),&block)
+      end
+
+      #
+      # Load advisory from file, optionally adding patched the user considers safe.
+      #
+      # @param [String] path
+      #   Path to file.
+      #
+      # @return [Advisory]
+      #
+      def load_advisory(path)
+        advisory = Advisory.load(path)
+        @user_considers_safe.each do |safe|
+          cve, safe_version = safe.split("@")
+          advisory.add_patched_version(safe_version) if advisory.cve == cve
+        end
+        advisory
       end
 
     end

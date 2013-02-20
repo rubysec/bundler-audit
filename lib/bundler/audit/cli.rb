@@ -30,9 +30,10 @@ module Bundler
 
       desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
       method_option :verbose, :type => :boolean, :aliases => '-v'
+      method_option :safe, :type => :array
 
       def check
-        database    = Database.new
+        database    = Database.new(:user_considers_safe => options[:safe])
         vulnerable  = false
         lock_file   = load_gemfile_lock('Gemfile.lock')
 
