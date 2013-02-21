@@ -28,8 +28,11 @@ RSpec::Core::RakeTask.new
 
 namespace :spec do
   task :bundle do
-    %w[spec/bundle/unpatched_gems spec/bundle/secure].each do |path|
-      chdir(path) { sh 'bundle', 'install', '--quiet' }
+    root = 'spec/bundle'
+    %w[secure unpatched_gems].each do |bundle|
+      chdir(File.join(root,bundle)) do
+        sh 'bundle', 'install', '--quiet'
+      end
     end
   end
 end
