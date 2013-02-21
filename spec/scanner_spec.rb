@@ -3,7 +3,7 @@ require 'bundler/audit/scanner'
 
 describe Scanner do
   describe "#scan" do
-    let(:bundle)    { 'unpatched' }
+    let(:bundle)    { 'unpatched_gems' }
     let(:directory) { File.join('spec','bundle',bundle) }
 
     subject { described_class.new(directory) }
@@ -24,7 +24,7 @@ describe Scanner do
   end
 
   context "when auditing an unpatched bundle" do
-    let(:bundle)    { 'unpatched' }
+    let(:bundle)    { 'unpatched_gems' }
     let(:directory) { File.join('spec','bundle',bundle) }
 
     subject { described_class.new(directory).scan.to_a }

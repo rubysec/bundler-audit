@@ -8,7 +8,7 @@ describe "CLI" do
   end
 
   context "when auditing a vulnerable bundle" do
-    let(:bundle)    { 'vuln' }
+    let(:bundle)    { 'unpatched_gems' }
     let(:directory) { File.join('spec','bundle',bundle) }
 
     subject do
