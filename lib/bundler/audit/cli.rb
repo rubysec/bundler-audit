@@ -15,11 +15,11 @@
 # along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'bundler/audit/database'
+require 'bundler/audit/scanner'
 require 'bundler/audit/version'
 
-require 'bundler/vendored_thor'
 require 'bundler'
+require 'bundler/vendored_thor'
 
 module Bundler
   module Audit
@@ -32,14 +32,15 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
 
       def check
-        database    = Database.new
-        vulnerable  = false
-        lock_file   = load_gemfile_lock('Gemfile.lock')
+        scanner    = Scanner.new
+        vulnerable = false
 
-        lock_file.specs.each do |gem|
-          database.check_gem(gem) do |advisory|
-            vulnerable = true
-            print_advisory gem, advisory
+        scanner.scan do |result|
+          vulnerable = true
+
+          case result
+          when Scanner::UnpatchedGem
+            print_advisory result.gem, result.advisory
           end
         end
 
@@ -60,8 +61,9 @@ module Bundler
 
       protected
 
-      def load_gemfile_lock(path)
-        Bundler::LockfileParser.new(File.read(path))
+      def say(string="", color=nil)
+        color = nil unless $stdout.tty?
+        super(string, color)
       end
 
       def print_advisory(gem, advisory)
@@ -106,11 +108,6 @@ module Bundler
         end
 
         say
-      end
-
-      def say(string="", color=nil)
-        color = nil unless $stdout.tty?
-        super(string, color)
       end
 
     end
