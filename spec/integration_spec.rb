@@ -7,7 +7,7 @@ describe "CLI" do
     File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundle-audit'))
   end
 
-  context "when auditing a vulnerable bundle" do
+  context "when auditing a bundle with unpatched gems" do
     let(:bundle)    { 'unpatched_gems' }
     let(:directory) { File.join('spec','bundle',bundle) }
 
@@ -44,6 +44,22 @@ Criticality: High
 URL: http://osvdb.org/show/osvdb/89025
 Title: Ruby on Rails Active Record JSON Parameter Parsing Query Bypass
 Solution: upgrade to ~> 2.3.16, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
+      }.strip)
+    end
+  end
+
+  context "when auditing a bundle with insecure sources" do
+    let(:bundle)    { 'insecure_sources' }
+    let(:directory) { File.join('spec','bundle',bundle) }
+
+    subject do
+      Dir.chdir(directory) { sh(command, :fail => true) }
+    end
+
+    it "should print warnings about insecure sources" do
+      subject.should include(%{
+Insecure Source URI found: git://github.com/rails/jquery-rails.git
+Insecure Source URI found: http://rubygems.org/
       }.strip)
     end
   end

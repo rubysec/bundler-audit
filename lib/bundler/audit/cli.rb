@@ -39,6 +39,8 @@ module Bundler
           vulnerable = true
 
           case result
+          when Scanner::InsecureSource
+            print_warning "Insecure Source URI found: #{result.source}"
           when Scanner::UnpatchedGem
             print_advisory result.gem, result.advisory
           end
@@ -64,6 +66,10 @@ module Bundler
       def say(string="", color=nil)
         color = nil unless $stdout.tty?
         super(string, color)
+      end
+
+      def print_warning(message)
+        say message, :yellow
       end
 
       def print_advisory(gem, advisory)

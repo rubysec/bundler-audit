@@ -7,6 +7,9 @@ module Bundler
   module Audit
     class Scanner
 
+      # Represents a plain-text source
+      InsecureSource = Struct.new(:source)
+
       # Represents a gem that is covered by an Advisory
       UnpatchedGem = Struct.new(:gem, :advisory)
 
@@ -51,6 +54,22 @@ module Bundler
       #
       def scan
         return enum_for(__method__) unless block_given?
+
+        @lockfile.sources.map do |source|
+          case source
+          when Source::Git
+            case source.uri
+            when /^git:/, /^http:/
+              yield InsecureSource.new(source.uri)
+            end
+          when Source::Rubygems
+            source.remotes.each do |uri|
+              if uri.scheme == 'http'
+                yield InsecureSource.new(uri.to_s)
+              end
+            end
+          end
+        end
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|

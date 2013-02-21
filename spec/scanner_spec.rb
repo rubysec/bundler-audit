@@ -23,7 +23,7 @@ describe Scanner do
     end
   end
 
-  context "when auditing an unpatched bundle" do
+  context "when auditing a bundle with unpatched gems" do
     let(:bundle)    { 'unpatched_gems' }
     let(:directory) { File.join('spec','bundle',bundle) }
 
@@ -33,6 +33,18 @@ describe Scanner do
       subject[0].gem.name.should == 'actionpack'
       subject[0].gem.version.to_s.should == '3.2.10'
       subject[0].advisory.cve.should == '2013-0156'
+    end
+  end
+
+  context "when auditing a bundle with insecure sources" do
+    let(:bundle)    { 'insecure_sources' }
+    let(:directory) { File.join('spec','bundle',bundle) }
+
+    subject { described_class.new(directory).scan.to_a }
+
+    it "should match unpatched gems to their advisories" do
+      subject[0].source.should == 'git://github.com/rails/jquery-rails.git'
+      subject[1].source.should == 'http://rubygems.org/'
     end
   end
 
