@@ -28,7 +28,7 @@ RSpec::Core::RakeTask.new
 
 namespace :spec do
   task :bundle do
-    %w[spec/bundle/vuln spec/bundle/secure].each do |path|
+    %w[spec/bundle/unpatched spec/bundle/secure].each do |path|
       chdir(path) { sh 'bundle', 'install', '--quiet' }
     end
   end
