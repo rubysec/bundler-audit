@@ -79,8 +79,8 @@ module Bundler
         say "Version: ", :red
         say gem.version
 
-        say "CVE: ", :red
-        say advisory.cve
+        say "Advisory: ", :red
+        say "CVE-#{advisory.cve}"
 
         say "Criticality: ", :red
         case advisory.criticality
