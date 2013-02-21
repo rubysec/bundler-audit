@@ -1,7 +1,8 @@
-require 'bundler/audit/database'
-
 require 'bundler'
+require 'bundler/audit/database'
 require 'bundler/lockfile_parser'
+
+require 'set'
 
 module Bundler
   module Audit
@@ -43,6 +44,12 @@ module Bundler
       #
       # Scans the project for issues.
       #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
@@ -52,8 +59,11 @@ module Bundler
       # @return [Enumerator]
       #   If no block is given, an Enumerator will be returned.
       #
-      def scan
-        return enum_for(__method__) unless block_given?
+      def scan(options={})
+        return enum_for(__method__,options) unless block_given?
+
+        ignore = Set[]
+        ignore += options[:ignore] if options[:ignore]
 
         @lockfile.sources.map do |source|
           case source
@@ -73,7 +83,9 @@ module Bundler
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
-            yield UnpatchedGem.new(gem,advisory)
+            unless ignore.include?("CVE-#{advisory.cve}")
+              yield UnpatchedGem.new(gem,advisory)
+            end
           end
         end
 
