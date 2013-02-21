@@ -46,7 +46,7 @@ module Bundler
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
-      # @yieldparam [UnpatchedGem] result
+      # @yieldparam [InsecureSource, UnpatchedGem] result
       #   A result from the scan.
       #
       # @return [Enumerator]
