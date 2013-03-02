@@ -32,6 +32,8 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
 
       def check
+        check_rubygems_version
+
         database    = Database.new
         vulnerable  = false
         lock_file   = load_gemfile_lock('Gemfile.lock')
@@ -111,6 +113,15 @@ module Bundler
       def say(string="", color=nil)
         color = nil unless $stdout.tty?
         super(string, color)
+      end
+
+      def check_rubygems_version
+        major, minor, *_ = Gem::VERSION.split('.')
+        if major.to_i <= 1 and minor.to_i < 8
+          say "Warning: RubyGems version (#{Gem::VERSION}) is too old and may give " \
+            "false positives in results. >= 1.8 recommended.", :red
+          say
+        end
       end
 
     end
