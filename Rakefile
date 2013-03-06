@@ -29,7 +29,9 @@ RSpec::Core::RakeTask.new
 namespace :spec do
   task :bundle do
     %w[spec/bundle/vuln spec/bundle/secure].each do |path|
-      chdir(path) { sh 'BUNDLE_BIN_PATH="" BUNDLE_GEMFILE="" RUBYOPT="" bundle install --quiet' }
+      chdir(path) do
+        sh 'BUNDLE_BIN_PATH="" BUNDLE_GEMFILE="" RUBYOPT="" bundle install --path vendor/bundle'
+      end
     end
   end
 end
