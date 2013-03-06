@@ -48,6 +48,23 @@ Solution: upgrade to ~> 2.3.16, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
     end
   end
 
+  context "when auditing a bundle with ignored gems" do
+    let(:bundle)    { 'unpatched_gems' }
+    let(:directory) { File.join('spec','bundle',bundle) }
+
+    let(:command) do
+      File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundle-audit -i CVE-2013-0156'))
+    end
+
+    subject do
+      Dir.chdir(directory) { sh(command, :fail => true) }
+    end
+
+    it "should not print advisory information for ignored gem" do
+      subject.should_not include("CVE-2013-0156")
+    end
+  end
+
   context "when auditing a bundle with insecure sources" do
     let(:bundle)    { 'insecure_sources' }
     let(:directory) { File.join('spec','bundle',bundle) }

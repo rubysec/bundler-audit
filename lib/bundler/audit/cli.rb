@@ -30,12 +30,13 @@ module Bundler
 
       desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
       method_option :verbose, :type => :boolean, :aliases => '-v'
+      method_option :ignore, :type => :array, :aliases => '-i'
 
       def check
         scanner    = Scanner.new
         vulnerable = false
 
-        scanner.scan do |result|
+        scanner.scan(:ignore => options.ignore) do |result|
           vulnerable = true
 
           case result
