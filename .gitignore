@@ -2,4 +2,4 @@ Gemfile.lock
 doc/
 pkg/
 spec/bundle/*/Gemfile.lock
-vendor/cache/*.gem
+vendor/bundle/

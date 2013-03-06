@@ -54,10 +54,53 @@ describe Bundler::Audit::Advisory do
     end
   end
 
+  describe "#unaffected?" do
+    let(:gem)  { 'activerecord' }
+    let(:cve)  { '2013-0155'    }
+
+    subject { described_class.load(path) }
+
+    context "when passed a version that matches one unaffected version" do
+      let(:version) { Gem::Version.new('2.3.10') }
+
+      it "should return true" do
+        subject.unaffected?(version).should be_true
+      end
+    end
+
+    context "when passed a version that matches no unaffected version" do
+      let(:version) { Gem::Version.new('3.0.9') }
+
+      it "should return false" do
+        subject.unaffected?(version).should be_false
+      end
+    end
+  end
+
+  describe "#patched?" do
+    subject { described_class.load(path) }
+
+    context "when passed a version that matches one patched version" do
+      let(:version) { Gem::Version.new('3.1.11') }
+
+      it "should return true" do
+        subject.patched?(version).should be_true
+      end
+    end
+
+    context "when passed a version that matches no patched version" do
+      let(:version) { Gem::Version.new('3.1.9') }
+
+      it "should return false" do
+        subject.patched?(version).should be_false
+      end
+    end
+  end
+
   describe "#vulnerable?" do
     subject { described_class.load(path) }
 
-    context "when passed a version that matches one patched_version" do
+    context "when passed a version that matches one patched version" do
       let(:version) { Gem::Version.new('3.1.11') }
 
       it "should return false" do
@@ -65,11 +108,34 @@ describe Bundler::Audit::Advisory do
       end
     end
 
-    context "when passed a version that matches no patched_version" do
+    context "when passed a version that matches no patched version" do
       let(:version) { Gem::Version.new('3.1.9') }
 
       it "should return true" do
         subject.vulnerable?(version).should be_true
+      end
+
+      context "when unaffected_versions is not empty" do
+        let(:gem)  { 'activerecord' }
+        let(:cve)  { '2013-0155'    }
+
+        subject { described_class.load(path) }
+     
+        context "when passed a version that matches one unaffected version" do
+          let(:version) { Gem::Version.new('2.3.15') }
+
+          it "should return false" do
+            subject.vulnerable?(version).should be_false
+          end
+        end
+
+        context "when passed a version that matches no unaffected version" do
+          let(:version) { Gem::Version.new('1.2.3') }
+
+          it "should return true" do
+            subject.vulnerable?(version).should be_true
+          end
+        end
       end
     end
   end
