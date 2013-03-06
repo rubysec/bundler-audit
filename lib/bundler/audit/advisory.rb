@@ -25,6 +25,7 @@ module Bundler
                                 :title,
                                 :description,
                                 :cvss_v2,
+                                :unaffected_versions,
                                 :patched_versions)
 
       #
@@ -45,6 +46,12 @@ module Bundler
           raise("advisory data in #{path.dump} was not a Hash")
         end
 
+        parse_versions = lambda { |versions|
+          Array(versions).map do |version|
+            Gem::Requirement.new(*version.split(', '))
+          end
+        }
+
         return new(
           path,
           cve,
@@ -52,9 +59,8 @@ module Bundler
           data['title'],
           data['description'],
           data['cvss_v2'],
-          Array(data['patched_versions']).map { |version|
-            Gem::Requirement.new(*version.split(', '))
-          }
+          parse_versions[data['unaffected_versions']],
+          parse_versions[data['patched_versions']]
         )
       end
 
@@ -73,6 +79,40 @@ module Bundler
       end
 
       #
+      # Checks whether the version is not affected by the advisory.
+      #
+      # @param [Gem::Version] version
+      #   The version to compare against {#unaffected_version}.
+      #
+      # @return [Boolean]
+      #   Specifies whether the version is not affected by the advisory.
+      #
+      # @since 0.2.0
+      #
+      def unaffected?(version)
+        unaffected_versions.any? do |unaffected_version|
+          unaffected_version === version
+        end
+      end
+
+      #
+      # Checks whether the version is patched against the advisory.
+      #
+      # @param [Gem::Version] version
+      #   The version to compare against {#patched_version}.
+      #
+      # @return [Boolean]
+      #   Specifies whether the version is patched against the advisory.
+      #
+      # @since 0.2.0
+      #
+      def patched?(version)
+        patched_versions.any? do |patched_version|
+          patched_version === version
+        end
+      end
+
+      #
       # Checks whether the version is vulnerable to the advisory.
       #
       # @param [Gem::Version] version
@@ -82,9 +122,7 @@ module Bundler
       #   Specifies whether the version is vulnerable to the advisory or not.
       #
       def vulnerable?(version)
-        !patched_versions.any? do |patched_version|
-          patched_version === version
-        end
+        !patched?(version) && !unaffected?(version)
       end
 
       #
