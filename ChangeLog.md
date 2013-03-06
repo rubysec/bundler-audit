@@ -1,3 +1,9 @@
+### 0.1.3 / 2013-03-05
+
+* Require RubyGems >= 1.8.0. Prior versions of RubyGems could not correctly
+  parse approximate version requirements (`~> 1.2.3`).
+* Updated the [ruby-advisory-db].
+
 ### 0.1.2 / 2013-02-17
 
 * Require [bundler] ~> 1.2.
