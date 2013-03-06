@@ -20,7 +20,7 @@ describe "CLI" do
     end
 
     it "should print advisory information for the vulnerable gems" do
-      subject.should include(%{
+      expect = %{
 Name: actionpack
 Version: 3.2.10
 Advisory: CVE-2013-0156
@@ -44,7 +44,11 @@ Criticality: High
 URL: http://osvdb.org/show/osvdb/89025
 Title: Ruby on Rails Active Record JSON Parameter Parsing Query Bypass
 Solution: upgrade to ~> 2.3.16, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
-      }.strip)
+
+Unpatched versions found!
+      }.strip.split "\n\n"
+
+      subject.strip.split("\n\n").should =~ expect
     end
   end
 
