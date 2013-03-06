@@ -28,8 +28,10 @@ RSpec::Core::RakeTask.new
 
 namespace :spec do
   task :bundle do
-    %w[spec/bundle/vuln spec/bundle/secure].each do |path|
-      chdir(path) do
+    root = 'spec/bundle'
+
+    %w[secure unpatched_gems insecure_sources].each do |bundle|
+      chdir(File.join(root,bundle)) do
         sh 'BUNDLE_BIN_PATH="" BUNDLE_GEMFILE="" RUBYOPT="" bundle install --path ../../../vendor/bundle'
       end
     end
