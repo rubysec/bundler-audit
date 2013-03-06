@@ -30,7 +30,7 @@ namespace :spec do
   task :bundle do
     %w[spec/bundle/vuln spec/bundle/secure].each do |path|
       chdir(path) do
-        sh 'BUNDLE_BIN_PATH="" BUNDLE_GEMFILE="" RUBYOPT="" bundle install --path vendor/bundle'
+        sh 'BUNDLE_BIN_PATH="" BUNDLE_GEMFILE="" RUBYOPT="" bundle install --path ../../../vendor/bundle'
       end
     end
   end
