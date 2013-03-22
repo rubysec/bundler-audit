@@ -83,7 +83,7 @@ module Bundler
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
-            unless ignore.include?("CVE-#{advisory.cve}")
+            unless ignored?(gem, advisory, ignore)
               yield UnpatchedGem.new(gem,advisory)
             end
           end
@@ -92,6 +92,15 @@ module Bundler
         return self
       end
 
+      private
+
+      def ignored?(gem, advisory, ignores)
+        ignores.any? do |ignore|
+          ignored_cve, ignored_version = ignore.split("@")
+          ignored_cve == "CVE-#{advisory.cve}" &&
+            (!ignored_version || Gem::Requirement.new(ignored_version).satisfied_by?(gem.version))
+        end
+      end
     end
   end
 end
