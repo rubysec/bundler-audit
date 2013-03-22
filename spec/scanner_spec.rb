@@ -44,6 +44,18 @@ describe Scanner do
         
         cves.should_not include('2013-0156')
       end
+
+      it "should ignore matching gem versions" do
+        subject = scanner.scan(:ignore => ['CVE-2013-0156@~>3.2.10'])
+        cves = subject.map { |result| result.advisory.cve }
+        cves.should_not include('2013-0156')
+      end
+
+      it "should not ignore non-matching gem versions" do
+        subject = scanner.scan(:ignore => ['CVE-2013-0156@~>3.2.11'])
+        cves = subject.map { |result| result.advisory.cve }
+        cves.should include('2013-0156')
+      end
     end
   end
 
