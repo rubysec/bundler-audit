@@ -83,6 +83,17 @@ Insecure Source URI found: git://github.com/rails/jquery-rails.git
 Insecure Source URI found: http://rubygems.org/
       }.strip)
     end
+
+    context "when the --consider-git-uris-safe option is given" do
+      let(:command) do
+        File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundle-audit --consider-git-uris-safe'))
+      end
+
+      it "should only warn about http sources" do
+        subject.should include("Insecure Source URI found: http://rubygems.org/")
+        subject.should_not include("Insecure Source URI found: git://github.com/rails/jquery-rails.git")
+      end
+    end
   end
 
   context "when auditing a secure bundle" do
