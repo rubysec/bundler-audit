@@ -50,6 +50,9 @@ module Bundler
       # @option options [Array<String>] :ignore
       #   The advisories to ignore.
       #
+      # @option options [Boolean] :consider_git_uris_safe
+      #   Do not warn about source URIs starting with "git:"
+      #
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
@@ -69,8 +72,10 @@ module Bundler
           case source
           when Source::Git
             case source.uri
-            when /^git:/, /^http:/
+            when /^http:/
               yield InsecureSource.new(source.uri)
+            when /^git:/
+              yield InsecureSource.new(source.uri) unless options[:consider_git_uris_safe]
             end
           when Source::Rubygems
             source.remotes.each do |uri|

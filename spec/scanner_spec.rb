@@ -54,9 +54,17 @@ describe Scanner do
 
     subject { scanner.scan.to_a }
 
-    it "should match unpatched gems to their advisories" do
+    it "should warn about the insecure sources" do
       subject[0].source.should == 'git://github.com/rails/jquery-rails.git'
       subject[1].source.should == 'http://rubygems.org/'
+    end
+
+    context "when the :consider_git_uris_safe option is given" do
+      subject { scanner.scan(:consider_git_uris_safe => true).to_a }
+
+      it "should only warn about http sources" do
+        subject.map(&:source).should == ['http://rubygems.org/']
+      end
     end
   end
 
