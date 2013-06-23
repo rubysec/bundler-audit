@@ -65,10 +65,19 @@ module Bundler
         ignore = Set[]
         ignore += options[:ignore] if options[:ignore]
 
+
+        secure_source_regexp = Regexp.new(
+          Array(options[:secure_source]).map do |source|
+            "^#{Regexp.escape source}"
+          end.join('|')
+        )
+
         @lockfile.sources.map do |source|
           case source
           when Source::Git
             case source.uri
+            when secure_source_regexp
+              # Do nothing
             when /^git:/, /^http:/
               yield InsecureSource.new(source.uri)
             end
