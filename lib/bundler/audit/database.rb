@@ -34,8 +34,10 @@ module Bundler
       USER_PATH = File.join(Gem.user_home,'.local','share','ruby-advisory-db')
 
       # Path to the ruby-advisory-db that will be used.
-      PATH = if File.directory?(USER_PATH) then USER_PATH
-             else                               VENDORED_PATH
+      PATH = if File.directory?(USER_PATH)
+               USER_PATH
+             else
+               VENDORED_PATH
              end
 
 
