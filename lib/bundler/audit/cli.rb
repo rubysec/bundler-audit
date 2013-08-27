@@ -55,6 +55,18 @@ module Bundler
         end
       end
 
+      desc 'update', 'Updates the ruby-advisory-db'
+      def update
+        say "Updating ruby-advisory-db ..."
+        if Database.update!
+          database = Database.new(Database::USER_PATH)
+
+          puts "ruby-advisory-db: #{database.size} advisories"
+        else
+          say "Failed to update ruby-advisory-db ...", :red
+        end
+      end
+
       desc 'version', 'Prints the bundler-audit version'
       def version
         database = Database.new
