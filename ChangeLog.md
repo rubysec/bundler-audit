@@ -1,4 +1,4 @@
-### 0.1.3 / 2013-03-05
+### 0.2.0 / 2013-03-05
 
 * Require RubyGems >= 1.8.0. Prior versions of RubyGems could not correctly
   parse approximate version requirements (`~> 1.2.3`).
@@ -6,6 +6,7 @@
 * Added {Bundle::Audit::Advisory#unaffected_versions}.
 * Added {Bundle::Audit::Advisory#unaffected?}.
 * Added {Bundle::Audit::Advisory#patched?}.
+* Renamed `Advisory#cve` to {Bundle::Audit::Advisory#id}.
 
 ### 0.1.2 / 2013-02-17
 
