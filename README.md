@@ -21,47 +21,61 @@ Patch-level verification for [Bundler][bundler].
 
 Audit a projects `Gemfile.lock`:
 
-    $ bundle-audit
-    Name: rack
-    Version: 1.4.4
-    CVE: 2013-0263
-    Criticality: High
-    URL: http://osvdb.org/show/osvdb/89939
-    Title: Rack Rack::Session::Cookie Function Timing Attack Remote Code Execution 
-    Patched Versions: ~> 1.1.6, ~> 1.2.8, ~> 1.3.10, ~> 1.4.5, >= 1.5.2
-    
-    Name: json
-    Version: 1.7.6
-    CVE: 2013-0269
-    Criticality: High
-    URL: http://direct.osvdb.org/show/osvdb/90074
-    Title: Ruby on Rails JSON Gem Arbitrary Symbol Creation Remote DoS
-    Patched Versions: ~> 1.5.4, ~> 1.6.7, >= 1.7.7
-    
-    Name: rails
+    Name: actionpack
     Version: 3.2.10
-    CVE: 2013-0155
-    Criticality: High
-    URL: http://osvdb.org/show/osvdb/89025
-    Title: Ruby on Rails Active Record JSON Parameter Parsing Query Bypass 
-    Patched Versions: ~> 3.0.19, ~> 3.1.10, >= 3.2.11
+    Advisory: OSVDB-91452
+    Criticality: Medium
+    URL: http://www.osvdb.org/show/osvdb/91452
+    Title: XSS vulnerability in sanitize_css in Action Pack
+    Solution: upgrade to ~> 2.3.18, ~> 3.1.12, >= 3.2.13
     
-    Name: rails
+    Name: actionpack
     Version: 3.2.10
-    CVE: 2013-0156
+    Advisory: OSVDB-91454
+    Criticality: Medium
+    URL: http://osvdb.org/show/osvdb/91454
+    Title: XSS Vulnerability in the `sanitize` helper of Ruby on Rails
+    Solution: upgrade to ~> 2.3.18, ~> 3.1.12, >= 3.2.13
+    
+    Name: actionpack
+    Version: 3.2.10
+    Advisory: OSVDB-89026
     Criticality: High
     URL: http://osvdb.org/show/osvdb/89026
-    Title: Ruby on Rails params_parser.rb Action Pack Type Casting Parameter Parsing
-    Remote Code Execution 
-    Patched Versions: ~> 2.3.15, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
+    Title: Ruby on Rails params_parser.rb Action Pack Type Casting Parameter Parsing Remote Code Execution
+    Solution: upgrade to ~> 2.3.15, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
     
-    Name: rails
+    Name: activerecord
     Version: 3.2.10
-    CVE: 2013-0276
+    Advisory: OSVDB-91453
+    Criticality: High
+    URL: http://osvdb.org/show/osvdb/91453
+    Title: Symbol DoS vulnerability in Active Record
+    Solution: upgrade to ~> 2.3.18, ~> 3.1.12, >= 3.2.13
+    
+    Name: activerecord
+    Version: 3.2.10
+    Advisory: OSVDB-90072
     Criticality: Medium
     URL: http://direct.osvdb.org/show/osvdb/90072
     Title: Ruby on Rails Active Record attr_protected Method Bypass
-    Patched Versions: ~> 2.3.17, ~> 3.1.11, >= 3.2.12
+    Solution: upgrade to ~> 2.3.17, ~> 3.1.11, >= 3.2.12
+    
+    Name: activerecord
+    Version: 3.2.10
+    Advisory: OSVDB-89025
+    Criticality: High
+    URL: http://osvdb.org/show/osvdb/89025
+    Title: Ruby on Rails Active Record JSON Parameter Parsing Query Bypass
+    Solution: upgrade to ~> 2.3.16, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
+    
+    Name: activesupport
+    Version: 3.2.10
+    Advisory: OSVDB-91451
+    Criticality: High
+    URL: http://www.osvdb.org/show/osvdb/91451
+    Title: XML Parsing Vulnerability affecting JRuby users
+    Solution: upgrade to ~> 3.1.12, >= 3.2.13
     
     Unpatched versions found!
 
