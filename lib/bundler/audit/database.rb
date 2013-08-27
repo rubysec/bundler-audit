@@ -27,6 +27,9 @@ module Bundler
     #
     class Database
 
+      # Git URL of the ruby-advisory-db
+      URL = 'https://github.com/rubysec/ruby-advisory-db.git'
+
       # Default path to the ruby-advisory-db
       VENDORED_PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db','gems'))
 
@@ -59,6 +62,27 @@ module Bundler
         end
 
         @path = path
+      end
+
+      #
+      # Updates the ruby-advisory-db.
+      #
+      # @return [Boolean]
+      #   Specifies whether the update was successful.
+      #
+      # @note
+      #   Requires network access.
+      #
+      # @since 0.3.0
+      #
+      def self.update!
+        if File.directory?(USER_DIR)
+          FileUtils.chdir(USER_DIR) do
+            system 'git', 'pull', 'origin', 'master'
+          end
+        else
+          system 'git', 'clone', URL, USER_DIR
+        end
       end
 
       #
