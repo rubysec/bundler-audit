@@ -31,18 +31,18 @@ describe Scanner do
     subject { scanner.scan.to_a }
 
     it "should match unpatched gems to their advisories" do
-      subject[0].gem.name.should == 'actionpack'
-      subject[0].gem.version.to_s.should == '3.2.10'
-      subject[0].advisory.cve.should == '2013-0156'
+      subject.all? { |result|
+        result.advisory.vulnerable?(result.gem.version)
+      }.should be_true
     end
 
     context "when the :ignore option is given" do
-      subject { scanner.scan(:ignore => ['CVE-2013-0156']) }
+      subject { scanner.scan(:ignore => ['OSVDB-89026']) }
 
       it "should ignore the specified advisories" do
-        cves = subject.map { |result| result.advisory.cve }
+        ids = subject.map { |result| result.advisory.id }
         
-        cves.should_not include('2013-0156')
+        ids.should_not include('OSVDB-89026')
       end
     end
   end
