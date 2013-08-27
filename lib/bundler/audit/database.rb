@@ -31,7 +31,7 @@ module Bundler
       URL = 'https://github.com/rubysec/ruby-advisory-db.git'
 
       # Default path to the ruby-advisory-db
-      VENDORED_PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db','gems'))
+      VENDORED_PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db'))
 
       # Path to the user's copy of the ruby-advisory-db
       USER_PATH = File.join(Gem.user_home,'.local','share','ruby-advisory-db')
@@ -76,12 +76,12 @@ module Bundler
       # @since 0.3.0
       #
       def self.update!
-        if File.directory?(USER_DIR)
-          FileUtils.chdir(USER_DIR) do
+        if File.directory?(USER_PATH)
+          FileUtils.chdir(USER_PATH) do
             system 'git', 'pull', 'origin', 'master'
           end
         else
-          system 'git', 'clone', URL, USER_DIR
+          system 'git', 'clone', URL, USER_PATH
         end
       end
 
@@ -196,7 +196,7 @@ module Bundler
       #   A path to an advisory `.yml` file.
       #
       def each_advisory_path(&block)
-        Dir.glob(File.join(@path,'*','*.yml'),&block)
+        Dir.glob(File.join(@path,'gems','*','*.yml'),&block)
       end
 
       #
@@ -212,7 +212,7 @@ module Bundler
       #   A path to an advisory `.yml` file.
       #
       def each_advisory_path_for(name,&block)
-        Dir.glob(File.join(@path,name,'*.yml'),&block)
+        Dir.glob(File.join(@path,'gems',name,'*.yml'),&block)
       end
 
     end
