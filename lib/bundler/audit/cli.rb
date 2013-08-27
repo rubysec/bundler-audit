@@ -81,7 +81,7 @@ module Bundler
         say gem.version
 
         say "Advisory: ", :red
-        say "CVE-#{advisory.cve}"
+        say advisory.id
 
         say "Criticality: ", :red
         case advisory.criticality

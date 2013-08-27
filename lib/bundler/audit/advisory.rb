@@ -20,7 +20,7 @@ require 'yaml'
 module Bundler
   module Audit
     class Advisory < Struct.new(:path,
-                                :cve,
+                                :id,
                                 :url,
                                 :title,
                                 :description,
@@ -39,7 +39,7 @@ module Bundler
       # @api semipublic
       #
       def self.load(path)
-        cve  = File.basename(path).chomp('.yml')
+        id   = File.basename(path).chomp('.yml')
         data = YAML.load_file(path)
 
         unless data.kind_of?(Hash)
@@ -54,7 +54,7 @@ module Bundler
 
         return new(
           path,
-          cve,
+          id,
           data['url'],
           data['title'],
           data['description'],
@@ -125,15 +125,7 @@ module Bundler
         !patched?(version) && !unaffected?(version)
       end
 
-      #
-      # Converts the advisory to a String.
-      #
-      # @return [String]
-      #   The CVE identifier.
-      #
-      def to_s
-        "CVE-#{cve}"
-      end
+      alias to_s id
 
     end
   end

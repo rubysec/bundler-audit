@@ -83,7 +83,7 @@ module Bundler
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
-            unless ignore.include?("CVE-#{advisory.cve}")
+            unless ignore.include?(advisory.id)
               yield UnpatchedGem.new(gem,advisory)
             end
           end
