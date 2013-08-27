@@ -1,11 +1,11 @@
 # bundler-audit
 
-* [Homepage](https://github.com/postmodern/bundler-audit#readme)
-* [Issues](https://github.com/postmodern/bundler-audit/issues)
+* [Homepage](https://github.com/rubysec/bundler-audit#readme)
+* [Issues](https://github.com/rubysec/bundler-audit/issues)
 * [Documentation](http://rubydoc.info/gems/bundler-audit/frames)
-* [Email](mailto:postmodern.mod3 at gmail.com)
-* [![Build Status](https://travis-ci.org/postmodern/bundler-audit.png)](https://travis-ci.org/postmodern/bundler-audit)
-* [![Code Climate](https://codeclimate.com/github/postmodern/bundler-audit.png)](https://codeclimate.com/github/postmodern/bundler-audit)
+* [Email](mailto:rubysec.mod3 at gmail.com)
+* [![Build Status](https://travis-ci.org/rubysec/bundler-audit.png)](https://travis-ci.org/rubysec/bundler-audit)
+* [![Code Climate](https://codeclimate.com/github/rubysec/bundler-audit.png)](https://codeclimate.com/github/rubysec/bundler-audit)
 
 ## Description
 

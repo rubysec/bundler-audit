@@ -4,7 +4,7 @@ description: bundler-audit provides patch-level verification for Bundled apps.
 license: GPLv3
 authors: Postmodern
 email: postmodern.mod3@gmail.com
-homepage: https://github.com/postmodern/bundler-audit#readme
+homepage: https://github.com/rubysec/bundler-audit#readme
 
 required_rubygems_version: ">= 1.8.0"
 
