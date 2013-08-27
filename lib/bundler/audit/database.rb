@@ -27,8 +27,17 @@ module Bundler
     #
     class Database
 
-      # directory containing advisories
-      PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db','gems'))
+      # Default path to the ruby-advisory-db
+      VENDORED_PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db','gems'))
+
+      # Path to the user's copy of the ruby-advisory-db
+      USER_PATH = File.join(Gem.user_home,'.local','share','ruby-advisory-db')
+
+      # Path to the ruby-advisory-db that will be used.
+      PATH = if File.directory?(USER_PATH) then USER_PATH
+             else                               VENDORED_PATH
+             end
+
 
       # The path to the advisory database
       attr_reader :path
