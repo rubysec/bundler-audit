@@ -36,14 +36,6 @@ module Bundler
       # Path to the user's copy of the ruby-advisory-db
       USER_PATH = File.join(Gem.user_home,'.local','share','ruby-advisory-db')
 
-      # Path to the ruby-advisory-db that will be used.
-      PATH = if File.directory?(USER_PATH)
-               USER_PATH
-             else
-               VENDORED_PATH
-             end
-
-
       # The path to the advisory database
       attr_reader :path
 
@@ -56,12 +48,24 @@ module Bundler
       # @raise [ArgumentError]
       #   The path was not a directory.
       #
-      def initialize(path=PATH)
+      def initialize(path=self.class.path)
         unless File.directory?(path)
           raise(ArgumentError,"#{path.dump} is not a directory")
         end
 
         @path = path
+      end
+
+      #
+      # The default path for the database.
+      #
+      # @return [String]
+      #   The path to the database directory.
+      #
+      def self.path
+        if File.directory?(USER_PATH) then USER_PATH
+        else                               VENDORED_PATH
+        end
       end
 
       #
