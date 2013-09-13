@@ -84,6 +84,7 @@ Audit a projects `Gemfile.lock`:
 ## Requirements
 
 * [bundler] ~> 1.2
+* [RubyGems] >= 1.8
 
 ## Install
 
@@ -109,3 +110,5 @@ along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
 [bundler]: https://github.com/carlhuda/bundler#readme
 
 [OSVDB]: http://osvdb.org/
+
+[RubyGems]: https://rubygems.org
