@@ -41,7 +41,14 @@ namespace :spec do
 
     %w[secure unpatched_gems insecure_sources].each do |bundle|
       chdir(File.join(root,bundle)) do
-        sh 'BUNDLE_BIN_PATH="" BUNDLE_GEMFILE="" RUBYOPT="" bundle install --path ../../../vendor/bundle'
+        begin
+          sh 'BUNDLE_BIN_PATH="" BUNDLE_GEMFILE="" RUBYOPT="" bundle install --path ../../../vendor/bundle'
+        rescue
+          if(File.exist?("Gemfile.lock"))
+            puts "Looks like Gemfile may have been updated.  Attempting to update things."
+            sh 'BUNDLE_BIN_PATH="" BUNDLE_GEMFILE="" RUBYOPT="" bundle update'
+          end
+        end
       end
     end
   end
