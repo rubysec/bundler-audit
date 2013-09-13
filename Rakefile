@@ -44,10 +44,9 @@ namespace :spec do
         begin
           sh 'BUNDLE_BIN_PATH="" BUNDLE_GEMFILE="" RUBYOPT="" bundle install --path ../../../vendor/bundle'
         rescue
-          if(File.exist?("Gemfile.lock"))
-            puts "Looks like Gemfile may have been updated.  Attempting to update things."
-            sh 'BUNDLE_BIN_PATH="" BUNDLE_GEMFILE="" RUBYOPT="" bundle update'
-          end
+          exit(1) if(!File.exist?('Gemfile.lock'))
+          puts "Looks like Gemfile may have been updated.  Attempting to update things."
+          sh 'BUNDLE_BIN_PATH="" BUNDLE_GEMFILE="" RUBYOPT="" bundle update'
         end
       end
     end
