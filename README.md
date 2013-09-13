@@ -23,6 +23,7 @@ Patch-level verification for [Bundler][bundler].
 
 Audit a projects `Gemfile.lock`:
 
+    $ bundle-audit
     Name: actionpack
     Version: 3.2.10
     Advisory: OSVDB-91452
@@ -88,6 +89,12 @@ Audit a projects `Gemfile.lock`:
 ## Install
 
     $ gem install bundler-audit
+
+Or in your Gemfile:
+
+```ruby
+gem 'bundler-audit', :require => nil
+```
 
 ## License
 
