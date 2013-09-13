@@ -41,7 +41,7 @@ describe Scanner do
 
       it "should ignore the specified advisories" do
         ids = subject.map { |result| result.advisory.id }
-        
+
         ids.should_not include('OSVDB-89026')
       end
     end
