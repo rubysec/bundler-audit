@@ -7,6 +7,15 @@ describe Bundler::Audit::Advisory do
   let(:gem)  { 'actionpack' }
   let(:id)   { 'OSVDB-84243' }
   let(:path) { File.join(root,'gems',gem,"#{id}.yml") }
+  let(:an_unaffected_version) do
+    YAML.
+      load(File.read(path))['unaffected_versions'].
+      map { |item| item.split(/\s*,\s*/) }.
+      flatten.
+      select { |ver| ver =~ /^(~>|>=|=|<=)/ }.
+      first.
+      sub(/^.*?(~>|>=|=|<=)\s+/, '')
+  end
 
   describe "load" do
     let(:data) { YAML.load_file(path) }
@@ -58,7 +67,7 @@ describe Bundler::Audit::Advisory do
     subject { described_class.load(path) }
 
     context "when passed a version that matches one unaffected version" do
-      let(:version) { Gem::Version.new('2.3.10') }
+      let(:version) { Gem::Version.new(an_unaffected_version) }
 
       it "should return true" do
         subject.unaffected?(version).should be_true
@@ -116,7 +125,7 @@ describe Bundler::Audit::Advisory do
         subject { described_class.load(path) }
 
         context "when passed a version that matches one unaffected version" do
-          let(:version) { Gem::Version.new('2.3.12') }
+          let(:version) { Gem::Version.new(an_unaffected_version) }
 
           it "should return false" do
             subject.vulnerable?(version).should be_false
