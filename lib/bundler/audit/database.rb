@@ -17,6 +17,7 @@
 
 require 'bundler/audit/advisory'
 
+require 'time'
 require 'yaml'
 
 module Bundler
@@ -86,6 +87,22 @@ module Bundler
           end
         else
           system 'git', 'clone', URL, USER_PATH
+        end
+      end
+
+      #
+      # Determines how recent the database is.
+      #
+      # @return [Time]
+      #   The when the database was last updated.
+      #
+      # @since 0.3.0
+      #
+      def timestamp
+        if File.directory?(File.join(@path,'.git'))
+          Time.parse(`git log --pretty="%cd" -1`)
+        else
+          File.ctime(@path)
         end
       end
 
