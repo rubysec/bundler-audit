@@ -82,7 +82,7 @@ module Bundler
       #
       def self.update!
         if File.directory?(USER_PATH)
-          FileUtils.chdir(USER_PATH) do
+          Dir.chdir(USER_PATH) do
             system 'git', 'pull', 'origin', 'master'
           end
         else
