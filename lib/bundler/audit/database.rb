@@ -64,8 +64,15 @@ module Bundler
       #   The path to the database directory.
       #
       def self.default
-        if File.directory?(USER_PATH) then USER_PATH
-        else                               VENDORED_PATH
+        if File.directory?(USER_PATH)
+          t1 = Dir.chdir(USER_PATH) { Time.parse(`git log --pretty="%cd" -1`) }
+          t2 = File.ctime(VENDORED_PATH)
+
+          if t1 >= t2 then USER_PATH
+          else             VENDORED_PATH
+          end
+        else
+          VENDORED_PATH
         end
       end
 
@@ -87,22 +94,6 @@ module Bundler
           end
         else
           system 'git', 'clone', URL, USER_PATH
-        end
-      end
-
-      #
-      # Determines how recent the database is.
-      #
-      # @return [Time]
-      #   The when the database was last updated.
-      #
-      # @since 0.3.0
-      #
-      def timestamp
-        if File.directory?(File.join(@path,'.git'))
-          Dir.chdir(@path) { Time.parse(`git log --pretty="%cd" -1`) }
-        else
-          File.ctime(@path)
         end
       end
 
