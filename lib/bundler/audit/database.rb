@@ -63,7 +63,7 @@ module Bundler
       # @return [String]
       #   The path to the database directory.
       #
-      def self.default
+      def self.path
         if File.directory?(USER_PATH)
           t1 = Dir.chdir(USER_PATH) { Time.parse(`git log --pretty="%cd" -1`) }
           t2 = File.ctime(VENDORED_PATH)
