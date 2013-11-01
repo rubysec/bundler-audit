@@ -81,6 +81,32 @@ Audit a projects `Gemfile.lock`:
     
     Unpatched versions found!
 
+Update the [ruby-advisory-db] that `bundle-audit` uses:
+
+    $ bundle-audit update
+    Updating ruby-advisory-db ...
+    remote: Counting objects: 44, done.
+    remote: Compressing objects: 100% (24/24), done.
+    remote: Total 39 (delta 19), reused 29 (delta 10)
+    Unpacking objects: 100% (39/39), done.
+    From https://github.com/rubysec/ruby-advisory-db
+     * branch            master     -> FETCH_HEAD
+    Updating 5f8225e..328ca86
+    Fast-forward
+     CONTRIBUTORS.md                    |  1 +
+     gems/actionmailer/OSVDB-98629.yml  | 17 +++++++++++++++++
+     gems/cocaine/OSVDB-98835.yml       | 15 +++++++++++++++
+     gems/fog-dragonfly/OSVDB-96798.yml | 13 +++++++++++++
+     gems/sounder/OSVDB-96278.yml       | 13 +++++++++++++
+     gems/wicked/OSVDB-98270.yml        | 14 ++++++++++++++
+     6 files changed, 73 insertions(+)
+     create mode 100644 gems/actionmailer/OSVDB-98629.yml
+     create mode 100644 gems/cocaine/OSVDB-98835.yml
+     create mode 100644 gems/fog-dragonfly/OSVDB-96798.yml
+     create mode 100644 gems/sounder/OSVDB-96278.yml
+     create mode 100644 gems/wicked/OSVDB-98270.yml
+    ruby-advisory-db: 64 advisories
+
 ## Requirements
 
 * [bundler] ~> 1.2
