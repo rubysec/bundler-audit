@@ -23,13 +23,16 @@ require 'rake'
 require 'rubygems/tasks'
 Gem::Tasks.new
 
-desc 'Updates data/ruby-advisory-db'
-task :update do
-  chdir 'data/ruby-advisory-db' do
-    sh 'git', 'pull', 'origin', 'master'
-  end
+namespace :db do
+  desc 'Updates data/ruby-advisory-db'
+  task :update do
+    chdir 'data/ruby-advisory-db' do
+      sh 'git', 'pull', 'origin', 'master'
+    end
 
-  sh 'git', 'commit', 'data/ruby-advisory-db', '-m', 'Updated ruby-advisory-db'
+    sh 'git', 'commit', 'data/ruby-advisory-db',
+                        '-m', 'Updated ruby-advisory-db'
+  end
 end
 
 require 'rspec/core/rake_task'

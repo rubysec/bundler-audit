@@ -3,10 +3,10 @@ require 'bundler/audit/database'
 require 'bundler/audit/advisory'
 
 describe Bundler::Audit::Advisory do
-  let(:root) { Bundler::Audit::Database::PATH }
+  let(:root) { Bundler::Audit::Database::VENDORED_PATH }
   let(:gem)  { 'actionpack' }
   let(:id)   { 'OSVDB-84243' }
-  let(:path) { File.join(root,gem,"#{id}.yml") }
+  let(:path) { File.join(root,'gems',gem,"#{id}.yml") }
 
   describe "load" do
     let(:data) { YAML.load_file(path) }

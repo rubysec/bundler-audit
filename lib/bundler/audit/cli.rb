@@ -55,6 +55,14 @@ module Bundler
         end
       end
 
+      desc 'update', 'Updates the ruby-advisory-db'
+      def update
+        say "Updating ruby-advisory-db ..."
+
+        Database.update!
+        puts "ruby-advisory-db: #{Database.new.size} advisories"
+      end
+
       desc 'version', 'Prints the bundler-audit version'
       def version
         database = Database.new

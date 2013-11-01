@@ -17,6 +17,7 @@
 
 require 'bundler/audit/advisory'
 
+require 'time'
 require 'yaml'
 
 module Bundler
@@ -27,8 +28,14 @@ module Bundler
     #
     class Database
 
-      # directory containing advisories
-      PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db','gems'))
+      # Git URL of the ruby-advisory-db
+      URL = 'https://github.com/rubysec/ruby-advisory-db.git'
+
+      # Default path to the ruby-advisory-db
+      VENDORED_PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db'))
+
+      # Path to the user's copy of the ruby-advisory-db
+      USER_PATH = File.join(Gem.user_home,'.local','share','ruby-advisory-db')
 
       # The path to the advisory database
       attr_reader :path
@@ -42,12 +49,52 @@ module Bundler
       # @raise [ArgumentError]
       #   The path was not a directory.
       #
-      def initialize(path=PATH)
+      def initialize(path=self.class.path)
         unless File.directory?(path)
           raise(ArgumentError,"#{path.dump} is not a directory")
         end
 
         @path = path
+      end
+
+      #
+      # The default path for the database.
+      #
+      # @return [String]
+      #   The path to the database directory.
+      #
+      def self.path
+        if File.directory?(USER_PATH)
+          t1 = Dir.chdir(USER_PATH) { Time.parse(`git log --pretty="%cd" -1`) }
+          t2 = File.ctime(VENDORED_PATH)
+
+          if t1 >= t2 then USER_PATH
+          else             VENDORED_PATH
+          end
+        else
+          VENDORED_PATH
+        end
+      end
+
+      #
+      # Updates the ruby-advisory-db.
+      #
+      # @return [Boolean]
+      #   Specifies whether the update was successful.
+      #
+      # @note
+      #   Requires network access.
+      #
+      # @since 0.3.0
+      #
+      def self.update!
+        if File.directory?(USER_PATH)
+          Dir.chdir(USER_PATH) do
+            system 'git', 'pull', 'origin', 'master'
+          end
+        else
+          system 'git', 'clone', URL, USER_PATH
+        end
       end
 
       #
@@ -161,7 +208,7 @@ module Bundler
       #   A path to an advisory `.yml` file.
       #
       def each_advisory_path(&block)
-        Dir.glob(File.join(@path,'*','*.yml'),&block)
+        Dir.glob(File.join(@path,'gems','*','*.yml'),&block)
       end
 
       #
@@ -177,7 +224,7 @@ module Bundler
       #   A path to an advisory `.yml` file.
       #
       def each_advisory_path_for(name,&block)
-        Dir.glob(File.join(@path,name,'*.yml'),&block)
+        Dir.glob(File.join(@path,'gems',name,'*.yml'),&block)
       end
 
     end
