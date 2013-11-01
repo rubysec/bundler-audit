@@ -82,7 +82,7 @@ module Bundler
       # Checks whether the version is not affected by the advisory.
       #
       # @param [Gem::Version] version
-      #   The version to compare against {#unaffected_version}.
+      #   The version to compare against {#unaffected_versions}.
       #
       # @return [Boolean]
       #   Specifies whether the version is not affected by the advisory.
@@ -99,7 +99,7 @@ module Bundler
       # Checks whether the version is patched against the advisory.
       #
       # @param [Gem::Version] version
-      #   The version to compare against {#patched_version}.
+      #   The version to compare against {#patched_versions}.
       #
       # @return [Boolean]
       #   Specifies whether the version is patched against the advisory.
