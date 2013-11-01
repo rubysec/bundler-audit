@@ -21,6 +21,14 @@ describe "CLI" do
 
     it "should print advisory information for the vulnerable gems" do
       expect = %{
+Name: actionmailer
+Version: 3.2.10
+Advisory: OSVDB-98629
+Criticality: Medium
+URL: http://www.osvdb.org/show/osvdb/98629
+Title: Action Mailer Gem for Ruby contains a possible DoS Vulnerability
+Solution: upgrade to >= 3.2.15
+
 Name: actionpack
 Version: 3.2.10
 Advisory: OSVDB-91452
