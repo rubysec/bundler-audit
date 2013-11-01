@@ -1,3 +1,15 @@
+### 0.3.0 / 2013-10-31
+
+* Added {Bundler::Audit::Database.update!} which uses `git` to download
+  [ruby-advisory-db] to `~/.local/share/ruby-advisory-db`.
+* {Bundler::Audit::Database.path} now returns the path to either
+  `~/.local/share/ruby-advisory-db` or the vendored copy, depending on which
+  is more recent.
+
+#### CLI
+
+* Added the `bundle-audit update` sub-command.
+
 ### 0.2.0 / 2013-03-05
 
 * Require RubyGems >= 1.8.0. Prior versions of RubyGems could not correctly
