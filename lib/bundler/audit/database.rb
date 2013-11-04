@@ -34,6 +34,9 @@ module Bundler
       # Default path to the ruby-advisory-db
       VENDORED_PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db'))
 
+      # Timestamp for when the database was last updated
+      VENDORED_TIMESTAMP = Time.parse(File.read("#{VENDORED_PATH}.ts").chomp)
+
       # Path to the user's copy of the ruby-advisory-db
       USER_PATH = File.join(Gem.user_home,'.local','share','ruby-advisory-db')
 
@@ -66,7 +69,7 @@ module Bundler
       def self.path
         if File.directory?(USER_PATH)
           t1 = Dir.chdir(USER_PATH) { Time.parse(`git log --pretty="%cd" -1`) }
-          t2 = File.ctime(VENDORED_PATH)
+          t2 = VENDORED_TIMESTAMP
 
           if t1 >= t2 then USER_PATH
           else             VENDORED_PATH

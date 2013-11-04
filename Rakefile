@@ -26,11 +26,18 @@ Gem::Tasks.new
 namespace :db do
   desc 'Updates data/ruby-advisory-db'
   task :update do
+    timestamp = nil
+
     chdir 'data/ruby-advisory-db' do
       sh 'git', 'pull', 'origin', 'master'
+
+      File.open('../ruby-advisory-db.ts','w') do |file|
+        file.write `git log --pretty="%cd" -1`
+      end
     end
 
     sh 'git', 'commit', 'data/ruby-advisory-db',
+                        'data/ruby-advisory-db.ts',
                         '-m', 'Updated ruby-advisory-db'
   end
 end
