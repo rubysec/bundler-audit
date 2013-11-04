@@ -3,3 +3,4 @@ doc/
 pkg/
 spec/bundle/*/Gemfile.lock
 vendor/bundle/
+tmp/
