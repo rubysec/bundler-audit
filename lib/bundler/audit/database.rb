@@ -35,7 +35,7 @@ module Bundler
       VENDORED_PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db'))
 
       # Timestamp for when the database was last updated
-      VENDORED_TIMESTAMP = Time.parse(File.read("#{VENDORED_PATH}.ts").chomp)
+      VENDORED_TIMESTAMP = Time.parse(File.read("#{VENDORED_PATH}.ts")).utc
 
       # Path to the user's copy of the ruby-advisory-db
       USER_PATH = File.join(Gem.user_home,'.local','share','ruby-advisory-db')

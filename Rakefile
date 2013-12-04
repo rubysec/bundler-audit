@@ -19,6 +19,7 @@ rescue Bundler::BundlerError => e
 end
 
 require 'rake'
+require 'time'
 
 require 'rubygems/tasks'
 Gem::Tasks.new
@@ -32,7 +33,7 @@ namespace :db do
       sh 'git', 'pull', 'origin', 'master'
 
       File.open('../ruby-advisory-db.ts','w') do |file|
-        file.write `git log --pretty="%cd" -1`
+        file.write Time.parse(`git log --pretty="%cd" -1`).utc
       end
     end
 
