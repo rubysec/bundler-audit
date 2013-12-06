@@ -88,6 +88,12 @@ module Bundler
           end
         end
 
+        if hash.has_key?('cvss_v2')
+          unless hash['cvss_v2'].is_a?(YAML::Nodes::Scalar)
+            raise("cvss_v2 in #{path.dump} is not a String")
+          end
+        end
+
         if hash.has_key?('unaffected_versions')
           unless hash['unaffected_versions'].is_a?(YAML::Nodes::Sequence)
             raise("unaffected_versions in #{path.dump} is not an Array")
