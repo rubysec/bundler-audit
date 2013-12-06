@@ -56,24 +56,20 @@ module Bundler
           raise("advisory data in #{path.dump} is missing a url")
         end
         
-        unless hash.has_key?('title')
-          raise("advisory data in #{path.dump} is missing a title")
-        end
-        
-        unless hash.has_key?('description')
-          raise("advisory data in #{path.dump} is missing a description")
-        end
-
-        unless hash.has_key?('patched_versions')
-          raise("advisory data in #{path.dump} is missing patched_versions")
-        end
-
         unless hash['url'].is_a?(YAML::Nodes::Scalar)
           raise("url in #{path.dump} is missing or not a String")
         end
 
+        unless hash.has_key?('title')
+          raise("advisory data in #{path.dump} is missing a title")
+        end
+        
         unless hash['title'].is_a?(YAML::Nodes::Scalar)
           raise("title in #{path.dump} is missing or not a String")
+        end
+
+        unless hash.has_key?('description')
+          raise("advisory data in #{path.dump} is missing a description")
         end
 
         unless hash['description'].is_a?(YAML::Nodes::Scalar)
@@ -100,6 +96,10 @@ module Bundler
           unless hash['unaffected_versions'].children.all? { |node| node.is_a?(YAML::Nodes::Scalar) }
             raise("unaffected_versions in #{path.dump} contains a non-String")
           end
+        end
+
+        unless hash.has_key?('patched_versions')
+          raise("advisory data in #{path.dump} is missing patched_versions")
         end
 
         unless hash['patched_versions'].is_a?(YAML::Nodes::Sequence)
