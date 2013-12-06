@@ -41,30 +41,118 @@ module Bundler
       # @api semipublic
       #
       def self.load(path)
-        id   = File.basename(path).chomp('.yml')
-        data = YAML.load_file(path)
+        id  = File.basename(path).chomp('.yml')
+        doc = YAML.parse(File.new(path))
 
-        unless data.kind_of?(Hash)
+        unless doc.root.kind_of?(YAML::Nodes::Mapping)
           raise("advisory data in #{path.dump} was not a Hash")
         end
 
+        hash = Hash[doc.root.children.each_slice(2).map { |key,value|
+          [key.value, value]
+        }]
+
+        unless hash.has_key?('url')
+          raise("advisory data in #{path.dump} is missing a url")
+        end
+        
+        unless hash.has_key?('title')
+          raise("advisory data in #{path.dump} is missing a title")
+        end
+        
+        unless hash.has_key?('description')
+          raise("advisory data in #{path.dump} is missing a description")
+        end
+
+        unless hash.has_key?('patched_versions')
+          raise("advisory data in #{path.dump} is missing patched_versions")
+        end
+
+        unless hash['url'].is_a?(YAML::Nodes::Scalar)
+          raise("url in #{path.dump} is missing or not a String")
+        end
+
+        unless hash['title'].is_a?(YAML::Nodes::Scalar)
+          raise("title in #{path.dump} is missing or not a String")
+        end
+
+        unless hash['description'].is_a?(YAML::Nodes::Scalar)
+          raise("description in #{path.dump} is not a String")
+        end
+
+        if hash.has_key?('cve')
+          unless hash['cve'].is_a?(YAML::Nodes::Scalar)
+            raise("cve in #{path.dump} is not a String")
+          end
+        end
+
+        if hash.has_key?('osvdb')
+          unless hash['osvdb'].is_a?(YAML::Nodes::Scalar)
+            raise("osvdb in #{path.dump} is not a String")
+          end
+        end
+
+        if hash.has_key?('unaffected_versions')
+          unless hash['unaffected_versions'].is_a?(YAML::Nodes::Sequence)
+            raise("unaffected_versions in #{path.dump} is not an Array")
+          end
+
+          unless hash['unaffected_versions'].children.all? { |node| node.is_a?(YAML::Nodes::Scalar) }
+            raise("unaffected_versions in #{path.dump} contains a non-String")
+          end
+        end
+
+        unless hash['patched_versions'].is_a?(YAML::Nodes::Sequence)
+          raise("patched_versions in #{path.dump} is not an Array")
+        end
+          
+        unless hash['patched_versions'].children.all? { |node| node.is_a?(YAML::Nodes::Scalar) }
+          raise("patched_versions in #{path.dump} contains a non-String")
+        end
+
+        url         = hash['url'].value
+        title       = hash['title'].value
+        description = hash['description'].value
+        cvss_v2     = if hash.has_key?('cvss_v2')
+                        unless hash['cvss_v2'].value.empty?
+                          Float(hash['cvss_v2'].value)
+                        end
+                      end
+        cve         = if hash.hash_key?('cve')
+                        unless hash['cve'].value.empty?
+                          hash['cve'].value
+                        end
+                      end
+        osvdb       = if hash.has_key?('osvdb')
+                        unless hash['osvdb'].value.empty?
+                          hash['osvdb'].value
+                        end
+                      end
+
         parse_versions = lambda { |versions|
-          Array(versions).map do |version|
-            Gem::Requirement.new(*version.split(', '))
+          versions.children.map do |version|
+            Gem::Requirement.new(*version.value.split(', '))
           end
         }
+
+        unaffected_versions = if hash.has_key?('unaffected_versions')
+                                parse_versions[hash['patched_versions']]
+                              else
+                                []
+                              end
+        patched_versions = parse_versions[hash['patched_versions']]
 
         return new(
           path,
           id,
-          data['url'],
-          data['title'],
-          data['description'],
-          data['cvss_v2'],
-          data['cve'],
-          data['osvdb'],
-          parse_versions[data['unaffected_versions']],
-          parse_versions[data['patched_versions']]
+          url,
+          title,
+          description,
+          cvss_v2,
+          cve,
+          osvdb,
+          unaffected_versions,
+          patched_versions
         )
       end
 
