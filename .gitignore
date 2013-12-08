@@ -1,5 +1,8 @@
 Gemfile.lock
 doc/
+.yardoc/
 pkg/
 spec/bundle/*/Gemfile.lock
+spec/bundle/*/.bundle/
 vendor/bundle/
+tmp/
