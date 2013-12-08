@@ -9,4 +9,5 @@ group :development do
   gem 'rubygems-tasks', '~> 0.2'
   gem 'rspec',          '~> 2.4'
   gem 'yard',           '~> 0.8'
+  gem 'simplecov',      '~> 0.7', :require => false
 end

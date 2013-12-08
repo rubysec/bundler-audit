@@ -1,3 +1,10 @@
+version = RUBY_VERSION.split(/\./).map(&:to_i)
+if((version[0] == 1 && version[1] >= 9) || (version[0] >= 2))
+  require 'simplecov'
+  require 'json'
+  SimpleCov.start
+end
+
 require 'rspec'
 require 'bundler/audit/version'
 
