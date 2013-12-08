@@ -1,3 +1,7 @@
+require 'simplecov'
+require 'json'
+SimpleCov.start
+
 require 'rspec'
 require 'bundler/audit/version'
 
