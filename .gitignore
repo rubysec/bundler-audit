@@ -1,5 +1,6 @@
 Gemfile.lock
 doc/
+coverage/
 pkg/
 spec/bundle/*/Gemfile.lock
 vendor/bundle/
