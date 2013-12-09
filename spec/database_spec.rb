@@ -1,13 +1,49 @@
 require 'spec_helper'
 require 'bundler/audit/database'
 require 'tmpdir'
+require 'rake/file_list'
 
 describe Bundler::Audit::Database do
+  let(:vendored_advisories) do
+    Rake::FileList[File.join(Bundler::Audit::Database::VENDORED_PATH, '**/*.yml')].sort
+  end
+
   describe "path" do
     subject { described_class.path }
 
     it "it should be a directory" do
       File.directory?(subject).should be_true
+    end
+
+    it "should prefer the user repo, iff it's as up to date, or more up to date than the vendored one" do
+      Bundler::Audit::Database.update!
+
+      # As up to date...
+      expect(Bundler::Audit::Database.path).to eq mocked_user_path
+
+      # More up to date...
+      fake_a_commit_in_the_user_repo
+      expect(Bundler::Audit::Database.path).to eq mocked_user_path
+
+      roll_user_repo_back(2)
+      expect(Bundler::Audit::Database.path).to eq Bundler::Audit::Database::VENDORED_PATH
+    end
+  end
+
+  describe "update!" do
+    it "should create the USER_PATH path as needed" do
+      Bundler::Audit::Database.update!
+      expect(File.directory?(mocked_user_path)).to be true
+    end
+
+    it "should create the repo, then update it given multple successive calls." do
+      expect_update_to_clone_repo!
+      Bundler::Audit::Database.update!
+      expect(File.directory?(mocked_user_path)).to be true
+
+      expect_update_to_update_repo!
+      Bundler::Audit::Database.update!
+      expect(File.directory?(mocked_user_path)).to be true
     end
   end
 
@@ -70,12 +106,29 @@ describe Bundler::Audit::Database do
   end
 
   describe "#size" do
-    it { subject.size.should > 0 }
+    it { expect(subject.size).to eq vendored_advisories.count }
+  end
+
+  describe "#advisories" do
+    it "should return a list of all advisories." do
+      actual_advisories = Bundler::Audit::Database.new.
+        advisories.
+        map(&:path).
+        sort
+
+      expect(actual_advisories).to eq vendored_advisories
+    end
   end
 
   describe "#to_s" do
     it "should return the Database path" do
       subject.to_s.should == subject.path
+    end
+  end
+
+  describe "#inspect" do
+    it "should produce a Ruby-ish instance descriptor" do
+      expect(Bundler::Audit::Database.new.inspect).to eq("#<Bundler::Audit::Database:#{Bundler::Audit::Database::VENDORED_PATH}>")
     end
   end
 end
