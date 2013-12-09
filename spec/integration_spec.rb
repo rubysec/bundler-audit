@@ -20,75 +20,16 @@ describe "CLI" do
     end
 
     it "should print advisory information for the vulnerable gems" do
-      expect = %{
-Name: actionmailer
-Version: 3.2.10
-Advisory: OSVDB-98629
-Criticality: Medium
-URL: http://www.osvdb.org/show/osvdb/98629
-Title: Action Mailer Gem for Ruby contains a possible DoS Vulnerability
-Solution: upgrade to >= 3.2.15
+      advisory_pattern = /(Name: [^\n]+
+Version: \d+.\d+.\d+
+Advisory: OSVDB-\d+
+Criticality: (High|Medium)
+URL: http:\/\/(direct|www\.)?osvdb.org\/show\/osvdb\/\d+
+Title: [^\n]*?
+Solution: upgrade to ((~>|=>) \d+.\d+.\d+, )*(~>|=>) \d+.\d+.\d+[\s\n]*?)+/
 
-Name: actionpack
-Version: 3.2.10
-Advisory: OSVDB-91452
-Criticality: Medium
-URL: http://www.osvdb.org/show/osvdb/91452
-Title: XSS vulnerability in sanitize_css in Action Pack
-Solution: upgrade to ~> 2.3.18, ~> 3.1.12, >= 3.2.13
-
-Name: actionpack
-Version: 3.2.10
-Advisory: OSVDB-91454
-Criticality: Medium
-URL: http://osvdb.org/show/osvdb/91454
-Title: XSS Vulnerability in the `sanitize` helper of Ruby on Rails
-Solution: upgrade to ~> 2.3.18, ~> 3.1.12, >= 3.2.13
-
-Name: actionpack
-Version: 3.2.10
-Advisory: OSVDB-89026
-Criticality: High
-URL: http://osvdb.org/show/osvdb/89026
-Title: Ruby on Rails params_parser.rb Action Pack Type Casting Parameter Parsing Remote Code Execution
-Solution: upgrade to ~> 2.3.15, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
-
-Name: activerecord
-Version: 3.2.10
-Advisory: OSVDB-91453
-Criticality: High
-URL: http://osvdb.org/show/osvdb/91453
-Title: Symbol DoS vulnerability in Active Record
-Solution: upgrade to ~> 2.3.18, ~> 3.1.12, >= 3.2.13
-
-Name: activerecord
-Version: 3.2.10
-Advisory: OSVDB-90072
-Criticality: Medium
-URL: http://direct.osvdb.org/show/osvdb/90072
-Title: Ruby on Rails Active Record attr_protected Method Bypass
-Solution: upgrade to ~> 2.3.17, ~> 3.1.11, >= 3.2.12
-
-Name: activerecord
-Version: 3.2.10
-Advisory: OSVDB-89025
-Criticality: High
-URL: http://osvdb.org/show/osvdb/89025
-Title: Ruby on Rails Active Record JSON Parameter Parsing Query Bypass
-Solution: upgrade to ~> 2.3.16, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
-
-Name: activesupport
-Version: 3.2.10
-Advisory: OSVDB-91451
-Criticality: High
-URL: http://www.osvdb.org/show/osvdb/91451
-Title: XML Parsing Vulnerability affecting JRuby users
-Solution: upgrade to ~> 3.1.12, >= 3.2.13
-
-Unpatched versions found!
-      }.strip.split "\n\n"
-
-      subject.strip.split("\n\n").should =~ expect
+      expect(subject).to match(advisory_pattern)
+      expect(subject).to include("Unpatched versions found!")
     end
   end
 
