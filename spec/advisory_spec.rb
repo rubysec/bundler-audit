@@ -19,6 +19,15 @@ describe Bundler::Audit::Advisory do
     its(:cvss_v2)     { should == data['cvss_v2']     }
     its(:description) { should == data['description'] }
 
+    context "YAML data not representing a hash" do
+      it "should raise an exception" do
+        path = File.expand_path('../fixtures/not_a_hash.yml', __FILE__)
+        expect {
+          Advisory.load(path)
+        }.to raise_exception("advisory data in #{path.dump} was not a Hash")
+      end
+    end
+
     describe "#patched_versions" do
       subject { described_class.load(path).patched_versions }
 
