@@ -1,3 +1,11 @@
+### 0.3.1 / 2013-12-03
+
+* Store the timestamp of when `data/ruby-advisory-db` was last updated in
+  `data/ruby-advisory-db.ts`.
+* Use `data/ruby-advisory-db.ts` instead of the creation time of the
+  `dataruby-advisory-db` directory, which is always the install time
+  of the rubygem.
+
 ### 0.3.0 / 2013-10-31
 
 * Added {Bundler::Audit::Database.update!} which uses `git` to download
