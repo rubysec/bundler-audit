@@ -8,33 +8,20 @@ describe Bundler::Audit::Advisory do
   let(:id)   { 'OSVDB-84243' }
   let(:path) { File.join(root,'gems',gem,"#{id}.yml") }
   let(:an_unaffected_version) do
-    Bundler::Audit::Advisory.
-      # Parse the YAML-based advisory format into something coherent...
-      load(path).
-      # Retrieve the list of rules specifying what versions are NOT affected
-      # by the advisory...
-      unaffected_versions.
-      # For all the rules, get the individual constraints out and see if we can
-      # find a suitable one...
-      map do |version_rule|
-        version_rule.
-          requirements.
-          # We only want constraints where the version number specified is
-          # one of the unaffected version.  I.E. we don't want ">", "<", or if
-          # such a thing exists, "!=" constraints.
-          select do |(constraint, gem_version)|
-            ['~>', '>=', '=', '<='].include?(constraint)
-          end.
-          # Now, fetch just the version component, which is a Gem::Version,
-          # and extract the string representation of the version.
-          map do |(constraint, gem_version)|
-            gem_version.version
-          end
-      end.
-      # Now flatten out list-of-lists, and retrieve the first eligible version,
-      # as frankly, anything from the list will do.
-      flatten.
-      first
+    Bundler::Audit::Advisory.load(path).unaffected_versions.map { |version_rule|
+      # For all the rules, get the individual constraints out and see if we
+      # can find a suitable one...
+      version_rule.requirements.select { |(constraint, gem_version)|
+        # We only want constraints where the version number specified is
+        # one of the unaffected version.  I.E. we don't want ">", "<", or if
+        # such a thing exists, "!=" constraints.
+        ['~>', '>=', '=', '<='].include?(constraint)
+      }.map { |(constraint, gem_version)|
+        # Fetch just the version component, which is a Gem::Version,
+        # and extract the string representation of the version.
+        gem_version.version
+      }
+    }.flatten.first
   end
 
   describe "load" do
