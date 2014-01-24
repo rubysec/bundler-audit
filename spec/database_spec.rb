@@ -19,10 +19,16 @@ describe Bundler::Audit::Database do
       Bundler::Audit::Database.update!
 
       # As up to date...
-      expect(Bundler::Audit::Database.path).to eq mocked_user_path
+      expect do
+        # Stub the Vendor copy to be the exact same as the user path copy
+        stub_const("Bundler::Audit::Database::VENDORED_TIMESTAMP", Dir.chdir(mocked_user_path) { Time.parse(`git log --pretty="%cd" -1`) })
+        # When they are the exact same prefer the user copy
+        expect(Bundler::Audit::Database.path).to eq mocked_user_path
+      end
 
       # More up to date...
       fake_a_commit_in_the_user_repo
+      # Prefer the newset, in this case user repo
       expect(Bundler::Audit::Database.path).to eq mocked_user_path
 
       # Roll the advisory-db back until its older than the one checked in this could
