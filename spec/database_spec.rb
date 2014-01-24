@@ -25,7 +25,16 @@ describe Bundler::Audit::Database do
       fake_a_commit_in_the_user_repo
       expect(Bundler::Audit::Database.path).to eq mocked_user_path
 
-      roll_user_repo_back(2)
+      # Roll the advisory-db back until its older than the one checked in this could
+      # be any number of commits, not just 2
+      roll_user_repo_back_until do
+        t1 = Dir.chdir(Bundler::Audit::Database::USER_PATH) { Time.parse(`git log --pretty="%cd" -1`) }
+        t2 = Time.parse(File.read("#{Bundler::Audit::Database::VENDORED_PATH}.ts")).utc
+        t2 > t1
+      end
+
+      # Now the Advisory db is older than the one checked into vendor. We should expect
+      # the Database to favour the newest (ie Vendor)
       expect(Bundler::Audit::Database.path).to eq Bundler::Audit::Database::VENDORED_PATH
     end
   end

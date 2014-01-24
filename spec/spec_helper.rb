@@ -45,6 +45,12 @@ module Helpers
       system 'git', 'checkout', 'master'
     end
   end
+
+  def roll_user_repo_back_until(&block)
+    while not yield
+      roll_user_repo_back(1)
+    end
+  end
 end
 
 include Bundler::Audit
