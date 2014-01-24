@@ -18,30 +18,29 @@ describe Bundler::Audit::Database do
     it "should prefer the user repo, iff it's as up to date, or more up to date than the vendored one" do
       Bundler::Audit::Database.update!
 
+      current_user_ts = Dir.chdir(mocked_user_path) { Time.parse(`git log --pretty="%cd" -1`) }
+      ts_const = "Bundler::Audit::Database::VENDORED_TIMESTAMP"
       # As up to date...
       expect do
         # Stub the Vendor copy to be the exact same as the user path copy
-        stub_const("Bundler::Audit::Database::VENDORED_TIMESTAMP", Dir.chdir(mocked_user_path) { Time.parse(`git log --pretty="%cd" -1`) })
+        stub_const(ts_const, current_user_ts)
         # When they are the exact same prefer the user copy
         expect(Bundler::Audit::Database.path).to eq mocked_user_path
       end
 
-      # More up to date...
-      fake_a_commit_in_the_user_repo
       # Prefer the newset, in this case user repo
-      expect(Bundler::Audit::Database.path).to eq mocked_user_path
-
-      # Roll the advisory-db back until its older than the one checked in this could
-      # be any number of commits, not just 2
-      roll_user_repo_back_until do
-        t1 = Dir.chdir(Bundler::Audit::Database::USER_PATH) { Time.parse(`git log --pretty="%cd" -1`) }
-        t2 = Time.parse(File.read("#{Bundler::Audit::Database::VENDORED_PATH}.ts")).utc
-        t2 > t1
+      expect do
+        stub_const(ts_const, current_user_ts-1)
+        # When they are the exact same prefer the user copy
+        expect(Bundler::Audit::Database.path).to eq mocked_user_path
       end
 
-      # Now the Advisory db is older than the one checked into vendor. We should expect
-      # the Database to favour the newest (ie Vendor)
-      expect(Bundler::Audit::Database.path).to eq Bundler::Audit::Database::VENDORED_PATH
+      # Prefer the newset, in this case vendor_path
+      expect do
+        stub_const(ts_const, current_user_ts+1)
+        # When they are the exact same prefer the user copy
+        expect(Bundler::Audit::Database.path).to eq Bundler::Audit::Database::VENDORED_PATH
+      end
     end
   end
 
