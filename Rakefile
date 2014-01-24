@@ -63,5 +63,10 @@ task :test    => :spec
 task :default => :spec
 
 require 'yard'
-YARD::Rake::YardocTask.new  
+YARD::Rake::YardocTask.new
 task :doc => :yard
+
+require './lib/bundler/audit/rake_task'
+Bundler::Audit::RakeTask.new do |r|
+  r.verbose = true
+end
