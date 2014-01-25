@@ -66,7 +66,7 @@ require 'yard'
 YARD::Rake::YardocTask.new
 task :doc => :yard
 
-require './lib/bundler/audit/rake_task'
-Bundler::Audit::RakeTask.new do |r|
+require './lib/bundler/audit/task'
+Bundler::Audit::Task.new do |r|
   r.verbose = true
 end
