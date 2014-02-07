@@ -54,9 +54,17 @@ describe Scanner do
 
     subject { scanner.scan.to_a }
 
-    it "should match unpatched gems to their advisories" do
+    it "should match the insecure sources" do
       subject[0].source.should == 'git://github.com/rails/jquery-rails.git'
       subject[1].source.should == 'http://rubygems.org/'
+    end
+
+    context "when sources are in :secure_sources" do
+      subject { scanner.scan(:secure_sources => ['git://github.com', 'http://']) }
+
+      it "should not match those sources as insecure" do
+        subject.should be_empty
+      end
     end
   end
 
