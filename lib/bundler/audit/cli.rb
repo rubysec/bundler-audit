@@ -72,9 +72,9 @@ module Bundler
 
       protected
 
-      def say(string="", color=nil)
+      def say(message="", color=nil)
         color = nil unless $stdout.tty?
-        super(string, color)
+        super(message.to_s, color)
       end
 
       def print_warning(message)
