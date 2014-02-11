@@ -18,12 +18,13 @@
 require 'bundler/audit/scanner'
 require 'bundler/audit/version'
 
+require 'thor'
 require 'bundler'
 require 'bundler/vendored_thor'
 
 module Bundler
   module Audit
-    class CLI < Thor
+    class CLI < ::Thor
 
       default_task :check
       map '--version' => :version

@@ -110,8 +110,9 @@ Update the [ruby-advisory-db] that `bundle-audit` uses:
 
 ## Requirements
 
-* [bundler] ~> 1.2
 * [RubyGems] >= 1.8
+* [thor] ~> 0.18
+* [bundler] ~> 1.2
 
 ## Install
 
@@ -134,8 +135,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
 
+[RubyGems]: https://rubygems.org
+[thor]: http://whatisthor.com/
 [bundler]: https://github.com/carlhuda/bundler#readme
 
 [OSVDB]: http://osvdb.org/
-
-[RubyGems]: https://rubygems.org
