@@ -36,11 +36,11 @@ module Bundler
       def check
         scanner    = Scanner.new
         vulnerable = false
-        insecure_src_only = false
+        insecure_src_only = true
 
         scanner.scan(:ignore => options.ignore) do |result|
           vulnerable = true
-          insecure_src_only = true
+
 
           case result
           when Scanner::InsecureSource
