@@ -12,7 +12,9 @@ module Bundler
       InsecureSource = Struct.new(:source)
 
       # Represents a gem that is covered by an Advisory
-      UnpatchedGem = Struct.new(:gem, :advisory)
+      UnpatchedGem = Struct.new(:gem, :advisory) do
+        alias_method :rubygem, :gem
+      end
 
       # The advisory database
       #
