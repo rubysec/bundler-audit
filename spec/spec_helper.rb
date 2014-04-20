@@ -55,6 +55,6 @@ RSpec.configure do |config|
   config.before(:each) do
     stub_const("Bundler::Audit::Database::URL", Bundler::Audit::Database::VENDORED_PATH)
     stub_const("Bundler::Audit::Database::USER_PATH", mocked_user_path)
-    FileUtils.rm_rf mocked_user_path if(File.exist?(mocked_user_path))
+    FileUtils.rm_rf(mocked_user_path) if File.exist?(mocked_user_path)
   end
 end
