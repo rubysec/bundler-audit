@@ -15,7 +15,7 @@ module Helpers
   end
 
   def mocked_user_path
-    File.expand_path('../../tmp/data', __FILE__)
+    File.expand_path('../../tmp/ruby-advisory-db', __FILE__)
   end
 
   def expect_update_to_clone_repo!
