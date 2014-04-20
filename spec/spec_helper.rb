@@ -40,9 +40,7 @@ module Helpers
 
   def roll_user_repo_back(num_commits)
     Dir.chdir(mocked_user_path) do
-      system 'git', 'checkout', "HEAD~#{num_commits}"
-      system 'git', 'branch', '-f', 'master', 'HEAD'
-      system 'git', 'checkout', 'master'
+      system 'git', 'reset', '--hard', "HEAD~#{num_commits}"
     end
   end
 end
