@@ -1,11 +1,10 @@
 require 'spec_helper'
 require 'bundler/audit/database'
 require 'tmpdir'
-require 'rake/file_list'
 
 describe Bundler::Audit::Database do
   let(:vendored_advisories) do
-    Rake::FileList[File.join(Bundler::Audit::Database::VENDORED_PATH, '**/*.yml')].sort
+    Dir[File.join(Bundler::Audit::Database::VENDORED_PATH, '**/*.yml')].sort
   end
 
   describe "path" do
