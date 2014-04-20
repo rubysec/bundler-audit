@@ -18,6 +18,11 @@ describe Bundler::Audit::Database do
     it "should prefer the user repo, iff it's as up to date, or more up to date than the vendored one" do
       Bundler::Audit::Database.update!
 
+      Dir.chdir(Bundler::Audit::Database::USER_PATH) do
+        puts "Timestamp:"
+        system 'git log --pretty="%cd" -1'
+      end
+
       # As up to date...
       expect(Bundler::Audit::Database.path).to eq mocked_user_path
 
@@ -25,7 +30,7 @@ describe Bundler::Audit::Database do
       fake_a_commit_in_the_user_repo
       expect(Bundler::Audit::Database.path).to eq mocked_user_path
 
-      roll_user_repo_back(2)
+      roll_user_repo_back(20)
       expect(Bundler::Audit::Database.path).to eq Bundler::Audit::Database::VENDORED_PATH
     end
   end
