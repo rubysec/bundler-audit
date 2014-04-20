@@ -1,5 +1,7 @@
-### 0.3.1 / 2013-12-03
+### 0.3.1 / 2014-04-20
 
+* Added thor ~> 0.18 as a dependency.
+* No longer rely on the vendored version of thor within bundler.
 * Store the timestamp of when `data/ruby-advisory-db` was last updated in
   `data/ruby-advisory-db.ts`.
 * Use `data/ruby-advisory-db.ts` instead of the creation time of the
