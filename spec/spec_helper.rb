@@ -1,5 +1,4 @@
 require 'simplecov'
-require 'json'
 SimpleCov.start
 
 require 'rspec'
