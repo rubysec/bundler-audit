@@ -6,6 +6,7 @@ authors: Postmodern
 email: postmodern.mod3@gmail.com
 homepage: https://github.com/rubysec/bundler-audit#readme
 
+required_ruby_version: ">= 1.9.0"
 required_rubygems_version: ">= 1.8.0"
 
 dependencies:
