@@ -146,3 +146,4 @@ along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
 [bundler]: https://github.com/carlhuda/bundler#readme
 
 [OSVDB]: http://osvdb.org/
+[ruby-advisory-db]: https://github.com/rubysec/ruby-advisory-db
