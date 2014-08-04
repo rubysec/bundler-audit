@@ -25,6 +25,7 @@ module Bundler
                                 :title,
                                 :description,
                                 :cvss_v2,
+                                :cve,
                                 :unaffected_versions,
                                 :patched_versions)
 
@@ -59,6 +60,7 @@ module Bundler
           data['title'],
           data['description'],
           data['cvss_v2'],
+          data['cve'],
           parse_versions[data['unaffected_versions']],
           parse_versions[data['patched_versions']]
         )
