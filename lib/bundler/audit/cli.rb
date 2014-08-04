@@ -92,6 +92,11 @@ module Bundler
         say "Advisory: ", :red
         say advisory.id
 
+        unless advisory.cve.nil?
+          say "CVE: ", :red
+          say "CVE-" + advisory.cve
+        end
+
         say "Criticality: ", :red
         case advisory.criticality
         when :low    then say "Low"
