@@ -108,8 +108,13 @@ Update the [ruby-advisory-db] that `bundle-audit` uses:
      create mode 100644 gems/wicked/OSVDB-98270.yml
     ruby-advisory-db: 64 advisories
 
+Ignore specific advisories:
+
+    $ bundle-audit check --ignore OSVDB-108664
+
 ## Requirements
 
+* [Ruby] >= 1.9
 * [RubyGems] >= 1.8
 * [thor] ~> 0.18
 * [bundler] ~> 1.2
@@ -135,8 +140,10 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
 
+[Ruby]: https://ruby-lang.org
 [RubyGems]: https://rubygems.org
 [thor]: http://whatisthor.com/
 [bundler]: https://github.com/carlhuda/bundler#readme
 
 [OSVDB]: http://osvdb.org/
+[ruby-advisory-db]: https://github.com/rubysec/ruby-advisory-db
