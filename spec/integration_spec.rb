@@ -22,7 +22,7 @@ describe "CLI" do
     it "should print advisory information for the vulnerable gems" do
       advisory_pattern = /(Name: [^\n]+
 Version: \d+.\d+.\d+
-Advisory: OSVDB-\d+
+OSVDB: OSVDB-\d+
 CVE: CVE-[0-9]{4}-[0-9]{4}
 Criticality: (High|Medium)
 URL: http:\/\/(direct|www\.)?osvdb.org\/show\/osvdb\/\d+

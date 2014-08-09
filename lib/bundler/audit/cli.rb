@@ -89,8 +89,8 @@ module Bundler
         say "Version: ", :red
         say gem.version
 
-        say "Advisory: ", :red
-        say advisory.id
+        say "OSVDB: ", :red
+        say advisory.osvdb
 
         unless advisory.cve.nil?
           say "CVE: ", :red
