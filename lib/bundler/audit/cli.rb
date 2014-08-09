@@ -92,7 +92,7 @@ module Bundler
         say "OSVDB: ", :red
         say advisory.osvdb
 
-        unless advisory.cve.nil?
+        if advisory.cve
           say "CVE: ", :red
           say "CVE-" + advisory.cve
         end
