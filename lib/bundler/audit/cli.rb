@@ -43,7 +43,6 @@ module Bundler
         scanner.scan(:ignore => options.ignore) do |result|
           vulnerable = true
 
-
           case result
           when Scanner::InsecureSource
             insecure_sources = true
