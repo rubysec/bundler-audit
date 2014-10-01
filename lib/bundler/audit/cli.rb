@@ -36,20 +36,25 @@ module Bundler
       def check
         scanner    = Scanner.new
         vulnerable = false
+        insecure_sources = false
+        unpatched_versions = false
 
         scanner.scan(:ignore => options.ignore) do |result|
           vulnerable = true
 
+
           case result
           when Scanner::InsecureSource
+            insecure_sources = true
             print_warning "Insecure Source URI found: #{result.source}"
           when Scanner::UnpatchedGem
+            unpatched_versions = true
             print_advisory result.gem, result.advisory
           end
         end
 
         if vulnerable
-          say "Unpatched versions found!", :red
+          say "Unpatched versions found!", :red unless !unpatched_versions
           exit 1
         else
           say "No unpatched versions found", :green
@@ -72,6 +77,8 @@ module Bundler
       end
 
       protected
+
+
 
       def say(message="", color=nil)
         color = nil unless $stdout.tty?
