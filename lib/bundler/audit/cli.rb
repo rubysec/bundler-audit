@@ -32,7 +32,7 @@ module Bundler
       desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
-      method_option :ignore_sources, :type => :boolean, :aliases => '-is'
+      method_option :ignore_sources, :type => :boolean, :aliases => '-is', :desc => 'ignore_sources', 'Ignore insecure sources'
 
       def check
         scanner    = Scanner.new
@@ -76,8 +76,6 @@ module Bundler
 
         puts "#{File.basename($0)} #{VERSION} (advisories: #{database.size})"
       end
-
-      desc 'ignore_sources', 'Ignore insecure sources'
 
       protected
 
