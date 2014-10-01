@@ -32,6 +32,7 @@ module Bundler
       desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
+      method_option :ignore_sources => :boolean, :aliases => '-is'
 
       def check
         scanner    = Scanner.new
@@ -46,7 +47,7 @@ module Bundler
           case result
           when Scanner::InsecureSource
             insecure_sources = true
-            print_warning "Insecure Source URI found: #{result.source}"
+            print_warning "Insecure Source URI found: #{result.source}" unless options.ignore_sources?
           when Scanner::UnpatchedGem
             unpatched_versions = true
             print_advisory result.gem, result.advisory
