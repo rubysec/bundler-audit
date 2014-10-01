@@ -39,9 +39,9 @@ module Bundler
         insecure_sources = false
         unpatched_versions = false
 
-
         scanner.scan(:ignore => options.ignore) do |result|
           vulnerable = true
+
 
           case result
           when Scanner::InsecureSource
