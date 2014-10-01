@@ -77,6 +77,8 @@ module Bundler
         puts "#{File.basename($0)} #{VERSION} (advisories: #{database.size})"
       end
 
+      desc 'ignore_sources', 'Ignore insecure sources'
+
       protected
 
 
