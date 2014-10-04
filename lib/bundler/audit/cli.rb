@@ -140,6 +140,7 @@ module Bundler
           say "Solution: ", :red
           say "remove or disable this gem until a patch is available!", [:red, :bold]
         end
+      end
 
         def print_advisory_json(gem, advisory)
           say gem.name
