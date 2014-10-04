@@ -21,6 +21,7 @@ require 'bundler/audit/version'
 require 'thor'
 require 'bundler'
 require 'bundler/vendored_thor'
+require 'pp'
 
 module Bundler
   module Audit
@@ -143,9 +144,14 @@ module Bundler
       end
 
         def print_advisory_json(gem, advisory)
-          say gem.name
+          output = {
+            "name": gem.name,
+            "version": gem.version,
+            "fixed_version": advisory.patched_versions.join(', ')
+          }
 
-          say gem.version
+          pp output
+
       end
 
     end
