@@ -145,9 +145,9 @@ module Bundler
 
         def print_advisory_json(gem, advisory)
           output = {
-            "name": gem.name,
-            "version": gem.version,
-            "fixed_version": advisory.patched_versions.join(', ')
+            "name": "#{gem.name}",
+            "version": "#{gem.version}",
+            "fixed_version": "#{advisory.patched_versions.join(', ')}"
           }
 
           pp output
