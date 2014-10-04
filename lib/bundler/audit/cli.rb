@@ -144,11 +144,11 @@ module Bundler
       end
 
         def print_advisory_json(gem, advisory)
-          output = {
+          @output = {"gems":[
             "name" => "#{gem.name}",
             "version" => "#{gem.version}",
             "fixed_version" => "#{advisory.patched_versions.join(', ')}"
-          }
+          ]}
 
           puts JSON.pretty_generate(output)
 
