@@ -33,6 +33,7 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :ignore_sources, :type => :boolean
+      method_option :json, :type => :boolean
 
       def check
         scanner    = Scanner.new
@@ -50,7 +51,11 @@ module Bundler
             print_warning "Insecure Source URI found: #{result.source}" unless options.ignore_sources?
           when Scanner::UnpatchedGem
             unpatched_versions = true
+            if options.json?
+            print_advisory_json result.gem, result.advisory
+          else
             print_advisory result.gem, result.advisory
+          end
           end
         end
 
@@ -136,7 +141,10 @@ module Bundler
           say "remove or disable this gem until a patch is available!", [:red, :bold]
         end
 
-        say
+        def print_advisory_json(gem, advisory)
+          say gem.name
+
+          say gem.version
       end
 
     end
