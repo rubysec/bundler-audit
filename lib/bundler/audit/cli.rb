@@ -151,7 +151,7 @@ module Bundler
             "version" => "#{gem.version}",
             "fixed_version" => "#{advisory.patched_versions.join(', ')}"}
 
-          puts JSON.pretty_generate(output)
+          puts JSON.pretty_generate(@array)
 
       end
 
