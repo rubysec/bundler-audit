@@ -55,10 +55,11 @@ module Bundler
           when Scanner::UnpatchedGem
             unpatched_versions = true
             if options.json?
-            print_advisory_json result.gem, result.advisory
+            build_advisory_json result.gem, result.advisory
           else
             print_advisory result.gem, result.advisory
           end
+          puts JSON.pretty_generate(@array) if !@array.empty?
           end
         end
 
@@ -145,14 +146,13 @@ module Bundler
         end
       end
 
-        def print_advisory_json(gem, advisory)
+        def build_advisory_json(gem, advisory)
           @array <<
-            {"name" => "#{gem.name}",
+            {
+              "name" => "#{gem.name}",
             "version" => "#{gem.version}",
-            "fixed_version" => "#{advisory.patched_versions.join(', ')}"}
-
-          puts JSON.pretty_generate(@array)
-
+            "fixed_version" => "#{advisory.patched_versions.join(', ')}"
+          }
       end
 
     end
