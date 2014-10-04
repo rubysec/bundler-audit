@@ -49,7 +49,7 @@ module Bundler
           case result
           when Scanner::InsecureSource
             insecure_sources = true
-            print_warning "Insecure Source URI found: #{result.source}" unless options.ignore_sources?
+            print_warning "Insecure Source URI found: #{result.source}" unless options.ignore_sources? || options.json?
           when Scanner::UnpatchedGem
             unpatched_versions = true
             if options.json?
