@@ -59,8 +59,8 @@ module Bundler
           else
             print_advisory result.gem, result.advisory
           end
-          puts JSON.pretty_generate(@array) if !@array.empty?
           end
+          puts JSON.pretty_generate(@array) if !@array.empty?
         end
 
         if vulnerable
