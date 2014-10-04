@@ -60,10 +60,10 @@ module Bundler
             print_advisory result.gem, result.advisory
           end
           end
-          puts JSON.pretty_generate(@array) if !@array.empty?
         end
 
         if vulnerable
+          puts JSON.pretty_generate(@array) if !@array.empty?
           say "Unpatched versions found!", :red unless !unpatched_versions || options.json?
           exit 1
         else
