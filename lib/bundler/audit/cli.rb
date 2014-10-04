@@ -61,7 +61,7 @@ module Bundler
         end
 
         if vulnerable
-          say "Unpatched versions found!", :red unless !unpatched_versions
+          say "Unpatched versions found!", :red unless !unpatched_versions || options.json?
           exit 1
         else
           say "No unpatched versions found", :green
