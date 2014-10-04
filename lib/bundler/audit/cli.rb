@@ -21,6 +21,7 @@ require 'bundler/audit/version'
 require 'thor'
 require 'bundler'
 require 'bundler/vendored_thor'
+require 'json'
 
 module Bundler
   module Audit
@@ -32,24 +33,38 @@ module Bundler
       desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
+      method_option :ignore_sources, :type => :boolean
+      method_option :json, :type => :boolean
+
 
       def check
         scanner    = Scanner.new
         vulnerable = false
+        insecure_sources = false
+        unpatched_versions = false
+        @array = Array.new
 
         scanner.scan(:ignore => options.ignore) do |result|
           vulnerable = true
 
+
           case result
           when Scanner::InsecureSource
-            print_warning "Insecure Source URI found: #{result.source}"
+            insecure_sources = true
+            print_warning "Insecure Source URI found: #{result.source}" unless options.ignore_sources? || options.json?
           when Scanner::UnpatchedGem
+            unpatched_versions = true
+            if options.json?
+            build_advisory_json result.gem, result.advisory
+          else
             print_advisory result.gem, result.advisory
+          end
           end
         end
 
         if vulnerable
-          say "Unpatched versions found!", :red
+          puts JSON.pretty_generate(@array) if !@array.empty?
+          say "Unpatched versions found!", :red unless !unpatched_versions || options.json?
           exit 1
         else
           say "No unpatched versions found", :green
@@ -72,6 +87,8 @@ module Bundler
       end
 
       protected
+
+
 
       def say(message="", color=nil)
         color = nil unless $stdout.tty?
@@ -127,8 +144,15 @@ module Bundler
           say "Solution: ", :red
           say "remove or disable this gem until a patch is available!", [:red, :bold]
         end
+      end
 
-        say
+        def build_advisory_json(gem, advisory)
+          @array <<
+            {
+              "name" => "#{gem.name}",
+            "version" => "#{gem.version}",
+            "fixed_version" => "#{advisory.patched_versions.join(', ')}"
+          }
       end
 
     end
