@@ -21,7 +21,7 @@ require 'bundler/audit/version'
 require 'thor'
 require 'bundler'
 require 'bundler/vendored_thor'
-require 'pp'
+require 'json
 
 module Bundler
   module Audit
