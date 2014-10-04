@@ -36,11 +36,13 @@ module Bundler
       method_option :ignore_sources, :type => :boolean
       method_option :json, :type => :boolean
 
+
       def check
         scanner    = Scanner.new
         vulnerable = false
         insecure_sources = false
         unpatched_versions = false
+        @array = Array.new
 
         scanner.scan(:ignore => options.ignore) do |result|
           vulnerable = true
@@ -144,11 +146,10 @@ module Bundler
       end
 
         def print_advisory_json(gem, advisory)
-          @output = {"gems":[
-            "name" => "#{gem.name}",
+          @array <<
+            {"name" => "#{gem.name}",
             "version" => "#{gem.version}",
-            "fixed_version" => "#{advisory.patched_versions.join(', ')}"
-          ]}
+            "fixed_version" => "#{advisory.patched_versions.join(', ')}"}
 
           puts JSON.pretty_generate(output)
 
