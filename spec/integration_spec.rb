@@ -16,7 +16,7 @@ describe "CLI" do
     end
 
     it "should print a warning" do
-      subject.should include("Unpatched versions found!")
+      subject.should include("Vulnerabilities found!")
     end
 
     it "should print advisory information for the vulnerable gems" do
@@ -29,7 +29,7 @@ Title: [^\n]*?
 Solution: upgrade to ((~>|=>) \d+.\d+.\d+, )*(~>|=>) \d+.\d+.\d+[\s\n]*?)+/
 
       expect(subject).to match(advisory_pattern)
-      expect(subject).to include("Unpatched versions found!")
+      expect(subject).to include("Vulnerabilities found!")
     end
   end
 
@@ -75,7 +75,7 @@ Insecure Source URI found: http://rubygems.org/
     end
 
     it "should print nothing when everything is fine" do
-      subject.strip.should == "No unpatched versions found"
+      subject.strip.should == "No vulnerabilities found"
     end
   end
 end
