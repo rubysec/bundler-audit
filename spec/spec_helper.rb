@@ -17,21 +17,28 @@ module Helpers
     string.gsub(/\e\[\d+m/, "")
   end
 
+  def mocked_local_share_path
+    File.expand_path('../../tmp/', __FILE__)
+  end
+
   def mocked_user_path
     File.expand_path('../../tmp/ruby-advisory-db', __FILE__)
   end
 
   def expect_update_to_clone_repo!
-    Bundler::Audit::Database.
-      should_receive(:system).
-      with('git', 'clone', Bundler::Audit::Database::VENDORED_PATH, mocked_user_path).
+    Git.
+      should_receive(:clone).
+      with(Bundler::Audit::Database::VENDORED_PATH, 'ruby-advisory-db', :path => mocked_local_share_path).
       and_call_original
   end
 
   def expect_update_to_update_repo!
-    Bundler::Audit::Database.
-      should_receive(:system).
-      with('git', 'pull', 'origin', 'master').
+    repo = Git.open(mocked_user_path)
+
+    Git.should_receive(:open).with(mocked_user_path).and_return(repo)
+    repo.
+      should_receive(:pull).
+      with('origin','master').
       and_call_original
   end
 
@@ -55,6 +62,7 @@ RSpec.configure do |config|
 
   config.before(:each) do
     stub_const("Bundler::Audit::Database::URL", Bundler::Audit::Database::VENDORED_PATH)
+    stub_const("Bundler::Audit::Database::LOCAL_SHARE_PATH", mocked_local_share_path)
     stub_const("Bundler::Audit::Database::USER_PATH", mocked_user_path)
     FileUtils.rm_rf(mocked_user_path) if File.exist?(mocked_user_path)
   end
