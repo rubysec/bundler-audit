@@ -38,6 +38,10 @@ module Bundler
       VENDORED_TIMESTAMP = Time.parse(File.read("#{VENDORED_PATH}.ts")).utc
 
       # Path to the user's copy of the ruby-advisory-db
+      unless ENV['HOME']
+        STDERR.puts "$HOME is not set. This is needed to find the advisory database."
+        exit(1)
+      end
       USER_PATH = File.expand_path(File.join(ENV['HOME'],'.local','share','ruby-advisory-db'))
 
       # The path to the advisory database
