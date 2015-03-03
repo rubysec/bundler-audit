@@ -50,6 +50,22 @@ Solution: upgrade to ((~>|=>) \d+.\d+.\d+, )*(~>|=>) \d+.\d+.\d+[\s\n]*?)+/
     end
   end
 
+  context "when auditing a bundle with insecure sources with path option" do
+    let(:bundle)    { 'insecure_sources' }
+    let(:directory) { File.join('spec','bundle',bundle) }
+    let(:command) do
+      File.expand_path(File.join(File.dirname(__FILE__),'..','bin',"bundle-audit -p #{directory}"))
+    end
+    let(:subject) { sh(command, :fail => true) }
+
+    it "should print warnings about insecure sources" do
+      subject.should include(%{
+Insecure Source URI found: git://github.com/rails/jquery-rails.git
+Insecure Source URI found: http://rubygems.org/
+      }.strip)
+    end
+  end
+
   context "when auditing a bundle with insecure sources" do
     let(:bundle)    { 'insecure_sources' }
     let(:directory) { File.join('spec','bundle',bundle) }
