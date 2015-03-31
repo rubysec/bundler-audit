@@ -108,6 +108,10 @@ Update the [ruby-advisory-db] that `bundle-audit` uses:
      create mode 100644 gems/wicked/OSVDB-98270.yml
     ruby-advisory-db: 64 advisories
 
+Update the [ruby-advisory-db] and check `Gemfile.lock` (useful for CI runs):
+
+    $ bundle-audit check --update
+
 Ignore specific advisories:
 
     $ bundle-audit check --ignore OSVDB-108664
