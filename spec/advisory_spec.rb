@@ -29,11 +29,30 @@ describe Bundler::Audit::Advisory do
 
     subject { described_class.load(path) }
 
-    its(:id)          { should == id                  }
-    its(:url)         { should == data['url']         }
-    its(:title)       { should == data['title']       }
-    its(:cvss_v2)     { should == data['cvss_v2']     }
-    its(:description) { should == data['description'] }
+    describe '#id' do
+      subject { super().id }
+      it { is_expected.to eq(id)                  }
+    end
+
+    describe '#url' do
+      subject { super().url }
+      it { is_expected.to eq(data['url'])         }
+    end
+
+    describe '#title' do
+      subject { super().title }
+      it { is_expected.to eq(data['title'])       }
+    end
+
+    describe '#cvss_v2' do
+      subject { super().cvss_v2 }
+      it { is_expected.to eq(data['cvss_v2'])     }
+    end
+
+    describe '#description' do
+      subject { super().description }
+      it { is_expected.to eq(data['description']) }
+    end
 
     context "YAML data not representing a hash" do
       it "should raise an exception" do
@@ -48,34 +67,41 @@ describe Bundler::Audit::Advisory do
       subject { described_class.load(path).patched_versions }
 
       it "should all be Gem::Requirement objects" do
-        subject.all? { |version|
-          version.should be_kind_of(Gem::Requirement)
-        }.should be_true
+        expect(subject.all? { |version|
+          expect(version).to be_kind_of(Gem::Requirement)
+        }).to be_truthy
       end
 
       it "should parse the versions" do
-        subject.map(&:to_s).should == data['patched_versions']
+        expect(subject.map(&:to_s)).to eq(data['patched_versions'])
       end
     end
   end
 
   describe "#criticality" do
     context "when cvss_v2 is between 0.0 and 3.3" do
-      before { subject.stub(:cvss_v2).and_return(3.3) }
-
-      its(:criticality) { should == :low }
+      before {
+        @advisory = Advisory.new
+        @advisory.cvss_v2 = 3.3
+      }
+      it { expect(@advisory.criticality).to eq(:low) }
     end
 
     context "when cvss_v2 is between 3.3 and 6.6" do
-      before { subject.stub(:cvss_v2).and_return(6.6) }
+      before {
+        @advisory = Advisory.new
+        @advisory.cvss_v2 = 6.6
+      }
+      it { expect(@advisory.criticality).to eq(:medium) }
 
-      its(:criticality) { should == :medium }
     end
 
     context "when cvss_v2 is between 6.6 and 10.0" do
-      before { subject.stub(:cvss_v2).and_return(10.0) }
-
-      its(:criticality) { should == :high }
+     before {
+        @advisory = Advisory.new
+        @advisory.cvss_v2 = 10.0
+      }
+      it { expect(@advisory.criticality).to eq(:high) }
     end
   end
 
@@ -86,7 +112,7 @@ describe Bundler::Audit::Advisory do
       let(:version) { Gem::Version.new(an_unaffected_version) }
 
       it "should return true" do
-        subject.unaffected?(version).should be_true
+        expect(subject.unaffected?(version)).to be_truthy
       end
     end
 
@@ -94,7 +120,7 @@ describe Bundler::Audit::Advisory do
       let(:version) { Gem::Version.new('3.0.9') }
 
       it "should return false" do
-        subject.unaffected?(version).should be_false
+        expect(subject.unaffected?(version)).to be_falsey
       end
     end
   end
@@ -106,7 +132,7 @@ describe Bundler::Audit::Advisory do
       let(:version) { Gem::Version.new('3.1.11') }
 
       it "should return true" do
-        subject.patched?(version).should be_true
+        expect(subject.patched?(version)).to be_truthy
       end
     end
 
@@ -114,7 +140,7 @@ describe Bundler::Audit::Advisory do
       let(:version) { Gem::Version.new('2.9.0') }
 
       it "should return false" do
-        subject.patched?(version).should be_false
+        expect(subject.patched?(version)).to be_falsey
       end
     end
   end
@@ -126,7 +152,7 @@ describe Bundler::Audit::Advisory do
       let(:version) { Gem::Version.new('3.1.11') }
 
       it "should return false" do
-        subject.vulnerable?(version).should be_false
+        expect(subject.vulnerable?(version)).to be_falsey
       end
     end
 
@@ -134,7 +160,7 @@ describe Bundler::Audit::Advisory do
       let(:version) { Gem::Version.new('2.9.0') }
 
       it "should return true" do
-        subject.vulnerable?(version).should be_true
+        expect(subject.vulnerable?(version)).to be_truthy
       end
 
       context "when unaffected_versions is not empty" do
@@ -144,7 +170,7 @@ describe Bundler::Audit::Advisory do
           let(:version) { Gem::Version.new(an_unaffected_version) }
 
           it "should return false" do
-            subject.vulnerable?(version).should be_false
+            expect(subject.vulnerable?(version)).to be_falsey
           end
         end
 
@@ -152,7 +178,7 @@ describe Bundler::Audit::Advisory do
           let(:version) { Gem::Version.new('1.2.3') }
 
           it "should return true" do
-            subject.vulnerable?(version).should be_true
+            expect(subject.vulnerable?(version)).to be_truthy
           end
         end
       end

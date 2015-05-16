@@ -22,15 +22,15 @@ module Helpers
   end
 
   def expect_update_to_clone_repo!
-    Bundler::Audit::Database.
-      should_receive(:system).
+    expect(Bundler::Audit::Database).
+      to receive(:system).
       with('git', 'clone', Bundler::Audit::Database::VENDORED_PATH, mocked_user_path).
       and_call_original
   end
 
   def expect_update_to_update_repo!
-    Bundler::Audit::Database.
-      should_receive(:system).
+    expect(Bundler::Audit::Database).
+      to receive(:system).
       with('git', 'pull', 'origin', 'master').
       and_call_original
   end
