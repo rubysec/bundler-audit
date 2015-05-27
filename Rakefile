@@ -42,7 +42,7 @@ namespace :spec do
 
     %w[secure unpatched_gems insecure_sources].each do |bundle|
       chdir(File.join(root,bundle)) do
-        sh 'BUNDLE_BIN_PATH="" BUNDLE_GEMFILE="" RUBYOPT="" bundle install --path ../../../vendor/bundle'
+        sh 'unset BUNDLE_BIN_PATH BUNDLE_GEMFILE RUBYOPT && bundle install --path ../../../vendor/bundle'
       end
     end
   end
