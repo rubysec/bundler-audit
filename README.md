@@ -114,7 +114,7 @@ Ignore specific advisories:
 
 ## Requirements
 
-* [Ruby] >= 1.9
+* [Ruby] >= 1.9.3
 * [RubyGems] >= 1.8
 * [thor] ~> 0.18
 * [bundler] ~> 1.2
