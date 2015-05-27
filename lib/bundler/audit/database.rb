@@ -19,6 +19,7 @@ require 'bundler/audit/advisory'
 
 require 'time'
 require 'yaml'
+require 'git'
 
 module Bundler
   module Audit
@@ -37,8 +38,11 @@ module Bundler
       # Timestamp for when the database was last updated
       VENDORED_TIMESTAMP = Time.parse(File.read("#{VENDORED_PATH}.ts")).utc
 
+      # Path to the user's local share directory
+      LOCAL_SHARE_PATH = File.expand_path(File.join(ENV['HOME'],'.local','share'))
+
       # Path to the user's copy of the ruby-advisory-db
-      USER_PATH = File.expand_path(File.join(ENV['HOME'],'.local','share','ruby-advisory-db'))
+      USER_PATH = File.join(LOCAL_SHARE_PATH,'ruby-advisory-db')
 
       # The path to the advisory database
       attr_reader :path
@@ -68,7 +72,7 @@ module Bundler
       #
       def self.path
         if File.directory?(USER_PATH)
-          t1 = Dir.chdir(USER_PATH) { Time.parse(`git log --pretty="%cd" -1`) }
+          t1 = Git.open(USER_PATH).log.first.date
           t2 = VENDORED_TIMESTAMP
 
           if t1 >= t2 then USER_PATH
@@ -93,10 +97,11 @@ module Bundler
       def self.update!
         if File.directory?(USER_PATH)
           Dir.chdir(USER_PATH) do
-            system 'git', 'pull', 'origin', 'master'
+            Git.open(USER_PATH).pull('origin', 'master')
           end
         else
-          system 'git', 'clone', URL, USER_PATH
+          FileUtils.mkdir_p(LOCAL_SHARE_PATH)
+          Git.clone(URL, 'ruby-advisory-db', :path => LOCAL_SHARE_PATH)
         end
       end
 
