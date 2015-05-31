@@ -16,7 +16,7 @@ describe "CLI" do
     end
 
     it "should print a warning" do
-      subject.should include("Vulnerabilities found!")
+      expect(subject).to include("Vulnerabilities found!")
     end
 
     it "should print advisory information for the vulnerable gems" do
@@ -46,7 +46,7 @@ Solution: upgrade to ((~>|=>) \d+.\d+.\d+, )*(~>|=>) \d+.\d+.\d+[\s\n]*?)+/
     end
 
     it "should not print advisory information for ignored gem" do
-      subject.should_not include("OSVDB-89026")
+      expect(subject).not_to include("OSVDB-89026")
     end
   end
 
@@ -59,7 +59,7 @@ Solution: upgrade to ((~>|=>) \d+.\d+.\d+, )*(~>|=>) \d+.\d+.\d+[\s\n]*?)+/
     end
 
     it "should print warnings about insecure sources" do
-      subject.should include(%{
+      expect(subject).to include(%{
 Insecure Source URI found: git://github.com/rails/jquery-rails.git
 Insecure Source URI found: http://rubygems.org/
       }.strip)
@@ -75,7 +75,7 @@ Insecure Source URI found: http://rubygems.org/
     end
 
     it "should print nothing when everything is fine" do
-      subject.strip.should == "No vulnerabilities found"
+      expect(subject.strip).to eq("No vulnerabilities found")
     end
   end
 end

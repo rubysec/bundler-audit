@@ -13,12 +13,12 @@ describe Scanner do
 
       subject.scan { |result| results << result }
 
-      results.should_not be_empty
+      expect(results).not_to be_empty
     end
 
     context "when not called with a block" do
       it "should return an Enumerator" do
-        subject.scan.should be_kind_of(Enumerable)
+        expect(subject.scan).to be_kind_of(Enumerable)
       end
     end
   end
@@ -31,9 +31,9 @@ describe Scanner do
     subject { scanner.scan.to_a }
 
     it "should match unpatched gems to their advisories" do
-      subject.all? { |result|
+      expect(subject.all? { |result|
         result.advisory.vulnerable?(result.gem.version)
-      }.should be_true
+      }).to be_truthy
     end
 
     context "when the :ignore option is given" do
@@ -42,7 +42,7 @@ describe Scanner do
       it "should ignore the specified advisories" do
         ids = subject.map { |result| result.advisory.id }
         
-        ids.should_not include('OSVDB-89026')
+        expect(ids).not_to include('OSVDB-89026')
       end
     end
   end
@@ -55,8 +55,8 @@ describe Scanner do
     subject { scanner.scan.to_a }
 
     it "should match unpatched gems to their advisories" do
-      subject[0].source.should == 'git://github.com/rails/jquery-rails.git'
-      subject[1].source.should == 'http://rubygems.org/'
+      expect(subject[0].source).to eq('git://github.com/rails/jquery-rails.git')
+      expect(subject[1].source).to eq('http://rubygems.org/')
     end
   end
 
@@ -68,7 +68,7 @@ describe Scanner do
     subject { scanner.scan.to_a }
 
     it "should print nothing when everything is fine" do
-      subject.should be_empty
+      expect(subject).to be_empty
     end
   end
 end
