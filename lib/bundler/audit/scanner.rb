@@ -153,6 +153,14 @@ module Bundler
 
       private
 
+      #
+      # Determines whether a URI is internal.
+      #
+      # @param [String] uri
+      #   The source URI.
+      #
+      # @return [Boolean]
+      #
       def internal_host?(uri)
         return unless host = URI.parse(uri).host
         Resolv.getaddresses(host).all? { |ip| internal_ip?(ip) }
@@ -169,6 +177,14 @@ module Bundler
         fc00::/7
       ].map(&IPAddr.method(:new))
 
+      #
+      # Determines whether an IP is internal.
+      #
+      # @param [String] ip
+      #   The IPv4/IPv6 address.
+      #
+      # @return [Boolean]
+      #
       def internal_ip?(ip)
         INTERNAL_SUBNETS.any? { |subnet| subnet.include?(ip) }
       end
