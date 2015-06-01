@@ -116,8 +116,6 @@ module Bundler
 
       def internal_ip?(ip)
         INTERNAL_SUBNETS.any? { |subnet| subnet.include?(ip) }
-      rescue Resolv::ResolvError
-        false
       end
     end
   end
