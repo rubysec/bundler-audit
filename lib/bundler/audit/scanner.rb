@@ -62,11 +62,39 @@ module Bundler
       # @return [Enumerator]
       #   If no block is given, an Enumerator will be returned.
       #
-      def scan(options={})
-        return enum_for(__method__,options) unless block_given?
+      def scan(options={},&block)
+        return enum_for(__method__,options) unless block
 
         ignore = Set[]
         ignore += options[:ignore] if options[:ignore]
+
+        scan_sources(options,&block)
+        scan_specs(options,&block)
+
+        return self
+      end
+
+      #
+      # Scans the gem sources in the lockfile.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @yield [result]
+      #   The given block will be passed the results of the scan.
+      #
+      # @yieldparam [InsecureSource] result
+      #   A result from the scan.
+      #
+      # @return [Enumerator]
+      #   If no block is given, an Enumerator will be returned.
+      #
+      # @api semipublic
+      #
+      # @since 0.4.0
+      #
+      def scan_sources(options={})
+        return enum_for(__method__,options) unless block_given?
 
         @lockfile.sources.map do |source|
           case source
@@ -84,6 +112,35 @@ module Bundler
             end
           end
         end
+      end
+
+      #
+      # Scans the gem sources in the lockfile.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
+      # @yield [result]
+      #   The given block will be passed the results of the scan.
+      #
+      # @yieldparam [UnpatchedGem] result
+      #   A result from the scan.
+      #
+      # @return [Enumerator]
+      #   If no block is given, an Enumerator will be returned.
+      #
+      # @api semipublic
+      #
+      # @since 0.4.0
+      #
+      def scan_specs(options={})
+        return enum_for(__method__,options) unless block_given?
+
+        ignore = Set[]
+        ignore += options[:ignore] if options[:ignore]
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
@@ -92,8 +149,6 @@ module Bundler
             end
           end
         end
-
-        return self
       end
 
       private
