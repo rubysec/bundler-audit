@@ -112,7 +112,7 @@ module Bundler
         172.16.0.0/12
         192.168.0.0/16
         fc00::/7
-      ].map { |cidr| IPAddr.new(cidr) }
+      ].map(&IPAddr.method(:new))
 
       def internal_ip?(ip)
         INTERNAL_SUBNETS.any? { |subnet| subnet.include?(ip) }
