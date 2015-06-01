@@ -168,8 +168,10 @@ module Bundler
         false
       end
 
-      # IPv4: https://tools.ietf.org/html/rfc1918#section-3
-      # IPv6: https://tools.ietf.org/html/rfc4193#section-8
+      # List of internal IP address ranges.
+      #
+      # @see https://tools.ietf.org/html/rfc1918#section-3
+      # @see https://tools.ietf.org/html/rfc4193#section-8
       INTERNAL_SUBNETS = %w[
         10.0.0.0/8
         172.16.0.0/12
