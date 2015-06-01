@@ -2,7 +2,10 @@ require 'bundler'
 require 'bundler/audit/database'
 require 'bundler/lockfile_parser'
 
+require 'ipaddr'
+require 'resolv'
 require 'set'
+require 'uri'
 
 module Bundler
   module Audit
@@ -70,6 +73,7 @@ module Bundler
           when Source::Git
             case source.uri
             when /^git:/, /^http:/
+              next if internal_host?(source.uri)
               yield InsecureSource.new(source.uri)
             end
           when Source::Rubygems
@@ -92,6 +96,29 @@ module Bundler
         return self
       end
 
+      private
+
+      def internal_host?(uri)
+        return unless host = URI.parse(uri).host
+        Resolv.getaddresses(host).all? { |ip| internal_ip?(ip) }
+      rescue URI::Error
+        false
+      end
+
+      # IPv4: https://tools.ietf.org/html/rfc1918#section-3
+      # IPv6: https://tools.ietf.org/html/rfc4193#section-8
+      INTERNAL_SUBNETS = %w[
+        10.0.0.0/8
+        172.16.0.0/12
+        192.168.0.0/16
+        fc00::/7
+      ].map { |cidr| IPAddr.new(cidr) }
+
+      def internal_ip?(ip)
+        INTERNAL_SUBNETS.any? { |subnet| subnet.include?(ip) }
+      rescue Resolv::ResolvError
+        false
+      end
     end
   end
 end
