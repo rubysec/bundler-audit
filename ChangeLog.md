@@ -4,6 +4,8 @@
 * Added {Bundler::Audit::Advisory#osvdb}.
 * Resolve the IP addresses of gem sources and ignore intranet gem sources.
   (PR #90)
+* Use ISO8601 date format when querying the git timestamp of ruby-advisory-db.
+  (PR #92)
 
 #### CLI
 
