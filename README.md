@@ -125,7 +125,7 @@ Ignore specific advisories:
 
 ## License
 
-Copyright (c) 2013-2014 Hal Brodigan (postmodern.mod3 at gmail.com)
+Copyright (c) 2013-2015 Hal Brodigan (postmodern.mod3 at gmail.com)
 
 bundler-audit is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
