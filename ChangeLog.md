@@ -1,3 +1,16 @@
+### 0.4.0 / 2015-06-22
+
+* Require ruby >= 1.9.3 due to i18n gem deprecating < 1.9.3.
+* Added {Bundler::Audit::Advisory#osvdb}.
+* Resolve the IP addresses of gem sources and ignore intranet gem sources.
+  (PR #90)
+
+#### CLI
+
+* Print the CVE or OSVDB id.
+* No longer print "Unpatched versions found!" when an insecure gem source
+  is detected. (PR #84)
+
 ### 0.3.1 / 2014-04-20
 
 * Added thor ~> 0.18 as a dependency.
