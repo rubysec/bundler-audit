@@ -1,4 +1,4 @@
-### 0.4.0 / 2015-06-22
+### 0.4.0 / 2015-06-30
 
 * Require ruby >= 1.9.3 due to i18n gem deprecating < 1.9.3.
 * Added {Bundler::Audit::Advisory#osvdb}.
