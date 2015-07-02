@@ -91,11 +91,7 @@ module Bundler
 
         say "Advisory: ", :red
 
-        if advisory.cve
-          say "CVE-#{advisory.cve}"
-        elsif advisory.osvdb
-          say advisory.osvdb
-        end
+        say advisory.id
 
         say "Criticality: ", :red
         case advisory.criticality
