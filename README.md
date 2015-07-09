@@ -123,6 +123,22 @@ Ignore specific advisories:
 
     $ gem install bundler-audit
 
+## Non-CLI Usage
+
+Besides using `bundle-audit` on the command line you can use it programmatically, too. This is especially interesting if you want to audit several repositories at once.
+
+    #!/usr/bin/env ruby
+    
+    require 'bundler/audit/scanner'
+    
+    %w(/path/to/ruby/repo1 /path/to/ruby/repo2).each do |repo_path|
+      puts "------------- #{repo}"
+      scanner = Bundler::Audit::Scanner.new(repo_path)
+      scanner.scan() do |result|
+        puts result
+      end
+    end
+
 ## License
 
 Copyright (c) 2013-2015 Hal Brodigan (postmodern.mod3 at gmail.com)

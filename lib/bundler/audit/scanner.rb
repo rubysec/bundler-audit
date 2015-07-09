@@ -1,5 +1,7 @@
 require 'bundler'
 require 'bundler/audit/database'
+require 'bundler/audit/unpatched_gem'
+require 'bundler/audit/insecure_source'
 require 'bundler/lockfile_parser'
 
 require 'ipaddr'
@@ -10,12 +12,6 @@ require 'uri'
 module Bundler
   module Audit
     class Scanner
-
-      # Represents a plain-text source
-      InsecureSource = Struct.new(:source)
-
-      # Represents a gem that is covered by an Advisory
-      UnpatchedGem = Struct.new(:gem, :advisory)
 
       # The advisory database
       #
@@ -145,7 +141,7 @@ module Bundler
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
             unless ignore.include?(advisory.id)
-              yield UnpatchedGem.new(gem,advisory)
+              yield UnpatchedGem.new(gem,advisory,options[:verbose])
             end
           end
         end
