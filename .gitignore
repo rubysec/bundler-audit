@@ -1,6 +1,6 @@
 .ruby-version
 .ruby-gemset
-Gemfile.lock
+/Gemfile.lock
 doc/
 .yardoc/
 coverage/
