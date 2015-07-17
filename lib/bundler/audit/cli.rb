@@ -29,12 +29,12 @@ module Bundler
       default_task :check
       map '--version' => :version
 
-      desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
+      desc 'check PATH', 'Checks PATH for insecure dependencies. If PATH is a directory, check PATH/Gemfile.lock'
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
 
-      def check
-        scanner    = Scanner.new
+      def check(path=Dir.pwd)
+        scanner    = Scanner.new(path)
         vulnerable = false
 
         scanner.scan(:ignore => options.ignore) do |result|
