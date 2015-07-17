@@ -33,15 +33,18 @@ module Bundler
       #
       # Initializes a scanner.
       #
-      # @param [String] root
-      #   The path to the project root.
+      # @param [String] path
+      #   The path to the project root or a Gemfile.lock.
       #
-      def initialize(root=Dir.pwd)
-        @root     = File.expand_path(root)
+      def initialize(path=Dir.pwd)
+        path = File.expand_path(path)
+        if File.directory?(path)
+          path = File.join(path, "Gemfile.lock")
+        end
+
+        @root = File.dirname(path)
         @database = Database.new
-        @lockfile = LockfileParser.new(
-          File.read(File.join(@root,'Gemfile.lock'))
-        )
+        @lockfile = LockfileParser.new(File.read(path))
       end
 
       #
