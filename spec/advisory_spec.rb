@@ -24,10 +24,10 @@ describe Bundler::Audit::Advisory do
     }.flatten.first
   end
 
+  subject { described_class.load(path) }
+
   describe "load" do
     let(:data) { YAML.load_file(path) }
-
-    subject { described_class.load(path) }
 
     describe '#id' do
       subject { super().id }
@@ -106,8 +106,6 @@ describe Bundler::Audit::Advisory do
   end
 
   describe "#unaffected?" do
-    subject { described_class.load(path) }
-
     context "when passed a version that matches one unaffected version" do
       let(:version) { Gem::Version.new(an_unaffected_version) }
 
@@ -126,8 +124,6 @@ describe Bundler::Audit::Advisory do
   end
 
   describe "#patched?" do
-    subject { described_class.load(path) }
-
     context "when passed a version that matches one patched version" do
       let(:version) { Gem::Version.new('3.1.11') }
 
@@ -146,8 +142,6 @@ describe Bundler::Audit::Advisory do
   end
 
   describe "#vulnerable?" do
-    subject { described_class.load(path) }
-
     context "when passed a version that matches one patched version" do
       let(:version) { Gem::Version.new('3.1.11') }
 
