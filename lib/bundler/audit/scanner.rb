@@ -101,13 +101,15 @@ module Bundler
           when Source::Git
             case source.uri
             when /^git:/, /^http:/
-              next if internal_host?(source.uri)
+              next if internal_source?(source.uri)
+
               yield InsecureSource.new(source.uri)
             end
           when Source::Rubygems
             source.remotes.each do |uri|
               if uri.scheme == 'http'
-                next if internal_host?(uri.to_s)
+                next if internal_source?(uri)
+
                 yield InsecureSource.new(uri.to_s)
               end
             end
@@ -155,15 +157,28 @@ module Bundler
       private
 
       #
-      # Determines whether a URI is internal.
+      # Determines whether a source is internal.
       #
-      # @param [String] uri
-      #   The source URI.
+      # @param [URI, String] uri
+      #   The URI.
       #
       # @return [Boolean]
       #
-      def internal_host?(uri)
-        return unless host = URI.parse(uri).host
+      def internal_source?(uri)
+        uri = URI(uri)
+
+        internal_host?(uri.host) if uri.host
+      end
+
+      #
+      # Determines whether a host is internal.
+      #
+      # @param [String] host
+      #   The hostname.
+      #
+      # @return [Boolean]
+      #
+      def internal_host?(host)
         Resolv.getaddresses(host).all? { |ip| internal_ip?(ip) }
       rescue URI::Error
         false
