@@ -120,28 +120,33 @@ describe Bundler::Audit::Advisory do
 
   describe "#criticality" do
     context "when cvss_v2 is between 0.0 and 3.3" do
-      before {
-        @advisory = Advisory.new
-        @advisory.cvss_v2 = 3.3
-      }
-      it { expect(@advisory.criticality).to eq(:low) }
+      subject do
+        described_class.new.tap do |advisory|
+          advisory.cvss_v2 = 3.3
+        end
+      end
+
+      it { expect(subject.criticality).to eq(:low) }
     end
 
     context "when cvss_v2 is between 3.3 and 6.6" do
-      before {
-        @advisory = Advisory.new
-        @advisory.cvss_v2 = 6.6
-      }
-      it { expect(@advisory.criticality).to eq(:medium) }
+      subject do
+        described_class.new.tap do |advisory|
+          advisory.cvss_v2 = 6.6
+        end
+      end
 
+      it { expect(subject.criticality).to eq(:medium) }
     end
 
     context "when cvss_v2 is between 6.6 and 10.0" do
-     before {
-        @advisory = Advisory.new
-        @advisory.cvss_v2 = 10.0
-      }
-      it { expect(@advisory.criticality).to eq(:high) }
+      subject do
+        described_class.new.tap do |advisory|
+          advisory.cvss_v2 = 10.0
+        end
+      end
+
+      it { expect(subject.criticality).to eq(:high) }
     end
   end
 
