@@ -78,6 +78,46 @@ describe Bundler::Audit::Advisory do
     end
   end
 
+  describe "#cve_id" do
+    let(:cve) { "2015-1234" }
+
+    subject do
+      described_class.new.tap do |advisory|
+        advisory.cve = cve
+      end
+    end
+
+    it "should prepend CVE- to the CVE id" do
+      expect(subject.cve_id).to be == "CVE-#{cve}"
+    end
+
+    context "when cve is nil" do
+      subject { described_class.new }
+
+      it { expect(subject.cve_id).to be_nil }
+    end
+  end
+
+  describe "#osvdb_id" do
+    let(:osvdb) { "123456" }
+
+    subject do
+      described_class.new.tap do |advisory|
+        advisory.osvdb = osvdb
+      end
+    end
+
+    it "should prepend OSVDB- to the OSVDB id" do
+      expect(subject.osvdb_id).to be == "OSVDB-#{osvdb}"
+    end
+
+    context "when cve is nil" do
+      subject { described_class.new }
+
+      it { expect(subject.osvdb_id).to be_nil }
+    end
+  end
+
   describe "#criticality" do
     context "when cvss_v2 is between 0.0 and 3.3" do
       before {

@@ -69,6 +69,24 @@ module Bundler
       end
 
       #
+      # The CVE identifier.
+      # 
+      # @return [String, nil]
+      #
+      def cve_id
+        "CVE-#{cve}" if cve
+      end
+
+      #
+      # The OSVDB identifier.
+      #
+      # @return [String, nil]
+      #
+      def osvdb_id
+        "OSVDB-#{osvdb}" if osvdb
+      end
+
+      #
       # Determines how critical the vulnerability is.
       #
       # @return [:low, :medium, :high]
