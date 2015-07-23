@@ -107,9 +107,7 @@ module Bundler
             end
           when Source::Rubygems
             source.remotes.each do |uri|
-              if uri.scheme == 'http'
-                next if internal_source?(uri)
-
+              if (uri.scheme == 'http' && !internal_source?(uri))
                 yield InsecureSource.new(uri.to_s)
               end
             end
