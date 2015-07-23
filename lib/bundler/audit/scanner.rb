@@ -101,9 +101,9 @@ module Bundler
           when Source::Git
             case source.uri
             when /^git:/, /^http:/
-              next if internal_source?(source.uri)
-
-              yield InsecureSource.new(source.uri)
+              unless internal_source?(source.uri)
+                yield InsecureSource.new(source.uri)
+              end
             end
           when Source::Rubygems
             source.remotes.each do |uri|
