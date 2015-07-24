@@ -90,13 +90,17 @@ module Bundler
       #
       # @since 0.3.0
       #
-      def self.update!
+      def self.update!(quiet = false)
         if File.directory?(USER_PATH)
           Dir.chdir(USER_PATH) do
-            system 'git', 'pull', 'origin', 'master'
+            cmd = ['git', 'pull', 'origin', 'master']
+            cmd << '--quiet' if quiet
+            system *cmd
           end
         else
-          system 'git', 'clone', URL, USER_PATH
+          cmd = ['git', 'clone', URL, USER_PATH]
+          cmd << '--quiet' if quiet
+          system *cmd
         end
       end
 

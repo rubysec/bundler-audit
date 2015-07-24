@@ -49,6 +49,20 @@ describe Bundler::Audit::Database do
       Bundler::Audit::Database.update!
       expect(File.directory?(mocked_user_path)).to be true
     end
+
+    it "should pass the quiet command through" do
+      expect(Bundler::Audit::Database).
+        to receive(:system).
+        with('git', 'clone', Bundler::Audit::Database::VENDORED_PATH, mocked_user_path, '--quiet').
+        and_call_original
+      Bundler::Audit::Database.update!(true)
+
+      expect(Bundler::Audit::Database).
+        to receive(:system).
+        with('git', 'pull', 'origin', 'master', '--quiet').
+        and_call_original
+      Bundler::Audit::Database.update!(true)
+    end
   end
 
   describe "#initialize" do

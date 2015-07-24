@@ -33,9 +33,10 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :quiet, :type => :boolean, :aliases => '-q', default: false
 
       def check
-        update if options[:update]
+        update(options[:quiet]) if options[:update]
 
         scanner    = Scanner.new
         vulnerable = false
@@ -60,10 +61,10 @@ module Bundler
       end
 
       desc 'update', 'Updates the ruby-advisory-db'
-      def update
+      def update(quiet = false)
         say "Updating ruby-advisory-db ..."
 
-        Database.update!
+        Database.update!(quiet)
         puts "ruby-advisory-db: #{Database.new.size} advisories"
       end
 
