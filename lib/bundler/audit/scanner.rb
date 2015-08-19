@@ -22,9 +22,6 @@ module Bundler
       # @return [Database]
       attr_reader :database
 
-      # Project root directory
-      attr_reader :root
-
       # The parsed `Gemfile.lock` from the project
       #
       # @return [Bundler::LockfileParser]
@@ -33,15 +30,12 @@ module Bundler
       #
       # Initializes a scanner.
       #
-      # @param [String] root
+      # @param [String] lockfile_content
       #   The path to the project root.
       #
-      def initialize(root=Dir.pwd)
-        @root     = File.expand_path(root)
+      def initialize(lockfile_content)
         @database = Database.new
-        @lockfile = LockfileParser.new(
-          File.read(File.join(@root,'Gemfile.lock'))
-        )
+        @lockfile = LockfileParser.new(lockfile_content)
       end
 
       #

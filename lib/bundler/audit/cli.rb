@@ -34,7 +34,8 @@ module Bundler
       method_option :ignore, :type => :array, :aliases => '-i'
 
       def check
-        scanner    = Scanner.new
+        root = File.expand_path(Dir.pwd)
+        scanner = Scanner.new(File.read(File.join(root, 'Gemfile.lock')))
         vulnerable = false
 
         scanner.scan(:ignore => options.ignore) do |result|
