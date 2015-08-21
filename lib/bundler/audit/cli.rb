@@ -41,13 +41,12 @@ module Bundler
         scanner    = Scanner.new
         vulnerable = false
 
-        scanner.scan(:ignore => options.ignore,
-                     :ignore_insecure_sources => options.ignore_insecure_sources
-                    ) do |result|
+        scanner.scan(:ignore => options.ignore) do |result|
           vulnerable = true
 
           case result
           when Scanner::InsecureSource
+            vulnerable = false if options[:ignore_insecure_sources]
             print_warning "Insecure Source URI found: #{result.source}"
           when Scanner::UnpatchedGem
             print_advisory result.gem, result.advisory

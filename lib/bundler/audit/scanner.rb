@@ -68,7 +68,7 @@ module Bundler
         ignore = Set[]
         ignore += options[:ignore] if options[:ignore]
 
-        scan_sources(options,&block) unless options[:ignore_insecure_sources]
+        scan_sources(options,&block)
         scan_specs(options,&block)
 
         return self
