@@ -39,8 +39,15 @@ module Bundler
       def initialize(root=Dir.pwd)
         @root     = File.expand_path(root)
         @database = Database.new
+
+        @file = if File.exists? File.join(@root,'Gemfile.lock')
+          File.join(@root,'Gemfile.lock')
+        elsif File.exists? File.join(@root,'gems.locked')
+          File.join(@root,'gems.locked')
+        end
+
         @lockfile = LockfileParser.new(
-          File.read(File.join(@root,'Gemfile.lock'))
+          File.read(@file)
         )
       end
 
