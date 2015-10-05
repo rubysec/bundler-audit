@@ -110,7 +110,7 @@ Update the [ruby-advisory-db] that `bundle-audit` uses:
 
 Update the [ruby-advisory-db] and check `Gemfile.lock` (useful for CI runs):
 
-    $ bundle-audit check --update
+    $ bundle-audit update && bundle-audit check
 
 Ignore specific advisories:
 
