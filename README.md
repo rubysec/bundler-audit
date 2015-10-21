@@ -146,6 +146,15 @@ end
 task default: 'bundle:audit'
 ```
 
+Rake task:
+
+```ruby
+require_relative 'lib/bundler/audit/task'
+Bundler::Audit::Task.new
+
+task default: 'bundle:audit'
+```
+
 ## Requirements
 
 * [Ruby] >= 1.9.3
