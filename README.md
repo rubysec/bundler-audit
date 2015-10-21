@@ -128,6 +128,15 @@ task default: 'bundle:audit'
 Rake task:
 
 ```ruby
+require_relative 'lib/bundler/audit/task'
+Bundler::Audit::Task.new
+
+task default: 'bundle:audit'
+```
+
+Rake task:
+
+```ruby
 # Overriding the default task with one that accepts the output file
 # Can be invoked as: rake bundler:audit\[bundler-audit-report.html\]
 namespace :bundler do
