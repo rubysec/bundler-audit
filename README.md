@@ -119,7 +119,7 @@ Ignore specific advisories:
 Rake task:
 
 ```ruby
-require 'bundler/audit/task'
+require_relative 'lib/bundler/audit/task'
 Bundler::Audit::Task.new
 
 task default: 'bundle:audit'
