@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'bundler/audit/database'
 require 'bundler/audit/advisory'
 
@@ -204,7 +203,7 @@ describe Bundler::Audit::Advisory do
 
       context "when unaffected_versions is not empty" do
         subject { described_class.load(path) }
-     
+
         context "when passed a version that matches one unaffected version" do
           let(:version) { Gem::Version.new(an_unaffected_version) }
 
