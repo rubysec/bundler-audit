@@ -3,8 +3,14 @@ require 'spec_helper'
 describe "CLI" do
   include Helpers
 
+  # The matrix build includes versions of Ruby with advisories. Always ignore
+  # them.
+  let(:ignore) do
+    '-i CVE-2014-2525 CVE-2014-3916 CVE-2014-4975 CVE-2015-1855 CVE-2015-3900 CVE-2015-4020'
+  end
+
   let(:command) do
-    File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundle-audit'))
+    File.expand_path(File.join(File.dirname(__FILE__),'..','bin',"bundle-audit #{ignore}"))
   end
 
   context "when auditing a bundle with unpatched gems" do
@@ -38,7 +44,7 @@ Solution: upgrade to ((~>|=>) \d+.\d+.\d+, )*(~>|=>) \d+.\d+.\d+[\s\n]*?)+/
     let(:directory) { File.join('spec','bundle',bundle) }
 
     let(:command) do
-      File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundle-audit -i OSVDB-89026'))
+      File.expand_path(File.join(File.dirname(__FILE__),'..','bin',"bundle-audit #{ignore} OSVDB-89026"))
     end
 
     subject do
