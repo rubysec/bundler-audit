@@ -89,7 +89,7 @@ describe Bundler::Audit::Database do
     end
 
     context "when given a block" do
-      it "should yield every advisory effecting the gem" do
+      it "should yield every advisory affecting the gem" do
         advisories = []
 
         subject.check_gem(gem) do |advisory|
@@ -116,7 +116,7 @@ describe Bundler::Audit::Database do
     let(:library) { Bundler::Audit::Scanner::Version.new('rubygems','2.4.5') }
 
     context "when given a block" do
-      it "should yield every advisory effecting the library" do
+      it "should yield every advisory affecting the library" do
         advisories = []
 
         subject.check_library(library) do |advisory|
@@ -143,7 +143,7 @@ describe Bundler::Audit::Database do
     let(:ruby) { Bundler::Audit::Scanner::Version.new('ruby','2.2.1') }
 
     context "when given a block" do
-      it "should yield every advisory effecting the Ruby version" do
+      it "should yield every advisory affecting the Ruby version" do
         advisories = []
 
         subject.check_ruby(ruby) do |advisory|

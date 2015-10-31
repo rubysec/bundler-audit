@@ -150,17 +150,17 @@ module Bundler
       end
 
       #
-      # Verifies whether the gem is effected by any advisories.
+      # Verifies whether the gem is affected by any advisories.
       #
       # @param [Gem::Specification] gem
       #   The gem to verify.
       #
       # @yield [advisory]
-      #   If a block is given, it will be passed advisories that effect
+      #   If a block is given, it will be passed advisories that affect
       #   the gem.
       #
       # @yieldparam [Advisory] advisory
-      #   An advisory that effects the specific version of the gem.
+      #   An advisory that affects the specific version of the gem.
       #
       # @return [Enumerator]
       #   If no block is given, an Enumerator will be returned.
@@ -170,17 +170,17 @@ module Bundler
       end
 
       #
-      # Verifies whether the Ruby is effected by any advisories.
+      # Verifies whether the Ruby is affected by any advisories.
       #
       # @param [Bundler::Audit::Scanner::Version] ruby
       #   The Ruby engine and version to verify.
       #
       # @yield [advisory]
-      #   If a block is given, it will be passed advisories that effect
+      #   If a block is given, it will be passed advisories that affect
       #   the Ruby.
       #
       # @yieldparam [Advisory] advisory
-      #   An advisory that effects the specific version of the Ruby.
+      #   An advisory that affects the specific version of the Ruby.
       #
       # @return [Enumerator]
       #   If no block is given, an Enumerator will be returned.
@@ -192,17 +192,17 @@ module Bundler
       end
 
       #
-      # Verifies whether the library is effected by any advisories.
+      # Verifies whether the library is affected by any advisories.
       #
       # @param [Bundler::Audit::Scanner::Version] library
       #   The library to verify.
       #
       # @yield [advisory]
-      #   If a block is given, it will be passed advisories that effect
+      #   If a block is given, it will be passed advisories that affect
       #   the Ruby.
       #
       # @yieldparam [Advisory] advisory
-      #   An advisory that effects the specific version of the Ruby.
+      #   An advisory that affects the specific version of the Ruby.
       #
       # @return [Enumerator]
       #   If no block is given, an Enumerator will be returned.
@@ -246,7 +246,7 @@ module Bundler
       protected
 
       #
-      # Verifies whether the object is effected by any advisories.
+      # Verifies whether the object is affected by any advisories.
       #
       # @param [Class] object
       #   The object to verify. This should be a class with name and version
@@ -256,11 +256,11 @@ module Bundler
       #   The advisory type; one of gems, libraries, or rubies.
       #
       # @yield [advisory]
-      #   If a block is given, it will be passed advisories that effect
+      #   If a block is given, it will be passed advisories that affect
       #   the gem.
       #
       # @yieldparam [Advisory] advisory
-      #   An advisory that effects the specific version of the gem.
+      #   An advisory that affects the specific version of the gem.
       #
       # @return [Enumerator]
       #   If no block is given, an Enumerator will be returned.
