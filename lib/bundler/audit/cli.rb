@@ -90,7 +90,13 @@ module Bundler
       def update
         say "Updating ruby-advisory-db ..."
 
-        Database.update!
+        if Database.update!
+          say "Updated ruby-advisory-db", :green
+        else
+          say "Failed updating ruby-advisory-db!", :red
+          exit 1
+        end
+
         puts "ruby-advisory-db: #{Database.new.size} advisories"
       end
 
