@@ -70,7 +70,7 @@ module Bundler
 
       #
       # The CVE identifier.
-      # 
+      #
       # @return [String, nil]
       #
       def cve_id
@@ -84,6 +84,15 @@ module Bundler
       #
       def osvdb_id
         "OSVDB-#{osvdb}" if osvdb
+      end
+
+      #
+      # Formatted identifier used for output
+      #
+      # @return [String, nil]
+      #
+      def pretty_id
+        cve_id || osvdb_id
       end
 
       #
