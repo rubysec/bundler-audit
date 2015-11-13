@@ -48,7 +48,7 @@ describe Scanner do
 
     context "with ignore file" do
       let(:bundle)    { 'unpatched_gems_with_ignore' }
-      let(:ignorefile_path) { File.join(directory, '.bundlerauditignore') }
+      let(:ignorefile_path) { File.join(directory, described_class::IGNOREFILE_NAME) }
       let(:advisories_to_ignore) { File.read(ignorefile_path).split }
 
       it "should ignore the specified advisories" do
@@ -56,6 +56,20 @@ describe Scanner do
 
         advisories_to_ignore.each do |advisory_to_ignore|
           expect(ids).not_to include(advisory_to_ignore)
+        end
+      end
+
+      # this example is here to make sure the previous example is not a false positive
+      it "should not ignore the advisories when ignore file is not present" do
+        # stubs out file call to bypass the ignore file
+        allow(File).to receive(:exist?).with(
+          a_string_ending_with(described_class::IGNOREFILE_NAME)
+        ) { false }
+
+        ids = subject.map { |result| result.advisory.id }
+
+        advisories_to_ignore.each do |advisory_to_ignore|
+          expect(ids).to include(advisory_to_ignore)
         end
       end
     end
