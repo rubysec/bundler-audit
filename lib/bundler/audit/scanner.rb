@@ -65,9 +65,6 @@ module Bundler
       def scan(options={},&block)
         return enum_for(__method__,options) unless block
 
-        ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
-
         scan_sources(options,&block)
         scan_specs(options,&block)
 
