@@ -40,7 +40,7 @@ namespace :spec do
   task :bundle do
     root = 'spec/bundle'
 
-    %w[secure unpatched_gems insecure_sources].each do |bundle|
+    %w[secure unpatched_gems insecure_sources unpatched_gems_with_ignore].each do |bundle|
       chdir(File.join(root,bundle)) do
         sh 'unset BUNDLE_BIN_PATH BUNDLE_GEMFILE RUBYOPT && bundle install --path ../../../vendor/bundle'
       end
@@ -53,5 +53,5 @@ task :test    => :spec
 task :default => :spec
 
 require 'yard'
-YARD::Rake::YardocTask.new  
+YARD::Rake::YardocTask.new
 task :doc => :yard
