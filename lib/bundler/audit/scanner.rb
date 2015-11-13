@@ -177,7 +177,20 @@ module Bundler
 
         @ignore = Set[]
         @ignore += options[:ignore] if options[:ignore]
+        @ignore += ignored_advisories_from_file
         @ignore
+      end
+
+      #
+      # Computes which advisories to ignore from ignore file if it exists
+      #
+      # @return [Array<String>]
+      #
+      def ignored_advisories_from_file
+        ignorefile_path = File.join(@root,'.bundlerauditignore')
+        return [] unless File.exist?(ignorefile_path)
+
+        File.read(ignorefile_path).split
       end
 
       #

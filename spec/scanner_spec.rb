@@ -41,8 +41,22 @@ describe Scanner do
 
       it "should ignore the specified advisories" do
         ids = subject.map { |result| result.advisory.id }
-        
+
         expect(ids).not_to include('OSVDB-89026')
+      end
+    end
+
+    context "with ignore file" do
+      let(:bundle)    { 'unpatched_gems_with_ignore' }
+      let(:ignorefile_path) { File.join(directory, '.bundlerauditignore') }
+      let(:advisories_to_ignore) { File.read(ignorefile_path).split }
+
+      it "should ignore the specified advisories" do
+        ids = subject.map { |result| result.advisory.id }
+
+        advisories_to_ignore.each do |advisory_to_ignore|
+          expect(ids).not_to include(advisory_to_ignore)
+        end
       end
     end
   end
