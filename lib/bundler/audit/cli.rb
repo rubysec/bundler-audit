@@ -32,26 +32,33 @@ module Bundler
       desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
+      method_option :ignore_insecure_sources, :type => :array, :aliases => '-s', :default => []
       method_option :update, :type => :boolean, :aliases => '-u'
 
       def check
         update if options[:update]
 
         scanner    = Scanner.new
-        vulnerable = false
+        secure = true
 
         scanner.scan(:ignore => options.ignore) do |result|
-          vulnerable = true
 
           case result
           when Scanner::InsecureSource
-            print_warning "Insecure Source URI found: #{result.source}"
+            ignored = options.ignore_insecure_sources.include?(result.source.to_s)
+            secure &&= ignored
+
+            message = "Insecure Source URI found: #{result.source}"
+            message << ' - IGNORED' if ignored
+
+            print_warning message
           when Scanner::UnpatchedGem
+            secure = false
             print_advisory result.gem, result.advisory
           end
         end
 
-        if vulnerable
+        if !secure
           say "Vulnerabilities found!", :red
           exit 1
         else

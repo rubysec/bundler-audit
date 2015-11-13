@@ -66,6 +66,50 @@ Insecure Source URI found: http://rubygems.org/
     end
   end
 
+  context "when auditing a bundle with insecure sources uris" do
+    let(:bundle)    { 'patched_insecure_sources' }
+    let(:directory) { File.join('spec','bundle',bundle) }
+
+    let(:command) do
+      path = File.expand_path(File.join(File.dirname(__FILE__),'..','bin',"bundle-audit"))
+      path << " -s #{whitelisted_insecure_sources.join(' ')}"
+    end
+
+    context "and partially whitelisted" do
+      let(:whitelisted_insecure_sources) do
+        %w(git://github.com/rails/jquery-rails.git)
+      end
+
+      subject do
+        Dir.chdir(directory) { sh(command, :fail => true) }
+      end
+
+      it "should fail and print warnings about ignored insecure sources" do
+    expect(subject).to include(%{
+Insecure Source URI found: git://github.com/rails/jquery-rails.git - IGNORED
+Insecure Source URI found: http://rubygems.org/
+    }.strip)
+      end
+    end
+
+    context "and fully whitelisted" do
+      let(:whitelisted_insecure_sources) do
+        %w(git://github.com/rails/jquery-rails.git http://rubygems.org/)
+      end
+
+      subject do
+        Dir.chdir(directory) { sh(command) }
+      end
+
+      it "should pass and print warnings about ignored insecure sources" do
+    expect(subject).to include(%{
+Insecure Source URI found: git://github.com/rails/jquery-rails.git - IGNORED
+Insecure Source URI found: http://rubygems.org/ - IGNORED
+    }.strip)
+      end
+    end
+  end
+
   context "when auditing a secure bundle" do
     let(:bundle)    { 'secure' }
     let(:directory) { File.join('spec','bundle',bundle) }
