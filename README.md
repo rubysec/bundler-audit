@@ -31,7 +31,7 @@ Audit a projects `Gemfile.lock`:
     URL: http://www.osvdb.org/show/osvdb/91452
     Title: XSS vulnerability in sanitize_css in Action Pack
     Solution: upgrade to ~> 2.3.18, ~> 3.1.12, >= 3.2.13
-    
+
     Name: actionpack
     Version: 3.2.10
     Advisory: OSVDB-91454
@@ -39,7 +39,7 @@ Audit a projects `Gemfile.lock`:
     URL: http://osvdb.org/show/osvdb/91454
     Title: XSS Vulnerability in the `sanitize` helper of Ruby on Rails
     Solution: upgrade to ~> 2.3.18, ~> 3.1.12, >= 3.2.13
-    
+
     Name: actionpack
     Version: 3.2.10
     Advisory: OSVDB-89026
@@ -47,7 +47,7 @@ Audit a projects `Gemfile.lock`:
     URL: http://osvdb.org/show/osvdb/89026
     Title: Ruby on Rails params_parser.rb Action Pack Type Casting Parameter Parsing Remote Code Execution
     Solution: upgrade to ~> 2.3.15, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
-    
+
     Name: activerecord
     Version: 3.2.10
     Advisory: OSVDB-91453
@@ -55,7 +55,7 @@ Audit a projects `Gemfile.lock`:
     URL: http://osvdb.org/show/osvdb/91453
     Title: Symbol DoS vulnerability in Active Record
     Solution: upgrade to ~> 2.3.18, ~> 3.1.12, >= 3.2.13
-    
+
     Name: activerecord
     Version: 3.2.10
     Advisory: OSVDB-90072
@@ -63,7 +63,7 @@ Audit a projects `Gemfile.lock`:
     URL: http://direct.osvdb.org/show/osvdb/90072
     Title: Ruby on Rails Active Record attr_protected Method Bypass
     Solution: upgrade to ~> 2.3.17, ~> 3.1.11, >= 3.2.12
-    
+
     Name: activerecord
     Version: 3.2.10
     Advisory: OSVDB-89025
@@ -71,7 +71,7 @@ Audit a projects `Gemfile.lock`:
     URL: http://osvdb.org/show/osvdb/89025
     Title: Ruby on Rails Active Record JSON Parameter Parsing Query Bypass
     Solution: upgrade to ~> 2.3.16, ~> 3.0.19, ~> 3.1.10, >= 3.2.11
-    
+
     Name: activesupport
     Version: 3.2.10
     Advisory: OSVDB-91451
@@ -79,7 +79,7 @@ Audit a projects `Gemfile.lock`:
     URL: http://www.osvdb.org/show/osvdb/91451
     Title: XML Parsing Vulnerability affecting JRuby users
     Solution: upgrade to ~> 3.1.12, >= 3.2.13
-    
+
     Unpatched versions found!
 
 Update the [ruby-advisory-db] that `bundle-audit` uses:
@@ -115,6 +115,15 @@ Update the [ruby-advisory-db] and check `Gemfile.lock` (useful for CI runs):
 Ignore specific advisories:
 
     $ bundle-audit check --ignore OSVDB-108664
+
+Rake task:
+
+```ruby
+require_relative 'lib/bundler/audit/task'
+Bundler::Audit::Task.new
+
+task default: 'bundle:audit'
+```
 
 ## Requirements
 
