@@ -136,6 +136,30 @@ task default: 'bundle:audit'
 
     $ gem install bundler-audit
 
+## Developer Setup
+
+For contributors to bundler-audit, to setup your environment and run the test suite:
+
+```bash
+# Fork repo on GitHub, then ...
+git clone FORK_URL
+
+cd bundler-audit/
+
+bundle install
+
+bundle exec gem install bundler # (may be optional)
+
+# Clone the data/ruby-advisory-db submodule (required by tests)
+git submodule update --init
+
+# Update the data/ruby-advisory-db
+bundle exec rake db:update
+
+# Run specs
+bundle exec rake test
+```
+
 ## License
 
 Copyright (c) 2013-2015 Hal Brodigan (postmodern.mod3 at gmail.com)
