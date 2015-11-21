@@ -78,4 +78,26 @@ Insecure Source URI found: http://rubygems.org/
       expect(subject.strip).to eq("No vulnerabilities found")
     end
   end
+
+  describe "update" do
+
+    let(:update_command) { "#{command} update" }
+    let(:bundle)         { 'secure' }
+    let(:directory)      { File.join('spec','bundle',bundle) }
+
+    subject do
+      Dir.chdir(directory) { sh(update_command) }
+    end
+
+    context "when advisories update successfully" do
+      it "should print status" do
+        expect(subject).not_to include("Fail")
+        expect(subject).to include("Updating ruby-advisory-db ...\n")
+        expect(subject).to include("Updated ruby-advisory-db\n")
+        expect(subject.lines.to_a.last).to match(/ruby-advisory-db: [1-9]\d+ advisories/)
+      end
+    end
+
+  end
+
 end
