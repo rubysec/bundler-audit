@@ -23,6 +23,7 @@ module Bundler
                                 :id,
                                 :url,
                                 :title,
+                                :date,
                                 :description,
                                 :cvss_v2,
                                 :cve,
@@ -59,6 +60,7 @@ module Bundler
           id,
           data['url'],
           data['title'],
+          data['date'],
           data['description'],
           data['cvss_v2'],
           data['cve'],
@@ -70,7 +72,7 @@ module Bundler
 
       #
       # The CVE identifier.
-      # 
+      #
       # @return [String, nil]
       #
       def cve_id
