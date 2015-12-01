@@ -149,7 +149,7 @@ task default: 'bundle:audit'
 Rake task:
 
 ```ruby
-require_relative 'lib/bundler/audit/task'
+require 'bundler/audit/task'
 Bundler::Audit::Task.new
 
 task default: 'bundle:audit'
