@@ -17,6 +17,7 @@
 
 require 'bundler/audit/scanner'
 require 'bundler/audit/version'
+require 'bundler/audit/html_creator'
 
 require 'thor'
 require 'bundler'
@@ -33,6 +34,7 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :output, :type => :string, :aliases => '-o'
 
       def check
         update if options[:update]
@@ -40,14 +42,39 @@ module Bundler
         scanner    = Scanner.new
         vulnerable = false
 
-        scanner.scan(:ignore => options.ignore) do |result|
-          vulnerable = true
+        file_name     = options[:output]
+        if file_name
+          @html_creator    = HTMLCreator.from file_name
+          results          = scanner.scan(:ignore => options.ignore)
+          insecure_sources = results.select { |result| result.is_a? Scanner::InsecureSource }
+          vulnerable_gems  = results.select { |result| result.is_a? Scanner::UnpatchedGem }
 
-          case result
-          when Scanner::InsecureSource
-            print_warning "Insecure Source URI found: #{result.source}"
-          when Scanner::UnpatchedGem
-            print_advisory result.gem, result.advisory
+          @html_creator.write_top_html insecure_sources.count, vulnerable_gems.count
+
+          if insecure_sources.any?
+            vulnerable = true
+            @html_creator.write_list_top
+            insecure_sources.each { |result| @html_creator.write_source_warning result.name, result.source }
+            @html_creator.write_list_bottom
+          end
+
+          if vulnerable_gems.any?
+            vulnerable = true
+            @html_creator.write_table_top
+            vulnerable_gems.each { |result| @html_creator.write_advisory result.gem, result.advisory }
+            @html_creator.write_table_bottom
+          end
+
+          @html_creator.done!
+        else
+          scanner.scan(:ignore => options.ignore) do |result|
+            vulnerable = true
+            case result
+            when Scanner::InsecureSource
+              print_warning "Insecure Source URI found: #{result.source}"
+            when Scanner::UnpatchedGem
+              print_advisory result.gem, result.advisory
+            end
           end
         end
 
@@ -139,7 +166,6 @@ module Bundler
 
         say
       end
-
     end
   end
 end
