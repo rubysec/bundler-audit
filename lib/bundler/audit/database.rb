@@ -82,8 +82,9 @@ module Bundler
       #
       # Updates the ruby-advisory-db.
       #
-      # @return [Boolean]
+      # @return [Boolean, nil]
       #   Specifies whether the update was successful.
+      #   A `nil` indicates no update was performed.
       #
       # @note
       #   Requires network access.
