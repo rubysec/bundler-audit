@@ -91,9 +91,11 @@ module Bundler
       # @since 0.3.0
       #
       def self.update!
-        if File.directory?(File.join(USER_PATH, ".git"))
-          Dir.chdir(USER_PATH) do
-            system 'git', 'pull', 'origin', 'master'
+        if File.directory?(USER_PATH)
+          if File.directory?(File.join(USER_PATH, ".git"))
+            Dir.chdir(USER_PATH) do
+              system 'git', 'pull', 'origin', 'master'
+            end
           end
         else
           system 'git', 'clone', URL, USER_PATH
