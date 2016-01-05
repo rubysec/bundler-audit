@@ -78,8 +78,8 @@ module Bundler
         puts "#{File.basename($0)} #{VERSION} (advisories: #{database.size})"
       end
 
-      desc 'list', 'Processes a list of installed gems'
-      def list
+      desc 'batch', 'Processes a list of installed gems from stdin'
+      def batch
         db = Database.new
         STDIN.each_line do |line|
           vulnerable = 0
