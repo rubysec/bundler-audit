@@ -83,6 +83,25 @@ module Bundler
         puts "#{File.basename($0)} #{VERSION} (advisories: #{database.size})"
       end
 
+      desc 'list', 'Processes a list of installed gems'
+      def list
+        db = Database.new
+        STDIN.each_line do |line|
+          name, version = unpack_version(line.chomp)
+          # Explicitly ignore anything with a version of "java"
+          next if version == "java"
+
+          spec = Gem::Specification.new do |s|
+            s.name = name
+            s.version = version
+          end
+
+          db.check_gem(spec) do |advisory|
+            print_advisory spec, advisory
+          end
+        end
+      end
+
       protected
 
       def say(message="", color=nil)
@@ -92,6 +111,12 @@ module Bundler
 
       def print_warning(message)
         say message, :yellow
+      end
+
+      def unpack_version(gem)
+        parts = gem.split("-")
+        version = parts.pop
+        [parts.join("-"), version]
       end
 
       def print_advisory(gem, advisory)
