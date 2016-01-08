@@ -82,7 +82,7 @@ module Bundler
       def batch
         db = Database.new
         STDIN.each_line do |line|
-          vulnerable = 0
+          vulnerable = false
           name, version = unpack_version(line.chomp)
           # Explicitly ignore anything with a version of "java"
           next if version == "java"
@@ -93,7 +93,7 @@ module Bundler
           end
 
           db.check_gem(spec) do |advisory|
-            vulnerable = 1
+            vulnerable = true
             print_advisory spec, advisory
           end
 
