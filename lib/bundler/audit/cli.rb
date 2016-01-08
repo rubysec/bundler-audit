@@ -97,8 +97,8 @@ module Bundler
             print_advisory spec, advisory
           end
 
-          warn_and_maybe_exit(vulnerable)
         end
+        warn_and_maybe_exit(vulnerable)
       end
 
       protected
