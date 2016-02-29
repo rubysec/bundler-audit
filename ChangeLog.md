@@ -1,3 +1,18 @@
+### 0.5.0 / 2015-02-28
+
+* Added {Bundler::Audit::Task}.
+* Added {Bundler::Audit::Advisory#cve_id}.
+* Added {Bundler::Audit::Advisory#osvdb_id}.
+* Allow insecure gem sources (`http://` and `git://`), if they are hosted on a
+  private network.
+
+#### CLI
+
+* Added the `--update` option to `bundler-audit check`.
+* `bundler-audit update` now returns a non-zero exit status on error.
+* `bundler-audit update` only updates `ruby-advisory-db`, if it is a git
+  repository.
+
 ### 0.4.0 / 2015-06-30
 
 * Require ruby >= 1.9.3 due to i18n gem deprecating < 1.9.3.
