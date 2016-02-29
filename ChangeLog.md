@@ -10,7 +10,7 @@
 
 * Added the `--update` option to `bundle-audit check`.
 * `bundle-audit update` now returns a non-zero exit status on error.
-* `bundle-audit update` only updates `ruby-advisory-db`, if it is a git
+* `bundle-audit update` only updates `~/.local/share/ruby-advisory-db`, if it is a git
   repository.
 
 ### 0.4.0 / 2015-06-30
