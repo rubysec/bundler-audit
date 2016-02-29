@@ -8,9 +8,9 @@
 
 #### CLI
 
-* Added the `--update` option to `bundler-audit check`.
-* `bundler-audit update` now returns a non-zero exit status on error.
-* `bundler-audit update` only updates `ruby-advisory-db`, if it is a git
+* Added the `--update` option to `bundle-audit check`.
+* `bundle-audit update` now returns a non-zero exit status on error.
+* `bundle-audit update` only updates `ruby-advisory-db`, if it is a git
   repository.
 
 ### 0.4.0 / 2015-06-30
