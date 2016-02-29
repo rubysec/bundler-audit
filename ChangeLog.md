@@ -1,6 +1,7 @@
 ### 0.5.0 / 2015-02-28
 
 * Added {Bundler::Audit::Task}.
+* Added {Bundler::Audit::Advisory#date}.
 * Added {Bundler::Audit::Advisory#cve_id}.
 * Added {Bundler::Audit::Advisory#osvdb_id}.
 * Allow insecure gem sources (`http://` and `git://`), if they are hosted on a
