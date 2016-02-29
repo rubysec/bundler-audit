@@ -1,4 +1,4 @@
-### 0.5.0 / 2015-02-28
+### 0.5.0 / 2016-02-28
 
 * Added {Bundler::Audit::Task}.
 * Added {Bundler::Audit::Advisory#date}.
