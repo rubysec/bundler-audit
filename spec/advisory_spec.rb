@@ -44,6 +44,11 @@ describe Bundler::Audit::Advisory do
       it { is_expected.to eq(data['title'])       }
     end
 
+    describe '#date' do
+      subject { super().date }
+      it { is_expected.to eq(data['date'])        }
+    end
+
     describe '#cvss_v2' do
       subject { super().cvss_v2 }
       it { is_expected.to eq(data['cvss_v2'])     }
@@ -204,7 +209,7 @@ describe Bundler::Audit::Advisory do
 
       context "when unaffected_versions is not empty" do
         subject { described_class.load(path) }
-     
+
         context "when passed a version that matches one unaffected version" do
           let(:version) { Gem::Version.new(an_unaffected_version) }
 
