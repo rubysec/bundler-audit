@@ -13,7 +13,7 @@ Patch-level verification for [Bundler][bundler].
 
 ## Features
 
-* Checks for vulnerable versions of gems in `Gemfile.lock`.
+* Checks for vulnerable versions of gems in `Gemfile.lock` / `gems.locked`.
 * Checks for insecure gem sources (`http://`).
 * Allows ignoring certain advisories that have been manually worked around.
 * Prints advisory information.
@@ -21,7 +21,7 @@ Patch-level verification for [Bundler][bundler].
 
 ## Synopsis
 
-Audit a projects `Gemfile.lock`:
+Audit a project's `Gemfile.lock` / `gems.locked`:
 
     $ bundle-audit
     Name: actionpack
@@ -108,7 +108,7 @@ Update the [ruby-advisory-db] that `bundle-audit` uses:
      create mode 100644 gems/wicked/OSVDB-98270.yml
     ruby-advisory-db: 64 advisories
 
-Update the [ruby-advisory-db] and check `Gemfile.lock` (useful for CI runs):
+Update the [ruby-advisory-db] and check `Gemfile.lock` / `gems.locked` (useful for CI runs):
 
     $ bundle-audit check --update
 
