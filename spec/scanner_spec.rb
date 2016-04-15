@@ -2,6 +2,62 @@ require 'spec_helper'
 require 'bundler/audit/scanner'
 
 describe Scanner do
+  context "lockfile" do
+    def with_lockfile(name)
+      FileUtils.touch("spec/bundle/lockfiles/#{name}")
+      yield
+    ensure
+      FileUtils.rm("spec/bundle/lockfiles/#{name}")
+    end
+
+    let(:directory) { File.join('spec','bundle','lockfiles') }
+
+    subject { described_class.new(directory) }
+
+    context "Gemfile.lock" do
+      let(:lockfile) { 'Gemfile.lock' }
+      let(:lockfile_content) { File.read(File.join(directory,lockfile)) }
+
+      it "set lockfile from Gemfile.lock" do
+        with_lockfile(lockfile) do
+          expect(Bundler::LockfileParser).to receive(:new).with(lockfile_content)
+
+          subject
+        end
+      end
+    end
+
+    context "gems.locked" do
+      let(:lockfile) { 'gems.locked' }
+      let(:lockfile_content) { File.read(File.join(directory,lockfile)) }
+
+      context "with Bundler version that supports gems.locked" do
+        it "set lockfile from gems.locked" do
+          with_lockfile(lockfile) do
+            stub_const("Bundler::VERSION", "1.8.0.pre")
+            expect(Bundler::LockfileParser).to receive(:new).with(lockfile_content)
+
+            subject
+          end
+        end
+      end
+
+      context "with Bundler version < 1.8.0.pre" do
+        let(:lockfile) { 'Gemfile.lock' }
+        let(:lockfile_content) { File.read(File.join(directory,lockfile)) }
+
+        it "fallback to Gemfile.lock" do
+          with_lockfile(lockfile) do
+            stub_const("Bundler::VERSION", "1.7.15")
+            expect(Bundler::LockfileParser).to receive(:new).with(lockfile_content)
+
+            subject
+          end
+        end
+      end
+    end
+  end
+
   describe "#scan" do
     let(:bundle)    { 'unpatched_gems' }
     let(:directory) { File.join('spec','bundle',bundle) }
@@ -41,7 +97,7 @@ describe Scanner do
 
       it "should ignore the specified advisories" do
         ids = subject.map { |result| result.advisory.id }
-        
+
         expect(ids).not_to include('OSVDB-89026')
       end
     end

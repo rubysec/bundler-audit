@@ -25,7 +25,7 @@ module Bundler
       # Project root directory
       attr_reader :root
 
-      # The parsed `Gemfile.lock` from the project
+      # The parsed lockfile from the project
       #
       # @return [Bundler::LockfileParser]
       attr_reader :lockfile
@@ -40,7 +40,7 @@ module Bundler
         @root     = File.expand_path(root)
         @database = Database.new
         @lockfile = LockfileParser.new(
-          File.read(File.join(@root,'Gemfile.lock'))
+          File.read(File.join(@root,find_lockfile))
         )
       end
 
@@ -205,6 +205,41 @@ module Bundler
       def internal_ip?(ip)
         INTERNAL_SUBNETS.any? { |subnet| subnet.include?(ip) }
       end
+
+      protected
+
+      GEMFILE_LOCK = 'Gemfile.lock'.freeze
+      GEMS_LOCKED = 'gems.locked'.freeze
+
+      private_constant :GEMFILE_LOCK
+      private_constant :GEMS_LOCKED
+
+      #
+      # Finds the lockfile in current folder.
+      #
+      # @return [String]
+      #   If Gemfile.lock is found, "Gemfile.lock" will be returned.
+      #   If gems.locked is found, "gems.locked" will be returned.
+      #
+      def find_lockfile
+        Dir.chdir(root) do
+          if File.exist?(GEMS_LOCKED) && bundler_support_gems_locked?
+            GEMS_LOCKED
+          elsif File.exist?(GEMFILE_LOCK)
+            GEMFILE_LOCK
+          end
+        end
+      end
+
+      #
+      # Check if current Bundler version >= 1.8.0.pre
+      #
+      # @return [Boolean]
+      #
+      def bundler_support_gems_locked?
+        Gem::Version.new(Bundler::VERSION) >= Gem::Version.new('1.8.0.pre'.freeze)
+      end
+
     end
   end
 end
