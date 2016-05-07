@@ -21,7 +21,7 @@ Patch-level verification for [Bundler][bundler].
 
 ## Synopsis
 
-Audit a projects `Gemfile.lock`:
+Audit a project's `Gemfile.lock`:
 
     $ bundle-audit
     Name: actionpack
