@@ -129,6 +129,9 @@ module Bundler
       # @param [String] name
       #   The gem name to lookup.
       #
+      # @param [String] type
+      #   The advisory type; one of gems, libraries, or rubies.
+      #
       # @yield [advisory]
       #   If a block is given, each advisory for the given gem will be yielded.
       #
@@ -138,38 +141,76 @@ module Bundler
       # @return [Enumerator]
       #   If no block is given, an Enumerator will be returned.
       #
-      def advisories_for(name)
-        return enum_for(__method__,name) unless block_given?
+      def advisories_for(name,type='gems')
+        return enum_for(__method__,name,type) unless block_given?
 
-        each_advisory_path_for(name) do |path|
+        each_advisory_path_for(name,type) do |path|
           yield Advisory.load(path)
         end
       end
 
       #
-      # Verifies whether the gem is effected by any advisories.
+      # Verifies whether the gem is affected by any advisories.
       #
       # @param [Gem::Specification] gem
       #   The gem to verify.
       #
       # @yield [advisory]
-      #   If a block is given, it will be passed advisories that effect
+      #   If a block is given, it will be passed advisories that affect
       #   the gem.
       #
       # @yieldparam [Advisory] advisory
-      #   An advisory that effects the specific version of the gem.
+      #   An advisory that affects the specific version of the gem.
       #
       # @return [Enumerator]
       #   If no block is given, an Enumerator will be returned.
       #
-      def check_gem(gem)
-        return enum_for(__method__,gem) unless block_given?
+      def check_gem(gem,&block)
+        check(gem,'gems',&block)
+      end
 
-        advisories_for(gem.name) do |advisory|
-          if advisory.vulnerable?(gem.version)
-            yield advisory
-          end
-        end
+      #
+      # Verifies whether the Ruby is affected by any advisories.
+      #
+      # @param [Bundler::Audit::Scanner::Version] ruby
+      #   The Ruby engine and version to verify.
+      #
+      # @yield [advisory]
+      #   If a block is given, it will be passed advisories that affect
+      #   the Ruby.
+      #
+      # @yieldparam [Advisory] advisory
+      #   An advisory that affects the specific version of the Ruby.
+      #
+      # @return [Enumerator]
+      #   If no block is given, an Enumerator will be returned.
+      #
+      # @since 0.5.0
+      #
+      def check_ruby(ruby,&block)
+        check(ruby,'rubies',&block)
+      end
+
+      #
+      # Verifies whether the library is affected by any advisories.
+      #
+      # @param [Bundler::Audit::Scanner::Version] library
+      #   The library to verify.
+      #
+      # @yield [advisory]
+      #   If a block is given, it will be passed advisories that affect
+      #   the Ruby.
+      #
+      # @yieldparam [Advisory] advisory
+      #   An advisory that affects the specific version of the Ruby.
+      #
+      # @return [Enumerator]
+      #   If no block is given, an Enumerator will be returned.
+      #
+      # @since 0.5.0
+      #
+      def check_library(library,&block)
+        check(library,'libraries',&block)
       end
 
       #
@@ -205,6 +246,38 @@ module Bundler
       protected
 
       #
+      # Verifies whether the object is affected by any advisories.
+      #
+      # @param [Class] object
+      #   The object to verify. This should be a class with name and version
+      #   attributes.
+      #
+      # @param [String] type
+      #   The advisory type; one of gems, libraries, or rubies.
+      #
+      # @yield [advisory]
+      #   If a block is given, it will be passed advisories that affect
+      #   the gem.
+      #
+      # @yieldparam [Advisory] advisory
+      #   An advisory that affects the specific version of the gem.
+      #
+      # @return [Enumerator]
+      #   If no block is given, an Enumerator will be returned.
+      #
+      # @since 0.5.0
+      #
+      def check(object,type='gems')
+        return enum_for(__method__,object,type) unless block_given?
+
+        advisories_for(object.name,type) do |advisory|
+          if advisory.vulnerable?(object.version)
+            yield advisory
+          end
+        end
+      end
+
+      #
       # Enumerates over every advisory path in the database.
       #
       # @yield [path]
@@ -214,7 +287,7 @@ module Bundler
       #   A path to an advisory `.yml` file.
       #
       def each_advisory_path(&block)
-        Dir.glob(File.join(@path,'gems','*','*.yml'),&block)
+        Dir.glob(File.join(@path,'{gems,libraries,rubies}','*','*.yml'),&block)
       end
 
       #
@@ -223,14 +296,17 @@ module Bundler
       # @param [String] name
       #   The gem of the gem.
       #
+      # @param [String] type
+      #   The advisory type; one of gems, libraries, or rubies.
+      #
       # @yield [path]
       #   The given block will be passed each advisory path.
       #
       # @yieldparam [String] path
       #   A path to an advisory `.yml` file.
       #
-      def each_advisory_path_for(name,&block)
-        Dir.glob(File.join(@path,'gems',name,'*.yml'),&block)
+      def each_advisory_path_for(name,type='gems',&block)
+        Dir.glob(File.join(@path,type,name,'*.yml'),&block)
       end
 
     end

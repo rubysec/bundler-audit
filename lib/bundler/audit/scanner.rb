@@ -14,6 +14,16 @@ module Bundler
       # Represents a plain-text source
       InsecureSource = Struct.new(:source)
 
+      # Represent a Ruby or RubyGems version.
+      class Version
+        def initialize(name,version)
+          @name = name
+          @version = Gem::Version.new(version)
+        end
+
+        attr_reader :name, :version
+      end
+
       # Represents a gem that is covered by an Advisory
       UnpatchedGem = Struct.new(:gem, :advisory)
 
@@ -65,13 +75,71 @@ module Bundler
       def scan(options={},&block)
         return enum_for(__method__,options) unless block
 
-        ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
-
+        scan_ruby(options,&block)
+        scan_rubygems(options,&block)
         scan_sources(options,&block)
         scan_specs(options,&block)
 
         return self
+      end
+
+      #
+      # Scans the current Ruby version.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
+      # @yield [result]
+      #   The given block will be passed the results of the scan.
+      #
+      # @yieldparam [UnpatchedGem] result
+      #   A result from the scan.
+      #
+      # @return [Enumerator]
+      #   If no block is given, an Enumerator will be returned.
+      #
+      # @api semipublic
+      #
+      # @since 0.5.0
+      #
+      def scan_ruby(options={},&block)
+        if RUBY_PATCHLEVEL < 0
+          version = ruby_version
+        else
+          version = "#{RUBY_VERSION}.#{RUBY_PATCHLEVEL}"
+        end
+        specs = [Version.new(RUBY_ENGINE,version)]
+        scan_inner(specs,'ruby',options,&block)
+      end
+
+      #
+      # Scans the current RubyGems version.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
+      # @yield [result]
+      #   The given block will be passed the results of the scan.
+      #
+      # @yieldparam [UnpatchedGem] result
+      #   A result from the scan.
+      #
+      # @return [Enumerator]
+      #   If no block is given, an Enumerator will be returned.
+      #
+      # @api semipublic
+      #
+      # @since 0.5.0
+      #
+      def scan_rubygems(options={},&block)
+        specs = [Version.new('rubygems',rubygems_version)]
+        scan_inner(specs,'library',options,&block)
       end
 
       #
@@ -137,23 +205,79 @@ module Bundler
       #
       # @since 0.4.0
       #
-      def scan_specs(options={})
+      def scan_specs(options={},&block)
+        scan_inner(@lockfile.specs,'gem',options,&block)
+      end
+
+      private
+
+      #
+      # Checks the Ruby version.
+      #
+      # @return [String]
+      #   The current Ruby version.
+      #
+      def ruby_version
+        # .gsub to separate strings (e.g., 2.1.0dev -> 2.1.0.dev,
+        # 2.2.0preview1 -> 2.2.0.preview.1).
+        `ruby --version`.split[1]
+          .gsub(/(\d)([a-z]+)/, '\1.\2')
+          .gsub(/([a-z]+)(\d)/, '\1.\2')
+      end
+
+      #
+      # Checks the RubyGems version.
+      #
+      # @return [String]
+      #   The current RubyGems version.
+      #
+      def rubygems_version
+        `gem --version`.strip
+      end
+
+      #
+      # Scans the specified sources.
+      #
+      # @param [Array] specs
+      #   An array of specifications (Ruby, RubyGems, or gems) to scan.
+      #
+      # @param [String] type
+      #   The type of specification; one of gem, library, or ruby.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
+      # @yield [result]
+      #   The given block will be passed the results of the scan.
+      #
+      # @yieldparam [UnpatchedGem] result
+      #   A result from the scan.
+      #
+      # @return [Enumerator]
+      #   If no block is given, an Enumerator will be returned.
+      #
+      # @api semipublic
+      #
+      # @since 0.5.0
+      #
+      def scan_inner(specs,type,options={})
         return enum_for(__method__,options) unless block_given?
 
         ignore = Set[]
         ignore += options[:ignore] if options[:ignore]
 
-        @lockfile.specs.each do |gem|
-          @database.check_gem(gem) do |advisory|
+        specs.each do |spec|
+          @database.send("check_#{type}".to_sym,spec) do |advisory|
             unless (ignore.include?(advisory.cve_id) ||
                     ignore.include?(advisory.osvdb_id))
-              yield UnpatchedGem.new(gem,advisory)
+              yield UnpatchedGem.new(spec,advisory)
             end
           end
         end
       end
-
-      private
 
       #
       # Determines whether a source is internal.
