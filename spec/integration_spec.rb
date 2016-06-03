@@ -4,7 +4,7 @@ describe "CLI" do
   include Helpers
 
   let(:command) do
-    File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundle-audit'))
+    File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundler-audit'))
   end
 
   context "when auditing a bundle with unpatched gems" do
@@ -38,7 +38,7 @@ Solution: upgrade to ((~>|=>) \d+.\d+.\d+, )*(~>|=>) \d+.\d+.\d+[\s\n]*?)+/
     let(:directory) { File.join('spec','bundle',bundle) }
 
     let(:command) do
-      File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundle-audit -i OSVDB-89026'))
+      File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundler-audit -i OSVDB-89026'))
     end
 
     subject do
