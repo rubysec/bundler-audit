@@ -1,7 +1,12 @@
+language: ruby
 rvm:
-  - 1.9.3
-  - 2.0
-  - 2.1
-  - 2.2
-before_install:
-  - gem install rspec
+  - 2.1.8
+  - 2.2.4
+  - 2.3.0
+  - jruby
+  - rbx-2
+
+matrix:
+  allow_failures:
+    - rvm: jruby
+    - rvm: rbx-2
