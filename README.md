@@ -23,7 +23,7 @@ Patch-level verification for [Bundler][bundler].
 
 Audit a project's `Gemfile.lock`:
 
-    $ bundle audit
+    $ bundle-audit
     Name: actionpack
     Version: 3.2.10
     Advisory: OSVDB-91452
@@ -84,7 +84,7 @@ Audit a project's `Gemfile.lock`:
 
 Update the [ruby-advisory-db] that `bundle audit` uses:
 
-    $ bundle audit update
+    $ bundle-audit update
     Updating ruby-advisory-db ...
     remote: Counting objects: 44, done.
     remote: Compressing objects: 100% (24/24), done.
@@ -110,11 +110,11 @@ Update the [ruby-advisory-db] that `bundle audit` uses:
 
 Update the [ruby-advisory-db] and check `Gemfile.lock` (useful for CI runs):
 
-    $ bundle audit check --update
+    $ bundle-audit check --update
 
 Ignore specific advisories:
 
-    $ bundle audit check --ignore OSVDB-108664
+    $ bundle-audit check --ignore OSVDB-108664
 
 Rake task:
 
