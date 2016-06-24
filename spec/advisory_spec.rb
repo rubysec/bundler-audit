@@ -54,6 +54,11 @@ describe Bundler::Audit::Advisory do
       it { is_expected.to eq(data['cvss_v2'])     }
     end
 
+    describe '#cvss_v3' do
+      subject { super().cvss_v3 }
+      it { is_expected.to eq(data['cvss_v3'])     }
+    end
+
     describe '#description' do
       subject { super().description }
       it { is_expected.to eq(data['description']) }
@@ -148,6 +153,36 @@ describe Bundler::Audit::Advisory do
       subject do
         described_class.new.tap do |advisory|
           advisory.cvss_v2 = 10.0
+        end
+      end
+
+      it { expect(subject.criticality).to eq(:high) }
+    end
+
+      context "when cvss_v3 is between 0.0 and 3.3" do
+      subject do
+        described_class.new.tap do |advisory|
+          advisory.cvss_v3 = 3.3
+        end
+      end
+
+      it { expect(subject.criticality).to eq(:low) }
+    end
+
+    context "when cvss_v3 is between 3.3 and 6.6" do
+      subject do
+        described_class.new.tap do |advisory|
+          advisory.cvss_v3 = 6.6
+        end
+      end
+
+      it { expect(subject.criticality).to eq(:medium) }
+    end
+
+    context "when cvss_v3 is between 6.6 and 10.0" do
+      subject do
+        described_class.new.tap do |advisory|
+          advisory.cvss_v3 = 10.0
         end
       end
 

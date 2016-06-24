@@ -26,6 +26,7 @@ module Bundler
                                 :date,
                                 :description,
                                 :cvss_v2,
+                                :cvss_v3,
                                 :cve,
                                 :osvdb,
                                 :unaffected_versions,
@@ -63,6 +64,7 @@ module Bundler
           data['date'],
           data['description'],
           data['cvss_v2'],
+          data['cvss_v3'],
           data['cve'],
           data['osvdb'],
           parse_versions[data['unaffected_versions']],
@@ -95,7 +97,8 @@ module Bundler
       #   The criticality of the vulnerability based on the CVSSv2 score.
       #
       def criticality
-        case cvss_v2
+        cvss = cvss_v3 ? cvss_v3 : cvss_v2
+        case cvss
         when 0.0..3.3  then :low
         when 3.3..6.6  then :medium
         when 6.6..10.0 then :high
