@@ -100,6 +100,7 @@ module Bundler
                   criticality: advisory.criticality ? advisory.criticality.to_s.capitalize : 'Unknown',
                   url: advisory.url,
                   description: @verbose ? advisory.description : '',
+                  title: advisory.title,
                   solution: advisory.patched_versions.empty? ? 'remove or disable this gem until a patch is available!' : "Upgrade to: #{advisory.patched_versions.join(', ')}"
                 }
                 @output[:vulnerable] = true
