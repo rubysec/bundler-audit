@@ -17,11 +17,11 @@
 
 require 'bundler/audit/scanner'
 require 'bundler/audit/version'
+require 'bundler/audit/formatter'
 
 require 'thor'
 require 'bundler'
 require 'bundler/vendored_thor'
-require 'json'
 
 module Bundler
   module Audit
@@ -36,23 +36,18 @@ module Bundler
       method_option :update, :type => :boolean, :aliases => '-u'
       method_option :output, :type => :string, :default => 'text', :aliases => '-o'
 
-      @output = nil
-      @vulnerable = false
-
       def check
         update if options[:update]
 
         scanner    = Scanner.new
+        formatter  = Formatter.new(options[:output], options[:verbose], self)
 
-        initialize_formatting
-
-        scanner.scan(:ignore => options.ignore) do |result|
-          @vulnerable = true
-          data_output result
+        scanner.scan(:ignore => options.ignore) do |result|      
+          formatter.update(result)
         end
   
-        print_output
-        exit 1 if @vulnerable
+        formatter.output
+        exit 1 if formatter.vulnerable
       end
 
       desc 'update', 'Updates the ruby-advisory-db'
@@ -80,102 +75,6 @@ module Bundler
       end
 
       protected
-      
-      def initialize_formatting
-        case options[:output]
-          when 'json'
-            @output = {vulnerable: false, insecure_sources: [], advisories: []}
-          when 'text'
-            @output = []
-        end
-      end
-
-      def print_output
-        case options[:output]
-          when 'json'
-            puts @output.to_json
-          when 'text'
-            @output << (@vulnerable ? [:say, 'Vulnerabilities found!', :red] : [:say, 'No vulnerabilities found', :green])
-            @output.each do |msg|
-              self.send msg[0], msg[1], msg[2]
-            end
-        end
-      end 
-
-      def data_output(result)
-        case options[:output]
-          when 'text'
-            case result
-              when Scanner::InsecureSource
-                @output << [:say, "Insecure Source URI found: #{result.source}", :yellow]
-              when Scanner::UnpatchedGem   
-                gem = result.gem
-                advisory = result.advisory
-                @output << [:say, "Name: ", :red]
-                @output << [:say, gem.name, nil]
-
-                @output << [:say, "Version: ", :red]
-                @output << [:say, gem.version, nil]
-
-                @output << [:say, "Advisory: ", :red]
-                
-                @output << (advisory.cve ? [:say, "CVE-#{advisory.cve}", nil] : [:say, advisory.osvdb, nil])
-
-                @output << [:say, "Criticality: ", :red]
-           
-                case advisory.criticality
-                when :low    then @output << [:say, "Low", nil]
-                when :medium then @output << [:say, "Medium", :yellow]
-                when :high   then @output << [:say, "High", [:red, :bold]]
-                else              @output << [:say, "Unknown", nil]
-                end
-
-                @output << [:say, "URL: ", :red]
-                @output << [:say, advisory.url, nil]
-
-                if options.verbose?
-                  @output << [:say, "Description:", :red]
-                  @output << [:say, '', nil]
-
-                  @output << [:print_wrapped, advisory.description, [:indent => 2]]
-                  @output << [:say, '', nil]
-                else
-
-                  @output << [:say, "Title: ", :red]
-                  @output << [:say, advisory.title, nil]
-                end
-
-                unless advisory.patched_versions.empty?
-                  @output << [:say, "Solution: upgrade to ", :red]
-                  @output << [:say, advisory.patched_versions.join(', '), nil]
-                else
-                  @output << [:say, "Solution: ", :red]
-                  @output << [:say, "remove or disable this gem until a patch is available!", [:red, :bold]]
-                end
-                  @output << [:say, '', nil]
-            end
-          when 'json'
-            case result
-              when Scanner::InsecureSource
-                @output[:insecure_sources] << {url: result.source}
-              when Scanner::UnpatchedGem
-                gem = result.gem
-                advisory = result.advisory
-                advisory_item = {
-                  name: gem.name,
-                  version: gem.version,
-                  cve: advisory.cve ? advisory.cve : '',
-                  osvdb: advisory.osvdb ? advisory.osvdb : '',
-                  criticality: advisory.criticality ? advisory.criticality.to_s.capitalize : 'Unknown',
-                  url: advisory.url,
-                  description: options.verbose? ? advisory.description : '',
-                  solution: advisory.patched_versions.empty? ? 'remove or disable this gem until a patch is available!' : "Upgrade to: #{advisory.patched_versions.join(', ')}"
-                }
-                @output[:vulnerable] = true
-                @output[:advisories] << advisory_item
-            end
-        end
-      end
 
       def say(message="", color=nil)
         color = nil unless $stdout.tty?
