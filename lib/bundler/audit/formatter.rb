@@ -23,7 +23,7 @@ module Bundler
           when 'text'
             @output = []
           when 'json'
-            @output = {vulnerabe: @vulnerable, insecure_sources: [], advisories: []}
+            @output = {vulnerable: @vulnerable, insecure_sources: [], advisories: []}
         end
       end
       
@@ -33,6 +33,7 @@ module Bundler
       # @param [Scanner] Scan result block
       #
       def update(result)
+        @vulnerable = true
         case @format
           when 'text'
             case result
