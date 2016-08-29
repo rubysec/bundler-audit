@@ -117,7 +117,7 @@ module Bundler
         def output
           case @format
             when 'json'
-              puts @output.to_json
+              puts JSON.pretty_generate(@output)
             when 'text'
               @output << (@vulnerable ? [:say, 'Vulnerabilities found!', :red] : [:say, 'No vulnerabilities found', :green])
               @output.each do |msg|
