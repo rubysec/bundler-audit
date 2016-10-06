@@ -4,7 +4,7 @@ require 'tmpdir'
 
 describe Bundler::Audit::Database do
   let(:vendored_advisories) do
-    Dir[File.join(Bundler::Audit::Database::VENDORED_PATH, '**/*.yml')].sort
+    Dir[File.join(Bundler::Audit::Database::VENDORED_PATH, 'gems/*/*.yml')].sort
   end
 
   describe "path" do
