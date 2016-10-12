@@ -15,8 +15,13 @@ require 'rubygems/tasks'
 Gem::Tasks.new
 
 namespace :db do
+  desc 'Initializes the ruby-advisory-db submodule'
+  task :init do
+    sh 'git', 'submodule', 'update', '--init', '--recursive'
+  end
+
   desc 'Updates data/ruby-advisory-db'
-  task :update do
+  task :update => 'db:init' do
     timestamp = nil
 
     chdir 'data/ruby-advisory-db' do
@@ -46,8 +51,16 @@ namespace :spec do
       end
     end
   end
+
+  task :check_advisory_db do
+    unless Dir.exists?('data/ruby-advisory-db/.git')
+      warn "*" * 50
+      warn "WARNING: ruby-advisory-db not present. Run 'rake db:init'"
+      warn "*" * 50
+    end
+  end
 end
-task :spec => 'spec:bundle'
+task :spec => ['spec:bundle', 'spec:check_advisory_db']
 
 task :test    => :spec
 task :default => :spec
