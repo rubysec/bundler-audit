@@ -136,6 +136,12 @@ task default: 'bundle:audit'
 
     $ gem install bundler-audit
 
+## Contributing
+
+1. Clone the repo
+1. `git submodule update --init` # To populate data dir.
+1. `bundle exec rake`
+
 ## License
 
 Copyright (c) 2013-2016 Hal Brodigan (postmodern.mod3 at gmail.com)
