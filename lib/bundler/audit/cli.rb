@@ -30,6 +30,7 @@ module Bundler
       map '--version' => :version
 
       desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
+      method_option :quiet, :type => :boolean, :aliases => '-q'
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
@@ -55,17 +56,19 @@ module Bundler
           say "Vulnerabilities found!", :red
           exit 1
         else
-          say "No vulnerabilities found", :green
+          say("No vulnerabilities found", :green) unless options.quiet?
         end
       end
 
       desc 'update', 'Updates the ruby-advisory-db'
-      def update
-        say "Updating ruby-advisory-db ..."
+      method_option :quiet, :type => :boolean, :aliases => '-q'
 
-        case Database.update!
+      def update
+        say("Updating ruby-advisory-db ...") unless options.quiet?
+
+        case Database.update!(quiet: options.quiet?)
         when true
-          say "Updated ruby-advisory-db", :green
+          say("Updated ruby-advisory-db", :green) unless options.quiet?
         when false
           say "Failed updating ruby-advisory-db!", :red
           exit 1
@@ -73,7 +76,9 @@ module Bundler
           say "Skipping update", :yellow
         end
 
-        puts "ruby-advisory-db: #{Database.new.size} advisories"
+        unless options.quiet?
+          puts("ruby-advisory-db: #{Database.new.size} advisories")
+        end
       end
 
       desc 'version', 'Prints the bundler-audit version'

@@ -1,3 +1,7 @@
+### Unreleased
+
+* Added `--quiet` option to `check` and `update` commands.
+
 ### 0.5.0 / 2016-02-28
 
 * Added {Bundler::Audit::Task}.
