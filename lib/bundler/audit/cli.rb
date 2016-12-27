@@ -51,12 +51,7 @@ module Bundler
           end
         end
 
-        if vulnerable
-          say "Vulnerabilities found!", :red
-          exit 1
-        else
-          say "No vulnerabilities found", :green
-        end
+        warn_and_maybe_exit(vulnerable)
       end
 
       desc 'update', 'Updates the ruby-advisory-db'
@@ -83,6 +78,29 @@ module Bundler
         puts "#{File.basename($0)} #{VERSION} (advisories: #{database.size})"
       end
 
+      desc 'batch', 'Processes a list of installed gems from stdin'
+      def batch
+        db = Database.new
+        STDIN.each_line do |line|
+          vulnerable = false
+          name, version = unpack_version(line.chomp)
+          # Explicitly ignore anything with a version of "java"
+          next if version == "java"
+
+          spec = Gem::Specification.new do |s|
+            s.name = name
+            s.version = version
+          end
+
+          db.check_gem(spec) do |advisory|
+            vulnerable = true
+            print_advisory spec, advisory
+          end
+
+        end
+        warn_and_maybe_exit(vulnerable)
+      end
+
       protected
 
       def say(message="", color=nil)
@@ -92,6 +110,21 @@ module Bundler
 
       def print_warning(message)
         say message, :yellow
+      end
+
+      def unpack_version(gem)
+        parts = gem.split("-")
+        version = parts.pop
+        [parts.join("-"), version]
+      end
+
+      def warn_and_maybe_exit(vulnerable)
+        if vulnerable
+          say "Vulnerabilities found!", :red
+          exit 1
+        else
+          say "No vulnerabilities found", :green
+        end
       end
 
       def print_advisory(gem, advisory)
