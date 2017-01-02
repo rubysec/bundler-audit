@@ -36,7 +36,7 @@ module Bundler
       # @param [String] root
       #   The path to the project root.
       #
-      def initialize(root=Dir.pwd)
+      def initialize(root)
         @root     = File.expand_path(root)
         @database = Database.new
         @lockfile = LockfileParser.new(
