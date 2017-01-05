@@ -22,6 +22,8 @@ require 'thor'
 require 'bundler'
 require 'bundler/vendored_thor'
 
+require 'json'
+
 module Bundler
   module Audit
     class CLI < ::Thor
@@ -33,29 +35,37 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :json, :type => :boolean
 
       def check
         update if options[:update]
 
-        scanner    = Scanner.new
+        scanner = Scanner.new
         vulnerable = false
 
-        scanner.scan(:ignore => options.ignore) do |result|
-          vulnerable = true
+        insecure_sources = scanner.scan_sources(:ignore => options.ignore).to_a
+        unpatched_gems = scanner.scan_specs(:ignore => options.ignore).to_a
 
-          case result
-          when Scanner::InsecureSource
-            print_warning "Insecure Source URI found: #{result.source}"
-          when Scanner::UnpatchedGem
-            print_advisory result.gem, result.advisory
+        vulnerable = !(insecure_sources.empty? and unpatched_gems.empty?)
+
+        if options.json
+          print_vulnerabilities_json(insecure_sources, unpatched_gems)
+        else
+          print_vulnerabilities(insecure_sources, unpatched_gems)
+        end
+
+        if options.json
+          error "Vulnerabilities found!" if vulnerable
+        else
+          if vulnerable
+            say "Vulnerabilities found!", :red
+          else
+            say "No vulnerabilities found", :green
           end
         end
 
         if vulnerable
-          say "Vulnerabilities found!", :red
           exit 1
-        else
-          say "No vulnerabilities found", :green
         end
       end
 
@@ -92,6 +102,16 @@ module Bundler
 
       def print_warning(message)
         say message, :yellow
+      end
+
+      def print_vulnerabilities(insecure_sources, unpatched_gems)
+        insecure_sources.each do |r|
+          print_warning "Insecure Source URI found: #{r.source}"
+        end
+
+        unpatched_gems.each do |r|
+          print_advisory(r.gem, r.advisory)
+        end
       end
 
       def print_advisory(gem, advisory)
@@ -143,6 +163,13 @@ module Bundler
         say
       end
 
+      def print_vulnerabilities_json(insecure_sources, unpatched_gems)
+        h = {
+          :vulnerable_sources => insecure_sources.map { |r| { :uri => r.source } },
+          :unpatched_gems => unpatched_gems.map { |r| r.advisory.to_h.merge(:name => r.gem.name, :version => r.gem.version) }
+        }
+        say JSON.pretty_generate(h)
+      end
     end
   end
 end
