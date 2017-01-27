@@ -123,6 +123,35 @@ describe Bundler::Audit::Advisory do
     end
   end
 
+  describe "#pretty_id" do
+    let(:cve) { "2015-1234" }
+    let(:osvdb) { "123456" }
+
+    context "when CVE id is present" do
+      subject do
+        described_class.new.tap do |advisory|
+          advisory.cve = cve
+        end
+      end
+
+      it "should use the CVE id" do
+        expect(subject.pretty_id).to eq(subject.cve_id)
+      end
+    end
+
+    context "when OSVDB id is present" do
+      subject do
+        described_class.new.tap do |advisory|
+          advisory.osvdb = osvdb
+        end
+      end
+
+      it "should use the CVE id" do
+        expect(subject.pretty_id).to eq(subject.osvdb_id)
+      end
+    end
+  end
+
   describe "#criticality" do
     context "when cvss_v2 is between 0.0 and 3.3" do
       subject do

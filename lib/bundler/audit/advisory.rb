@@ -89,6 +89,15 @@ module Bundler
       end
 
       #
+      # Formatted identifier used for output
+      #
+      # @return [String, nil]
+      #
+      def pretty_id
+        cve_id || osvdb_id
+      end
+
+      #
       # Determines how critical the vulnerability is.
       #
       # @return [:low, :medium, :high]
