@@ -82,7 +82,7 @@ Audit a project's `Gemfile.lock`:
 
     Unpatched versions found!
 
-Update the [ruby-advisory-db] that `bundle audit` uses:
+Update the [ruby-advisory-db] that `bundle-audit` uses:
 
     $ bundle-audit update
     Updating ruby-advisory-db ...
