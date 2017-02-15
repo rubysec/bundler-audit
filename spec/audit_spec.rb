@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'bundler/audit'
 
 describe Bundler::Audit do

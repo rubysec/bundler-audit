@@ -1,4 +1,3 @@
-require 'spec_helper'
 require 'bundler/audit/scanner'
 
 describe Scanner do
@@ -41,7 +40,7 @@ describe Scanner do
 
       it "should ignore the specified advisories" do
         ids = subject.map { |result| result.advisory.id }
-        
+
         expect(ids).not_to include('OSVDB-89026')
       end
     end
