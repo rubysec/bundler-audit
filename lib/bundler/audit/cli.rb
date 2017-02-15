@@ -33,6 +33,7 @@ module Bundler
       method_option :quiet, :type => :boolean, :aliases => '-q'
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
+      method_option :ignore_insecure_sources, :type => :boolean, :aliases => '-s'
       method_option :update, :type => :boolean, :aliases => '-u'
 
       def check
@@ -46,6 +47,7 @@ module Bundler
 
           case result
           when Scanner::InsecureSource
+            vulnerable = false if options[:ignore_insecure_sources]
             print_warning "Insecure Source URI found: #{result.source}"
           when Scanner::UnpatchedGem
             print_advisory result.gem, result.advisory
