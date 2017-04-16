@@ -104,7 +104,7 @@ module Bundler
         say gem.name
 
         say "Version: ", :red
-        say gem.version
+        say gem.version.to_s
 
         say "Advisory: ", :red
 
