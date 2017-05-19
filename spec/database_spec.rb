@@ -4,7 +4,7 @@ require 'tmpdir'
 
 describe Bundler::Audit::Database do
   let(:vendored_advisories) do
-    Dir[File.join(Bundler::Audit::Database::VENDORED_PATH, '**/*.yml')].sort
+    Dir[File.join(Bundler::Audit::Database::VENDORED_PATH, 'gems/*/*.yml')].sort
   end
 
   describe "path" do
@@ -15,7 +15,7 @@ describe Bundler::Audit::Database do
     end
 
     it "should prefer the user repo, iff it's as up to date, or more up to date than the vendored one" do
-      Bundler::Audit::Database.update!
+      Bundler::Audit::Database.update!(quiet: false)
 
       Dir.chdir(Bundler::Audit::Database::USER_PATH) do
         puts "Timestamp:"
@@ -36,17 +36,17 @@ describe Bundler::Audit::Database do
 
   describe "update!" do
     it "should create the USER_PATH path as needed" do
-      Bundler::Audit::Database.update!
+      Bundler::Audit::Database.update!(quiet: false)
       expect(File.directory?(mocked_user_path)).to be true
     end
 
     it "should create the repo, then update it given multple successive calls." do
       expect_update_to_clone_repo!
-      Bundler::Audit::Database.update!
+      Bundler::Audit::Database.update!(quiet: false)
       expect(File.directory?(mocked_user_path)).to be true
 
       expect_update_to_update_repo!
-      Bundler::Audit::Database.update!
+      Bundler::Audit::Database.update!(quiet: false)
       expect(File.directory?(mocked_user_path)).to be true
     end
   end
