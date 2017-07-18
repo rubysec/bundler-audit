@@ -4,9 +4,9 @@ rvm:
   - 2.2.4
   - 2.3.0
   - jruby
-  - rubinius-3
+  - rbx-3
 
 matrix:
   allow_failures:
     - rvm: jruby
-    - rvm: rubinius-3
+    - rvm: rbx-3
