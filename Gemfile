@@ -3,7 +3,7 @@ source 'https://rubygems.org/'
 gemspec
 
 group :development do
-  gem 'rake',           '~> 10.0'
+  gem 'rake'
   gem 'kramdown',       '~> 0.14'
 
   gem 'rubygems-tasks', '~> 0.2'
