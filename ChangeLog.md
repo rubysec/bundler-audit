@@ -1,6 +1,8 @@
-### Unreleased
+### 0.6.0 / 2017-07-18
 
-* Added `--quiet` option to `check` and `update` commands.
+* Added `--quiet` option to `check` and `update` commands (@jaredbeck).
+* Added `bin/bundler-audit` which will be executed when `bundle audit` is ran
+  (@vassilevsky).
 
 ### 0.5.0 / 2016-02-28
 
