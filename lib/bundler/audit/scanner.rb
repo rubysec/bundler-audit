@@ -15,7 +15,9 @@ module Bundler
       InsecureSource = Struct.new(:source)
 
       # Represents a gem that is covered by an Advisory
-      UnpatchedGem = Struct.new(:gem, :advisory)
+      UnpatchedGem = Struct.new(:gem, :advisory) do
+        alias_method :rubygem, :gem
+      end
 
       # The advisory database
       #
@@ -33,15 +35,18 @@ module Bundler
       #
       # Initializes a scanner.
       #
-      # @param [String] root
-      #   The path to the project root.
+      # @param [String, #read] path_io
+      #   The path to a directory with a Gemfile.lock, or an IO representation of Gemfile.lock
       #
-      def initialize(root=Dir.pwd)
-        @root     = File.expand_path(root)
+      def initialize(path_io=Dir.pwd)
         @database = Database.new
-        @lockfile = LockfileParser.new(
-          File.read(File.join(@root,'Gemfile.lock'))
-        )
+        @lockfile = if path_io.respond_to?(:read)
+                      @root = nil
+                      LockfileParser.new(path_io.read)
+                    else
+                      @root = path_io
+                      LockfileParser.new File.read(File.join(@root,'Gemfile.lock'))
+                    end
       end
 
       #
