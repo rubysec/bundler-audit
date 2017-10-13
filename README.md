@@ -9,7 +9,7 @@
 
 ## Description
 
-Patch-level verification for [Bundler][bundler].
+Patch-level verification for [bundler].
 
 ## Features
 
@@ -127,8 +127,8 @@ task default: 'bundle:audit'
 
 ## Requirements
 
-* [Ruby] >= 1.9.3
-* [RubyGems] >= 1.8
+* [ruby] >= 1.9.3
+* [rubygems] >= 1.8
 * [thor] ~> 0.18
 * [bundler] ~> 1.2
 
@@ -159,8 +159,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
 
-[Ruby]: https://ruby-lang.org
-[RubyGems]: https://rubygems.org
+[ruby]: https://ruby-lang.org
+[rubygems]: https://rubygems.org
 [thor]: http://whatisthor.com/
 [bundler]: https://github.com/carlhuda/bundler#readme
 
