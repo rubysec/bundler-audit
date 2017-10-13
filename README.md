@@ -127,6 +127,7 @@ task default: 'bundle:audit'
 
 ## Requirements
 
+* [git]
 * [ruby] >= 1.9.3
 * [rubygems] >= 1.8
 * [thor] >= 0.18, < 2
@@ -159,6 +160,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
 
+[git]: https://git-scm.com
 [ruby]: https://ruby-lang.org
 [rubygems]: https://rubygems.org
 [thor]: http://whatisthor.com/
