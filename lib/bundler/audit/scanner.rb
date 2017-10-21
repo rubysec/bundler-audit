@@ -41,10 +41,13 @@ module Bundler
       #
       def initialize(root=Dir.pwd,gemfile_lock='Gemfile.lock')
         @root     = File.expand_path(root)
+        gemfile_lock_path = File.join(@root,gemfile_lock)
+        unless File.file?(gem_file_lock_path)
+          puts "Unable to find the gem's Gemfile.lock file in #{@root}!"
+          exit 1
+        end
         @database = Database.new
-        @lockfile = LockfileParser.new(
-          File.read(File.join(@root,gemfile_lock))
-        )
+        @lockfile = LockfileParser.new(File.read(gem_file_lock_path))
       end
 
       #
