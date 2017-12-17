@@ -38,7 +38,8 @@ module Bundler
       def check
         update if options[:update]
 
-        scanner    = Scanner.new
+        lockfile   = File.read(File.join(Dir.pwd, 'Gemfile.lock'))
+        scanner    = Scanner.new(lockfile)
         vulnerable = false
 
         scanner.scan(:ignore => options.ignore) do |result|
