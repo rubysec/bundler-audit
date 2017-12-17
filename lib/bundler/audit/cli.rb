@@ -16,6 +16,7 @@
 #
 
 require 'bundler/audit/scanner'
+require 'bundler/audit/lockfile_loader'
 require 'bundler/audit/version'
 
 require 'thor'
@@ -38,8 +39,7 @@ module Bundler
       def check
         update if options[:update]
 
-        lockfile   = File.read(File.join(Dir.pwd, 'Gemfile.lock'))
-        scanner    = Scanner.new(lockfile)
+        scanner    = Scanner.new(LockfileLoader.new(Dir.pwd).contents)
         vulnerable = false
 
         scanner.scan(:ignore => options.ignore) do |result|
