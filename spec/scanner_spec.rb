@@ -2,11 +2,14 @@ require 'spec_helper'
 require 'bundler/audit/scanner'
 
 describe Scanner do
+  let(:scanner) { described_class.new(lockfile_contents) }
+  let(:lockfile_contents) { File.read(File.join(directory, 'Gemfile.lock')) }
+
   describe "#scan" do
     let(:bundle)    { 'unpatched_gems' }
     let(:directory) { File.join('spec','bundle',bundle) }
 
-    subject { described_class.new(directory) }
+    subject { scanner }
 
     it "should yield results" do
       results = []
@@ -26,7 +29,6 @@ describe Scanner do
   context "when auditing a bundle with unpatched gems" do
     let(:bundle)    { 'unpatched_gems' }
     let(:directory) { File.join('spec','bundle',bundle) }
-    let(:scanner)  { described_class.new(directory)    }
 
     subject { scanner.scan.to_a }
 
@@ -41,7 +43,7 @@ describe Scanner do
 
       it "should ignore the specified advisories" do
         ids = subject.map { |result| result.advisory.id }
-        
+
         expect(ids).not_to include('OSVDB-89026')
       end
     end
@@ -50,7 +52,6 @@ describe Scanner do
   context "when auditing a bundle with insecure sources" do
     let(:bundle)    { 'insecure_sources' }
     let(:directory) { File.join('spec','bundle',bundle) }
-    let(:scanner)   { described_class.new(directory)    }
 
     subject { scanner.scan.to_a }
 
@@ -63,7 +64,6 @@ describe Scanner do
   context "when auditing a secure bundle" do
     let(:bundle)    { 'secure' }
     let(:directory) { File.join('spec','bundle',bundle) }
-    let(:scanner)   { described_class.new(directory)    }
 
     subject { scanner.scan.to_a }
 

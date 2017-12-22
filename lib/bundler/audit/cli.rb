@@ -16,6 +16,7 @@
 #
 
 require 'bundler/audit/scanner'
+require 'bundler/audit/lockfile_loader'
 require 'bundler/audit/version'
 
 require 'thor'
@@ -38,7 +39,7 @@ module Bundler
       def check
         update if options[:update]
 
-        scanner    = Scanner.new
+        scanner    = Scanner.new(LockfileLoader.new(Dir.pwd).contents)
         vulnerable = false
 
         scanner.scan(:ignore => options.ignore) do |result|
