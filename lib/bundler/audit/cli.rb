@@ -21,6 +21,7 @@ require 'bundler/audit/version'
 require 'thor'
 require 'bundler'
 require 'bundler/vendored_thor'
+require 'json'
 
 module Bundler
   module Audit
@@ -32,6 +33,7 @@ module Bundler
       desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
       method_option :quiet, :type => :boolean, :aliases => '-q'
       method_option :verbose, :type => :boolean, :aliases => '-v'
+      method_option :json, :type => :boolean, :aliases => '-j'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
 
@@ -41,22 +43,42 @@ module Bundler
         scanner    = Scanner.new
         vulnerable = false
 
+        insec_srcs = []
+        insec_gems = {}
+        insec_gems[:technologies] = []
         scanner.scan(:ignore => options.ignore) do |result|
           vulnerable = true
 
           case result
-          when Scanner::InsecureSource
-            print_warning "Insecure Source URI found: #{result.source}"
-          when Scanner::UnpatchedGem
-            print_advisory result.gem, result.advisory
+            when Scanner::InsecureSource
+              if not options.json? then
+                print_warning "Insecure Source URI found: #{result.source}"
+              else
+                insec_srcs.push(result.source)
+              end
+            when Scanner::UnpatchedGem
+              if not options.json? then
+                print_advisory result.gem, result.advisory
+              else
+                insec_gems[:technologies].push(:name => result.gem.name, :version => result.gem.version, :issues => [:name => (result.advisory.cve ? ("CVE-" + result.advisory.cve) : ("OSVDB-" + result.advisory.osvdb.to_s)), :short_desc => result.advisory.title, :description => result.advisory.description, :risk => (result.advisory.criticality ? result.advisory.criticality : "unknown")])
+              end
           end
-        end
+          end
+          if options.json? and insec_srcs.length >= 1 then
+            is = {}
+            is[:insecure_sources] = insec_srcs
+            puts is.to_json
+          end
+          if options.json? and not insec_gems.empty? then
+            puts insec_gems.to_json
+          end
 
-        if vulnerable
-          say "Vulnerabilities found!", :red
-          exit 1
-        else
-          say("No vulnerabilities found", :green) unless options.quiet?
+          if vulnerable
+            say "Vulnerabilities found!", :red unless options.json?
+            exit 1
+          else
+            say("No vulnerabilities found", :green) unless options.quiet? || unless options.json?
+          end
         end
       end
 
