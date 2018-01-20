@@ -12,7 +12,7 @@ module Bundler
     class Scanner
 
       # Represents a plain-text source
-      InsecureSource = Struct.new(:source)
+      InsecureSource = Struct.new(:source, :name)
 
       # Represents a gem that is covered by an Advisory
       UnpatchedGem = Struct.new(:gem, :advisory)
@@ -105,7 +105,7 @@ module Bundler
             case source.uri
             when /^git:/, /^http:/
               unless internal_source?(source.uri)
-                yield InsecureSource.new(source.uri)
+                yield InsecureSource.new(source.uri, source.name)
               end
             end
           when Source::Rubygems

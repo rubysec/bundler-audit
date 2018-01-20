@@ -125,6 +125,10 @@ Bundler::Audit::Task.new
 task default: 'bundle:audit'
 ```
 
+Write to an HTML file:
+
+    $ bundle-audit -o=tmp/audit.html
+
 ## Requirements
 
 * [ruby] >= 1.9.3
