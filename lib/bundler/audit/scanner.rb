@@ -68,9 +68,6 @@ module Bundler
       def scan(options={},&block)
         return enum_for(__method__,options) unless block
 
-        ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
-
         scan_sources(options,&block)
         scan_specs(options,&block)
 
@@ -143,13 +140,9 @@ module Bundler
       def scan_specs(options={})
         return enum_for(__method__,options) unless block_given?
 
-        ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
-
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
-            unless (ignore.include?(advisory.cve_id) ||
-                    ignore.include?(advisory.osvdb_id))
+            unless ignore?(options, advisory)
               yield UnpatchedGem.new(gem,advisory)
             end
           end
@@ -157,6 +150,55 @@ module Bundler
       end
 
       private
+
+      #
+      # Determines whether an advisory should be ignored
+      #
+      # @param options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
+      # @param [Advisory] advisory
+      #   The advistory to check against.
+      #
+      # @return [Boolean]
+      #
+      def ignore?(options, advisory)
+        ignore = ignored_advisories(options)
+        ignore.include?(advisory.cve_id) || ignore.include?(advisory.osvdb_id)
+      end
+
+      #
+      # Computes which advisories to ignore
+      #
+      # @param options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
+      # @return [Array<String>]
+      #
+      def ignored_advisories(options)
+        return @ignore if @ignore
+
+        @ignore = Set[]
+        @ignore += options[:ignore] if options[:ignore]
+        @ignore += ignored_advisories_from_file
+        @ignore
+      end
+
+      # Name of ignore file.
+      #
+      IGNOREFILE_NAME = '.bundlerauditignore'
+
+      #
+      # Computes which advisories to ignore from ignore file if it exists
+      #
+      # @return [Array<String>]
+      #
+      def ignored_advisories_from_file
+        ignorefile_path = File.join(@root,IGNOREFILE_NAME)
+        return [] unless File.exist?(ignorefile_path)
+
+        File.read(ignorefile_path).split
+      end
 
       #
       # Determines whether a source is internal.

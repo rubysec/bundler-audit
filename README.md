@@ -116,6 +116,9 @@ Ignore specific advisories:
 
     $ bundle audit check --ignore OSVDB-108664
 
+Alternatively, adding `.bundlerauditignore` allows specific advisories to be ignored.
+See [example](spec/bundle/unpatched_gems_with_ignore/.bundlerauditignore)
+
 Rake task:
 
 ```ruby
