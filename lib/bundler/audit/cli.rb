@@ -17,6 +17,7 @@
 
 require 'bundler/audit/scanner'
 require 'bundler/audit/version'
+require 'bundler/audit/cli/printers'
 
 require 'thor'
 require 'bundler'
@@ -34,30 +35,23 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :format, :type => :string, :default => 'text',
+                             :aliases => '-F'
 
       def check
+        begin
+          extend Printers.load(options[:format])
+        rescue Printers::PrinterNotFound
+          say "Unknown format: #{options[:format]}", :red
+          exit 1
+        end
+
         update if options[:update]
 
         scanner    = Scanner.new
-        vulnerable = false
+        results = scanner.scan(:ignore => options.ignore)
 
-        scanner.scan(:ignore => options.ignore) do |result|
-          vulnerable = true
-
-          case result
-          when Scanner::InsecureSource
-            print_warning "Insecure Source URI found: #{result.source}"
-          when Scanner::UnpatchedGem
-            print_advisory result.gem, result.advisory
-          end
-        end
-
-        if vulnerable
-          say "Vulnerabilities found!", :red
-          exit 1
-        else
-          say("No vulnerabilities found", :green) unless options.quiet?
-        end
+        print_results(results)
       end
 
       desc 'update', 'Updates the ruby-advisory-db'
@@ -77,7 +71,7 @@ module Bundler
         end
 
         unless options.quiet?
-          puts("ruby-advisory-db: #{Database.new.size} advisories")
+          puts "ruby-advisory-db: #{Database.new.size} advisories"
         end
       end
 
@@ -90,64 +84,16 @@ module Bundler
 
       protected
 
+      #
+      # @abstract
+      #
+      def print_results(results)
+        raise(NotImplementedError,"#{self.class}##{__method__} not defined")
+      end
+
       def say(message="", color=nil)
         color = nil unless $stdout.tty?
         super(message.to_s, color)
-      end
-
-      def print_warning(message)
-        say message, :yellow
-      end
-
-      def print_advisory(gem, advisory)
-        say "Name: ", :red
-        say gem.name
-
-        say "Version: ", :red
-        say gem.version
-
-        say "Advisory: ", :red
-
-        if advisory.cve
-          say advisory.cve_id
-        elsif advisory.osvdb
-          say advisory.osvdb_id
-        elsif advisory.ghsa
-          say advisory.ghsa_id
-        end
-
-        say "Criticality: ", :red
-        case advisory.criticality
-        when :low    then say "Low"
-        when :medium then say "Medium", :yellow
-        when :high   then say "High", [:red, :bold]
-        else              say "Unknown"
-        end
-
-        say "URL: ", :red
-        say advisory.url
-
-        if options.verbose?
-          say "Description:", :red
-          say
-
-          print_wrapped advisory.description, :indent => 2
-          say
-        else
-
-          say "Title: ", :red
-          say advisory.title
-        end
-
-        unless advisory.patched_versions.empty?
-          say "Solution: upgrade to ", :red
-          say advisory.patched_versions.join(', ')
-        else
-          say "Solution: ", :red
-          say "remove or disable this gem until a patch is available!", [:red, :bold]
-        end
-
-        say
       end
 
     end
