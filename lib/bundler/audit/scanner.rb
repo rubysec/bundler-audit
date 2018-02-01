@@ -1,5 +1,6 @@
 require 'bundler'
 require 'bundler/audit/database'
+require 'bundler/audit/results'
 require 'bundler/lockfile_parser'
 
 require 'ipaddr'
@@ -10,12 +11,6 @@ require 'uri'
 module Bundler
   module Audit
     class Scanner
-
-      # Represents a plain-text source
-      InsecureSource = Struct.new(:source)
-
-      # Represents a gem that is covered by an Advisory
-      UnpatchedGem = Struct.new(:gem, :advisory)
 
       # The advisory database
       #
@@ -59,7 +54,7 @@ module Bundler
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
-      # @yieldparam [InsecureSource, UnpatchedGem] result
+      # @yieldparam [Results::InsecureSource, Results::UnpatchedGem] result
       #   A result from the scan.
       #
       # @return [Enumerator]
@@ -86,7 +81,7 @@ module Bundler
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
-      # @yieldparam [InsecureSource] result
+      # @yieldparam [Results::InsecureSource] result
       #   A result from the scan.
       #
       # @return [Enumerator]
@@ -105,13 +100,13 @@ module Bundler
             case source.uri
             when /^git:/, /^http:/
               unless internal_source?(source.uri)
-                yield InsecureSource.new(source.uri)
+                yield Results::InsecureSource.new(source.uri)
               end
             end
           when Source::Rubygems
             source.remotes.each do |uri|
               if (uri.scheme == 'http' && !internal_source?(uri))
-                yield InsecureSource.new(uri.to_s)
+                yield Results::InsecureSource.new(uri.to_s)
               end
             end
           end
@@ -130,7 +125,7 @@ module Bundler
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
-      # @yieldparam [UnpatchedGem] result
+      # @yieldparam [Results::UnpatchedGem] result
       #   A result from the scan.
       #
       # @return [Enumerator]
