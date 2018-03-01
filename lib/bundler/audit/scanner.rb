@@ -99,18 +99,21 @@ module Bundler
       def scan_sources(options={})
         return enum_for(__method__,options) unless block_given?
 
+        ignore = Set[]
+        ignore += options[:ignore] if options[:ignore]
+
         @lockfile.sources.map do |source|
           case source
           when Source::Git
             case source.uri
             when /^git:/, /^http:/
-              unless internal_source?(source.uri)
+              unless internal_source?(source.uri) || ignore.include?(source.uri)
                 yield InsecureSource.new(source.uri)
               end
             end
           when Source::Rubygems
             source.remotes.each do |uri|
-              if (uri.scheme == 'http' && !internal_source?(uri))
+              if (uri.scheme == 'http' && !internal_source?(uri)) && !ignore.include?(uri.to_s)
                 yield InsecureSource.new(uri.to_s)
               end
             end
