@@ -17,7 +17,7 @@ describe Bundler::Audit::CLI::Printers do
   describe ".register" do
     context "when given a valid printer module" do
       module GoodModule
-        def print_results(results)
+        def print_report(report)
         end
       end
 
@@ -31,9 +31,9 @@ describe Bundler::Audit::CLI::Printers do
       end
     end
 
-    context "when given a printer module that does not define #print_results" do
+    context "when given a printer module that does not define #print_report" do
       module BadModule
-        def pront_results(results)
+        def pront_report(report)
         end
       end
 
@@ -42,7 +42,7 @@ describe Bundler::Audit::CLI::Printers do
 
       it do
         expect { subject.register(name,printer) }.to raise_error(
-          NotImplementedError, "#{printer.inspect} does not define #print_results"
+          NotImplementedError, "#{printer.inspect} does not define #print_report"
         )
       end
     end

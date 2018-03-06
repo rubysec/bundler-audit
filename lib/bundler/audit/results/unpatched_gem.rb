@@ -32,6 +32,21 @@ module Bundler
         end
 
         #
+        # Compares the unpatched gem to another result.
+        #
+        # @param [Result] result
+        #
+        # @return [Boolean]
+        #
+        def ==(other)
+          self.class == other && (
+            @gem.name == other.gem.name &&
+            @gem.version == other.gem.version &&
+            @advisory == other.advisory
+          )
+        end
+
+        #
         # Converts the unpatched gem result into a String.
         #
         # @return [String]
