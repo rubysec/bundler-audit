@@ -37,6 +37,7 @@ module Bundler
       method_option :update, :type => :boolean, :aliases => '-u'
       method_option :format, :type => :string, :default => 'text',
                              :aliases => '-F'
+      method_option :output, :type => :string, :aliases => '-o'
 
       def check
         begin
@@ -51,7 +52,13 @@ module Bundler
         scanner = Scanner.new
         report  = scanner.report(:ignore => options.ignore)
 
-        print_report(report)
+        output = if options[:output] then File.new(options[:output],'w')
+                 else                     $stdout
+                 end
+
+        print_report(report,output)
+
+        output.close if options[:output]
       end
 
       desc 'update', 'Updates the ruby-advisory-db'

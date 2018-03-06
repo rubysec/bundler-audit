@@ -6,7 +6,7 @@ module Bundler
       module Formats
         module Good
 
-          def print_report(report)
+          def print_report(report,output=$stdout)
             say "I am a good format.", :green
           end
 
