@@ -26,8 +26,8 @@ module Bundler
         # @api public
         #
         def self.register(name,printer)
-          unless printer.instance_methods.include?(:print_results)
-            raise(NotImplementedError,"#{printer.inspect} does not define #print_results")
+          unless printer.instance_methods.include?(:print_report)
+            raise(NotImplementedError,"#{printer.inspect} does not define #print_report")
           end
 
           @registry[name.to_sym] = printer

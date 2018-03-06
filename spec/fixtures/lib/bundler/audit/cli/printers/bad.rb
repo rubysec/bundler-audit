@@ -6,7 +6,7 @@ module Bundler
       module Printers
         module Bad
 
-          def print_results(results)
+          def print_report(report)
             say "I am a bad printer!", :red
           end
 

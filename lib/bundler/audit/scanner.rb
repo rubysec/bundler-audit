@@ -1,6 +1,6 @@
 require 'bundler'
 require 'bundler/audit/database'
-require 'bundler/audit/results'
+require 'bundler/audit/report'
 require 'bundler/lockfile_parser'
 
 require 'ipaddr'
@@ -40,6 +40,34 @@ module Bundler
         @lockfile = LockfileParser.new(
           File.read(File.join(@root,gemfile_lock))
         )
+      end
+
+      #
+      # Preforms a {#scan} and collects the results into a {Report report}.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
+      # @yield [result]
+      #   The given block will be passed the results of the scan.
+      #
+      # @yieldparam [Results::InsecureSource, Results::UnpatchedGem] result
+      #   A result from the scan.
+      #
+      # @return [Report]
+      #
+      def report(options={})
+        report = Report.new()
+
+        scan(options) do |result|
+          report << result
+          yield result if block_given?
+        end
+
+        return report
       end
 
       #

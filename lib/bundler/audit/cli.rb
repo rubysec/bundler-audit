@@ -48,10 +48,10 @@ module Bundler
 
         update if options[:update]
 
-        scanner    = Scanner.new
-        results = scanner.scan(:ignore => options.ignore)
+        scanner = Scanner.new
+        report  = scanner.report(:ignore => options.ignore)
 
-        print_results(results)
+        print_report(report)
       end
 
       desc 'update', 'Updates the ruby-advisory-db'
@@ -87,7 +87,7 @@ module Bundler
       #
       # @abstract
       #
-      def print_results(results)
+      def print_report(report)
         raise(NotImplementedError,"#{self.class}##{__method__} not defined")
       end
 

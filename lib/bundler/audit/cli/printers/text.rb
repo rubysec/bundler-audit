@@ -9,15 +9,11 @@ module Bundler
           #
           # Prints any findings as plain-text.
           #
-          # @param [Enumerator] findings
+          # @param [Report] report
           #   The results from the {Scanner}.
           #
-          def print_results(results)
-            vulnerable = false
-
-            results.each do |result|
-              vulnerable = true
-
+          def print_report(report)
+            report.each do |result|
               case result
               when Results::InsecureSource
                 print_warning "Insecure Source URI found: #{result.source}"
@@ -26,7 +22,7 @@ module Bundler
               end
             end
 
-            if vulnerable
+            if report.vulnerable?
               say "Vulnerabilities found!", :red
               exit 1
             else

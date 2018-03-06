@@ -21,6 +21,17 @@ module Bundler
         end
 
         #
+        # Compares the insecure source with another result.
+        #
+        # @param [Result] other
+        #
+        # @return [Boolean]
+        #
+        def ==(other)
+          self.class == other.class && @source == other.source
+        end
+
+        #
         # Converts the insecure source result to a String.
         #
         def to_s

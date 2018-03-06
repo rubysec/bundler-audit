@@ -6,7 +6,7 @@ module Bundler
       module Printers
         module Good
 
-          def print_results(results)
+          def print_report(report)
             say "I am a good printer.", :green
           end
 
