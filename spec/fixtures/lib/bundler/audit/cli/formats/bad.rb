@@ -3,16 +3,16 @@ require 'thor'
 module Bundler
   module Audit
     class CLI < ::Thor
-      module Printers
+      module Formats
         module Bad
 
           def print_report(report)
-            say "I am a bad printer!", :red
+            say "I am a bad format!", :red
           end
 
         end
 
-        Printers.register :incorrect, Bad
+        Formats.register :incorrect, Bad
       end
     end
   end

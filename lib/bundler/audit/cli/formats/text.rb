@@ -3,7 +3,7 @@ require 'thor'
 module Bundler
   module Audit
     class CLI < ::Thor
-      module Printers
+      module Formats
         module Text
 
           #
@@ -87,7 +87,7 @@ module Bundler
 
         end
 
-        Printers.register :text, Text
+        Formats.register :text, Text
       end
     end
   end
