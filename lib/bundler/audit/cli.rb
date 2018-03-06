@@ -17,7 +17,7 @@
 
 require 'bundler/audit/scanner'
 require 'bundler/audit/version'
-require 'bundler/audit/cli/printers'
+require 'bundler/audit/cli/formats'
 
 require 'thor'
 require 'bundler'
@@ -40,8 +40,8 @@ module Bundler
 
       def check
         begin
-          extend Printers.load(options[:format])
-        rescue Printers::PrinterNotFound
+          extend Formats.load(options[:format])
+        rescue Formats::FormatNotFound
           say "Unknown format: #{options[:format]}", :red
           exit 1
         end
