@@ -149,6 +149,17 @@ module Bundler
         !patched?(version) && !unaffected?(version)
       end
 
+      #
+      # Compares two advisories.
+      #
+      # @param [Advisory] other
+      #
+      # @return [Boolean]
+      #
+      def ==(other)
+        id == other.id
+      end
+
       alias to_s id
 
     end

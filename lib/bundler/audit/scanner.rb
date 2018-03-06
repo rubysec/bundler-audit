@@ -1,5 +1,6 @@
 require 'bundler'
 require 'bundler/audit/database'
+require 'bundler/audit/report'
 require 'bundler/lockfile_parser'
 
 require 'ipaddr'
@@ -10,12 +11,6 @@ require 'uri'
 module Bundler
   module Audit
     class Scanner
-
-      # Represents a plain-text source
-      InsecureSource = Struct.new(:source)
-
-      # Represents a gem that is covered by an Advisory
-      UnpatchedGem = Struct.new(:gem, :advisory)
 
       # The advisory database
       #
@@ -48,6 +43,34 @@ module Bundler
       end
 
       #
+      # Preforms a {#scan} and collects the results into a {Report report}.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
+      # @yield [result]
+      #   The given block will be passed the results of the scan.
+      #
+      # @yieldparam [Results::InsecureSource, Results::UnpatchedGem] result
+      #   A result from the scan.
+      #
+      # @return [Report]
+      #
+      def report(options={})
+        report = Report.new()
+
+        scan(options) do |result|
+          report << result
+          yield result if block_given?
+        end
+
+        return report
+      end
+
+      #
       # Scans the project for issues.
       #
       # @param [Hash] options
@@ -59,7 +82,7 @@ module Bundler
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
-      # @yieldparam [InsecureSource, UnpatchedGem] result
+      # @yieldparam [Results::InsecureSource, Results::UnpatchedGem] result
       #   A result from the scan.
       #
       # @return [Enumerator]
@@ -86,7 +109,7 @@ module Bundler
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
-      # @yieldparam [InsecureSource] result
+      # @yieldparam [Results::InsecureSource] result
       #   A result from the scan.
       #
       # @return [Enumerator]
@@ -105,13 +128,13 @@ module Bundler
             case source.uri
             when /^git:/, /^http:/
               unless internal_source?(source.uri)
-                yield InsecureSource.new(source.uri)
+                yield Results::InsecureSource.new(source.uri)
               end
             end
           when Source::Rubygems
             source.remotes.each do |uri|
               if (uri.scheme == 'http' && !internal_source?(uri))
-                yield InsecureSource.new(uri.to_s)
+                yield Results::InsecureSource.new(uri.to_s)
               end
             end
           end
@@ -130,7 +153,7 @@ module Bundler
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
-      # @yieldparam [UnpatchedGem] result
+      # @yieldparam [Results::UnpatchedGem] result
       #   A result from the scan.
       #
       # @return [Enumerator]
@@ -150,7 +173,7 @@ module Bundler
           @database.check_gem(gem) do |advisory|
             unless (ignore.include?(advisory.cve_id) ||
                     ignore.include?(advisory.osvdb_id))
-              yield UnpatchedGem.new(gem,advisory)
+              yield Results::UnpatchedGem.new(gem,advisory)
             end
           end
         end
