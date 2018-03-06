@@ -12,7 +12,13 @@ module Bundler
           # @param [Report] report
           #   The results from the {Scanner}.
           #
-          def print_report(report)
+          # @param [IO] output
+          #   Optional output stream.
+          #
+          def print_report(report,output=$stdout)
+            original_stdout = $stdout
+            $stdout = output
+
             report.each do |result|
               case result
               when Results::InsecureSource
@@ -28,6 +34,8 @@ module Bundler
             else
               say("No vulnerabilities found", :green) unless options.quiet?
             end
+
+            $stdout = original_stdout
           end
 
           private
