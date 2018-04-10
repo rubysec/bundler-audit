@@ -1,6 +1,8 @@
 require 'bundler/audit/results'
 require 'bundler/audit/version'
 
+require 'time'
+
 module Bundler
   module Audit
     #
@@ -14,6 +16,11 @@ module Bundler
       #
       # @return [String]
       attr_reader :version
+
+      # The time when the report was generated.
+      #
+      # @return [Time]
+      attr_reader :created_at
 
       # The list of all results.
       #
@@ -36,7 +43,9 @@ module Bundler
       # @param [#each] results
       #
       def initialize(results=[])
-        @version = VERSION
+        @version    = VERSION
+        @created_at = Time.now
+
         @results = []
         @insecure_sources = []
         @unpatched_gems = []

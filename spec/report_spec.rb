@@ -25,6 +25,10 @@ describe Bundler::Audit::Report do
     end
   end
 
+  describe "#time" do
+    it { expect(subject.created_at).to be_kind_of(Time) }
+  end
+
   describe "#<<" do
     subject { described_class.new }
 
