@@ -19,6 +19,12 @@ describe Bundler::Audit::Report do
 
   subject { described_class.new(results) }
 
+  describe "#version" do
+    it "should be the VERSION constant" do
+      expect(subject.version).to be(Bundler::Audit::VERSION)
+    end
+  end
+
   describe "#<<" do
     subject { described_class.new }
 

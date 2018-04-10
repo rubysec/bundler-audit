@@ -1,4 +1,5 @@
 require 'bundler/audit/results'
+require 'bundler/audit/version'
 
 module Bundler
   module Audit
@@ -8,6 +9,11 @@ module Bundler
     class Report
 
       include Enumerable
+
+      # The version of `bundler-audit` which created the report object.
+      #
+      # @return [String]
+      attr_reader :version
 
       # The list of all results.
       #
@@ -30,6 +36,7 @@ module Bundler
       # @param [#each] results
       #
       def initialize(results=[])
+        @version = VERSION
         @results = []
         @insecure_sources = []
         @unpatched_gems = []
