@@ -29,7 +29,7 @@ module Bundler
     class Database
 
       # Git URL of the ruby-advisory-db
-      URL = 'https://github.com/rubysec/ruby-advisory-db.git'
+      URL = 'https://github.com/everydayruby/ruby-advisory-db'
 
       # Default path to the ruby-advisory-db
       VENDORED_PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db'))
