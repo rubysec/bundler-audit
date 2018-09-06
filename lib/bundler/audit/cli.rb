@@ -74,6 +74,7 @@ module Bundler
           exit 1
         when nil
           say "Skipping update", :yellow
+          exit 1
         end
 
         unless options.quiet?
