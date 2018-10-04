@@ -5,6 +5,16 @@ module Bundler
       # @abstract
       #
       class Result
+
+        #
+        # @return [Hash{Symbol => Object}]
+        #
+        # @abstract
+        #
+        def to_h
+          raise(NotImplementedError,"#{self.class}#to_h not implemented!")
+        end
+
       end
     end
   end

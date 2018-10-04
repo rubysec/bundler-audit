@@ -55,6 +55,20 @@ module Bundler
           @advisory.id
         end
 
+        #
+        # @return [Hash{Symbol => Object}]
+        #
+        def to_h
+          {
+            type: :unpatched_gem,
+            gem:  {
+              name: @gem.name,
+              version: @gem.version
+            },
+            advisory: @advisory.to_h
+          }
+        end
+
       end
     end
   end

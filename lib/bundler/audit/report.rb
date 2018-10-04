@@ -133,6 +133,17 @@ module Bundler
         @unpatched_gems.map(&:gem)
       end
 
+      #
+      # @return [Hash{Symbol => Object}]
+      #
+      def to_h
+        {
+          version:    @version,
+          created_at: @created_at,
+          results:    @results.map(&:to_h)
+        }
+      end
+
     end
   end
 end
