@@ -34,6 +34,7 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :no_exit_on_warn, :type => :boolean
 
       def check
         update if options[:update]
@@ -54,6 +55,7 @@ module Bundler
 
         if vulnerable
           say "Vulnerabilities found!", :red
+          exit 0 if options.no_exit_on_warn?
           exit 1
         else
           say("No vulnerabilities found", :green) unless options.quiet?
