@@ -37,8 +37,8 @@ module Bundler
 
       def check
         update if options[:update]
-
-        scanner    = Scanner.new
+        gemfile_lock = ENV['BUNDLE_GEMFILE'] ? ENV['BUNDLE_GEMFILE'] + '.lock' : 'Gemfile.lock'
+        scanner    = Scanner.new gemfile_lock
         vulnerable = false
 
         scanner.scan(:ignore => options.ignore) do |result|

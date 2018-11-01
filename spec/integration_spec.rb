@@ -79,6 +79,16 @@ Insecure Source URI found: http://rubygems.org/
     end
   end
 
+  context "when auditing a specific Gemfile using BUNDLE_GEMFILE" do
+    subject do
+       sh("BUNDLE_GEMFILE=spec/bundle/secure/Gemfile #{command}")
+    end
+
+    it "should print nothing when everything is fine" do
+      expect(subject.strip).to eq("No vulnerabilities found")
+    end
+  end
+
   describe "update" do
 
     let(:update_command) { "#{command} update" }
