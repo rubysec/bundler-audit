@@ -39,7 +39,7 @@ module Bundler
         # @return [Boolean]
         #
         def ==(other)
-          self.class == other && (
+          self.class == other.class && (
             @gem.name == other.gem.name &&
             @gem.version == other.gem.version &&
             @advisory == other.advisory
