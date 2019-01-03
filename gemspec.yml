@@ -11,4 +11,4 @@ required_rubygems_version: ">= 1.8.0"
 
 dependencies:
   thor: ~> 0.18
-  bundler: ~> 1.2
+  bundler: ">= 1.2.0, < 3"
