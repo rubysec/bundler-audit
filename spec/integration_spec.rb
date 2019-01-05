@@ -23,8 +23,8 @@ describe "CLI" do
       advisory_pattern = /(Name: [^\n]+
 Version: \d+.\d+.\d+
 Advisory: CVE-[0-9]{4}-[0-9]{4}
-Criticality: (High|Medium)
-URL: http:\/\/(direct|www\.)?osvdb.org\/show\/osvdb\/\d+
+Criticality: (High|Medium|Low|Unknown)
+URL: http:\/\/[^\n]*
 Title: [^\n]*?
 Solution: upgrade to ((~>|=>) \d+.\d+.\d+, )*(~>|=>) \d+.\d+.\d+[\s\n]*?)+/
 
