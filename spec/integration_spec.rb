@@ -26,7 +26,7 @@ Advisory: CVE-[0-9]{4}-[0-9]{4}
 Criticality: (High|Medium|Low|Unknown)
 URL: https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)
 Title: [^\n]*?
-Solution: upgrade to (~>|=>) \d+\.\d+\.\d+(\.\d+)?(, (~>|=>) \d+\.\d+\.\d+(\.\d+)?)*[\s\n]*?)+}
+Solution: upgrade to (~>|>=) \d+\.\d+\.\d+(\.\d+)?(, (~>|>=) \d+\.\d+\.\d+(\.\d+)?)*[\s\n]*?)}
 
       expect(subject).to match(advisory_pattern)
       expect(subject).to include("Vulnerabilities found!")
