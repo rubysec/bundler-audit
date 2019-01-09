@@ -1,3 +1,7 @@
+### 0.6.1 / 2019-01-10
+
+* Require bundler `>= 1.2.0, < 3` to support [bundler] 2.0.
+
 ### 0.6.0 / 2017-07-18
 
 * Added `--quiet` option to `check` and `update` commands (@jaredbeck).
