@@ -17,6 +17,7 @@
 
 require 'bundler/audit/scanner'
 require 'bundler/audit/version'
+require 'bundler/audit/presenter/default'
 
 require 'thor'
 require 'bundler'
@@ -25,6 +26,10 @@ require 'bundler/vendored_thor'
 module Bundler
   module Audit
     class CLI < ::Thor
+      DEFAULT_PRESENTER = 'Default'
+      Error = Class.new(RuntimeError)
+      PresenterUnkown = Class.new(Error)
+      PresenterInvalid = Class.new(Error)
 
       default_task :check
       map '--version' => :version
@@ -34,30 +39,29 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :presenter, :type => :string, :aliases => '-p', :default => DEFAULT_PRESENTER
 
       def check
         update if options[:update]
 
         scanner    = Scanner.new
-        vulnerable = false
+        presenter = presenter_klass(options[:presenter]).new(self.shell, options)
 
         scanner.scan(:ignore => options.ignore) do |result|
-          vulnerable = true
-
           case result
           when Scanner::InsecureSource
-            print_warning "Insecure Source URI found: #{result.source}"
+            presenter.push_warning "Insecure Source URI found: #{result.source}"
           when Scanner::UnpatchedGem
-            print_advisory result.gem, result.advisory
+            presenter.push_advisory result
           end
         end
 
-        if vulnerable
-          say "Vulnerabilities found!", :red
-          exit 1
-        else
-          say("No vulnerabilities found", :green) unless options.quiet?
-        end
+        presenter.print_report
+        exit presenter.exit_code
+
+      rescue Error => e
+        say e.message, :red
+        exit 1
       end
 
       desc 'update', 'Updates the ruby-advisory-db'
@@ -95,59 +99,14 @@ module Bundler
         super(message.to_s, color)
       end
 
-      def print_warning(message)
-        say message, :yellow
+      def presenter_klass(presenter_string)
+        presenter_name = options[:presenter].capitalize.to_sym
+        raise PresenterUnkown, "Unknown Presenter '#{presenter_name}'" unless Presenter.const_defined? presenter_name
+
+        Presenter.const_get presenter_name
+      rescue NameError
+        raise PresenterInvalid, "Invalid Presenter Name '#{presenter_name}'"
       end
-
-      def print_advisory(gem, advisory)
-        say "Name: ", :red
-        say gem.name
-
-        say "Version: ", :red
-        say gem.version
-
-        say "Advisory: ", :red
-
-        if advisory.cve
-          say "CVE-#{advisory.cve}"
-        elsif advisory.osvdb
-          say advisory.osvdb
-        end
-
-        say "Criticality: ", :red
-        case advisory.criticality
-        when :low    then say "Low"
-        when :medium then say "Medium", :yellow
-        when :high   then say "High", [:red, :bold]
-        else              say "Unknown"
-        end
-
-        say "URL: ", :red
-        say advisory.url
-
-        if options.verbose?
-          say "Description:", :red
-          say
-
-          print_wrapped advisory.description, :indent => 2
-          say
-        else
-
-          say "Title: ", :red
-          say advisory.title
-        end
-
-        unless advisory.patched_versions.empty?
-          say "Solution: upgrade to ", :red
-          say advisory.patched_versions.join(', ')
-        else
-          say "Solution: ", :red
-          say "remove or disable this gem until a patch is available!", [:red, :bold]
-        end
-
-        say
-      end
-
     end
   end
 end

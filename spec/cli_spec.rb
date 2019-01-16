@@ -2,6 +2,40 @@ require 'spec_helper'
 require 'bundler/audit/cli'
 
 describe Bundler::Audit::CLI do
+  describe "#check" do
+    let(:options) { Thor::CoreExt::HashWithIndifferentAccess.new(subject.options.to_h.merge(presenter: presenter)) }
+
+    context "--presenter" do
+      before do
+        allow(subject).to receive(:options).and_return(options)
+      end
+
+      context "with default presenter" do
+        let(:presenter) { 'default' }
+        before { allow(subject).to receive(:exit).and_return(0) }
+        it "runs successfully" do
+          expect { subject.check }.to output(/No vulnerabilities found/).to_stdout
+        end
+      end
+
+      context "with invalid presenter name" do
+        let(:presenter) { '☮️' }
+        before { allow(subject).to receive(:exit).and_return(1) }
+        it "fails with invalid presenter" do
+          expect { subject.check }.to output(/Invalid Presenter/).to_stdout
+        end
+      end
+
+      context "with invalid presenter name" do
+        let(:presenter) { 'supercalifragilistic' }
+        before { allow(subject).to receive(:exit).and_return(1) }
+        it "fails with unkown presenter" do
+          expect { subject.check }.to output(/Unknown Presenter/).to_stdout
+        end
+      end
+    end
+  end
+
   describe "#update" do
     context "not --quiet (the default)" do
       context "when update succeeds" do
