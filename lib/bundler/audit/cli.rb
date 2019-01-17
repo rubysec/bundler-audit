@@ -18,6 +18,7 @@
 require 'bundler/audit/scanner'
 require 'bundler/audit/version'
 require 'bundler/audit/presenter/default'
+require 'bundler/audit/presenter/junit'
 
 require 'thor'
 require 'bundler'
