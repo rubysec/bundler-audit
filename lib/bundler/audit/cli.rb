@@ -34,11 +34,13 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :gemfile, :type => :string
 
       def check
         update if options[:update]
 
-        scanner    = Scanner.new
+        gemfile    = options[:gemfile] || "Gemfile"
+        scanner    = Scanner.new(Dir.pwd, "#{gemfile}.lock")
         vulnerable = false
 
         scanner.scan(:ignore => options.ignore) do |result|
