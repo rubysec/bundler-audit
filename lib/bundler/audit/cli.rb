@@ -101,7 +101,7 @@ module Bundler
       end
 
       def presenter_klass(presenter_string)
-        presenter_name = options[:presenter].capitalize.to_sym
+        presenter_name = presenter_string.capitalize.to_sym
         raise PresenterUnkown, "Unknown Presenter '#{presenter_name}'" unless Presenter.const_defined? presenter_name
 
         Presenter.const_get presenter_name
