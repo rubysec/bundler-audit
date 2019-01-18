@@ -3,7 +3,7 @@ require 'bundler/audit/presenter/base'
 module Bundler
   module Audit
     module Presenter
-      class Default < Base
+      class Plain < Base
         def print_report
           @warnings.each do |warning|
             print_warning warning

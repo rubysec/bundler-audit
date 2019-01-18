@@ -17,7 +17,7 @@
 
 require 'bundler/audit/scanner'
 require 'bundler/audit/version'
-require 'bundler/audit/presenter/default'
+require 'bundler/audit/presenter/plain'
 require 'bundler/audit/presenter/junit'
 
 require 'thor'
@@ -27,7 +27,7 @@ require 'bundler/vendored_thor'
 module Bundler
   module Audit
     class CLI < ::Thor
-      DEFAULT_PRESENTER = 'Default'
+      DEFAULT_PRESENTER = 'plain'
       Error = Class.new(RuntimeError)
       PresenterUnkown = Class.new(Error)
       PresenterInvalid = Class.new(Error)
