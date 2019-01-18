@@ -40,13 +40,13 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
-      method_option :presenter, :type => :string, :aliases => '-p', :default => DEFAULT_PRESENTER
+      method_option :format, :type => :string, :aliases => '-p', :default => DEFAULT_PRESENTER
 
       def check
         update if options[:update]
 
         scanner    = Scanner.new
-        presenter = presenter_klass(options[:presenter]).new(self.shell, options)
+        presenter = presenter_klass(options[:format]).new(self.shell, options)
 
         scanner.scan(:ignore => options.ignore) do |result|
           case result

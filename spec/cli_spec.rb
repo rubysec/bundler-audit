@@ -3,9 +3,9 @@ require 'bundler/audit/cli'
 
 describe Bundler::Audit::CLI do
   describe "#check" do
-    let(:options) { Thor::CoreExt::HashWithIndifferentAccess.new(subject.options.to_h.merge(presenter: presenter)) }
+    let(:options) { Thor::CoreExt::HashWithIndifferentAccess.new(subject.options.to_h.merge(format: presenter)) }
 
-    context "--presenter" do
+    context "--format" do
       before do
         allow(subject).to receive(:options).and_return(options)
       end
