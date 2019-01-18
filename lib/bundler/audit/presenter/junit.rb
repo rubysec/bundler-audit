@@ -35,13 +35,17 @@ module Bundler
           end
         end
 
+        def bundle_title(bundle)
+          "#{advisory_criticality(bundle.advisory).upcase} #{bundle.gem.name}(#{bundle.gem.version}) #{bundle.advisory.title}"
+        end
+
         def template_string
           <<-HERE.strip
 <?xml version="1.0" encoding="UTF-8" ?>
 <testsuites id="<%= Time.now.to_i %>" name="Bundle Audit" tests="225" failures="1262">
   <testsuite id="Gemfile" name="Ruby Gemfile" failures="<%= @advisory_bundles.size %>">
     <%- @advisory_bundles.each do |bundle| -%>
-    <testcase id="<%= bundle.gem.name %>" name="<%= bundle.gem.name %>">
+    <testcase id="<%= bundle.gem.name %>" name="<%= bundle_title(bundle) %>">
       <failure message="<%= bundle.advisory.title %>" type="<%= bundle.advisory.criticality %>">
 Name: <%= bundle.gem.name %>
 Version: <%= bundle.gem.version %>
