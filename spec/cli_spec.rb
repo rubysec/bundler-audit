@@ -11,7 +11,7 @@ describe Bundler::Audit::CLI do
       end
 
       context "with default presenter" do
-        let(:presenter) { 'default' }
+        let(:presenter) { Bundler::Audit::CLI::DEFAULT_PRESENTER }
         before { allow(subject).to receive(:exit).and_return(0) }
         it "runs successfully" do
           expect { subject.check }.to output(/No vulnerabilities found/).to_stdout
