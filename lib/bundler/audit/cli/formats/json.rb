@@ -9,7 +9,7 @@ module Bundler
           def print_report(report,output=$stdout)
             hash = report.to_h
 
-            if output == STDOUT
+            if output.tty?
               output.puts ::JSON.pretty_generate(hash)
             else
               output.write(::JSON.generate(hash))
