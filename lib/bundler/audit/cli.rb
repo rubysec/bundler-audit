@@ -34,11 +34,16 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :file, type: :string, aliases: "-f"
 
       def check
         update if options[:update]
 
-        scanner    = Scanner.new
+        scanner = if options[:file]
+          Scanner.new(Dir.pwd, options[:file])
+        else
+          Scanner.new
+        end
         vulnerable = false
 
         scanner.scan(:ignore => options.ignore) do |result|
