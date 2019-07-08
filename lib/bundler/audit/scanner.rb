@@ -197,7 +197,11 @@ module Bundler
         ignorefile_path = File.join(@root,IGNOREFILE_NAME)
         return [] unless File.exist?(ignorefile_path)
 
-        File.read(ignorefile_path).split
+        lines = File.read(ignorefile_path).split(/[\r\n]+/)
+        lines.map! { |line| line.gsub(/#.*/, "").strip }
+        lines.reject! { |line| line.empty? }
+
+        lines
       end
 
       #

@@ -49,7 +49,14 @@ describe Scanner do
     context "with ignore file" do
       let(:bundle)    { 'unpatched_gems_with_ignore' }
       let(:ignorefile_path) { File.join(directory, described_class::IGNOREFILE_NAME) }
-      let(:advisories_to_ignore) { File.read(ignorefile_path).split }
+      let(:advisories_to_ignore) { scanner.send(:ignored_advisories_from_file) }
+
+      it "contains the expected parsed advisories" do
+        expect(advisories_to_ignore).to eq([
+          "CVE-2016-0753",
+          "CVE-2016-6317",
+        ])
+      end
 
       it "should ignore the specified advisories" do
         ids = subject.map { |result| result.advisory.id }
@@ -57,6 +64,9 @@ describe Scanner do
         advisories_to_ignore.each do |advisory_to_ignore|
           expect(ids).not_to include(advisory_to_ignore)
         end
+
+        # Does not parse comments in the ignore file.
+        expect(ids).to include("CVE-2015-7577")
       end
 
       # this example is here to make sure the previous example is not a false positive
