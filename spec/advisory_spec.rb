@@ -123,6 +123,26 @@ describe Bundler::Audit::Advisory do
     end
   end
 
+  describe "#ghsa_id" do
+    let(:ghsa) { "xfhh-rx56-rxcr" }
+
+    subject do
+      described_class.new.tap do |advisory|
+        advisory.ghsa = ghsa
+      end
+    end
+
+    it "should prepend GHSA- to the GHSA id" do
+      expect(subject.ghsa_id).to be == "GHSA-#{ghsa}"
+    end
+
+    context "when ghsa is nil" do
+      subject { described_class.new }
+
+      it { expect(subject.ghsa_id).to be_nil }
+    end
+  end
+
   describe "#criticality" do
     context "when cvss_v2 is between 0.0 and 3.3" do
       subject do

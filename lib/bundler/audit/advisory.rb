@@ -28,6 +28,7 @@ module Bundler
                                 :cvss_v2,
                                 :cve,
                                 :osvdb,
+                                :ghsa,
                                 :unaffected_versions,
                                 :patched_versions)
 
@@ -65,6 +66,7 @@ module Bundler
           data['cvss_v2'],
           data['cve'],
           data['osvdb'],
+          data['ghsa'],
           parse_versions[data['unaffected_versions']],
           parse_versions[data['patched_versions']]
         )
@@ -86,6 +88,15 @@ module Bundler
       #
       def osvdb_id
         "OSVDB-#{osvdb}" if osvdb
+      end
+
+      #
+      # The GHSA (GitHub Security Advisory) identifier
+      #
+      # @return [String, nil]
+      #
+      def ghsa_id
+        "GHSA-#{ghsa}" if ghsa
       end
 
       #
