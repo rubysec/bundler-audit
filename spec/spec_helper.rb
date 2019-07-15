@@ -32,7 +32,7 @@ module Helpers
   def expect_update_to_update_repo!
     expect(Bundler::Audit::Database).
       to receive(:system).
-      with('git', 'pull', 'origin', 'master').
+      with('git', 'pull', '--no-rebase', 'origin', 'master').
       and_call_original
   end
 

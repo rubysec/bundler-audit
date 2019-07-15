@@ -99,7 +99,7 @@ module Bundler
         if File.directory?(USER_PATH)
           if File.directory?(File.join(USER_PATH, ".git"))
             Dir.chdir(USER_PATH) do
-              command = %w(git pull)
+              command = %w(git pull --no-rebase)
               command << '--quiet' if options[:quiet]
               command << 'origin' << 'master'
               system *command
