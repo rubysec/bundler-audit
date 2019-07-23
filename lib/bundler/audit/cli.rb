@@ -111,7 +111,7 @@ module Bundler
         if advisory.cve
           say advisory.cve_id
         elsif advisory.osvdb
-          say advisory.osvdb
+          say advisory.osvdb_id
         elsif advisory.ghsa
           say advisory.ghsa_id
         end
