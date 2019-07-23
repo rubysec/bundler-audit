@@ -83,28 +83,6 @@ describe Bundler::Audit::Advisory do
     end
   end
 
-  describe "#has_supported_identifier?" do
-    it "should return false if an advisory has no CVE, OSVDB, nor GHSA ID" do
-      advisory = described_class.new.tap do |advisory|
-        advisory.cve = nil
-        advisory.osvdb = nil
-        advisory.ghsa = nil
-      end
-
-      expect(advisory.has_supported_identifier?).to be_falsey
-    end
-
-    it "should return true if an advisory has a CVE" do
-      advisory = described_class.new.tap do |advisory|
-        advisory.cve = "2019-12345"
-        advisory.osvdb = nil
-        advisory.ghsa = nil
-      end
-
-      expect(advisory.has_supported_identifier?).to be_truthy
-    end
-  end
-
   describe "#cve_id" do
     let(:cve) { "2015-1234" }
 

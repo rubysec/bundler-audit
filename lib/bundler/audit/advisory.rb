@@ -99,10 +99,6 @@ module Bundler
         "GHSA-#{ghsa}" if ghsa
       end
 
-      def has_supported_identifier?
-        cve || osvdb || ghsa
-      end
-
       #
       # Determines how critical the vulnerability is.
       #
