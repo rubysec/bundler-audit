@@ -31,18 +31,19 @@ describe Scanner do
     subject { scanner.scan.to_a }
 
     it "should match unpatched gems to their advisories" do
+      ids = subject.map { |result| result.advisory.id }
+      expect(ids).to include('OSVDB-89025')
       expect(subject.all? { |result|
         result.advisory.vulnerable?(result.gem.version)
       }).to be_truthy
     end
 
     context "when the :ignore option is given" do
-      subject { scanner.scan(:ignore => ['OSVDB-89026']) }
+      subject { scanner.scan(:ignore => ['OSVDB-89025']) }
 
       it "should ignore the specified advisories" do
         ids = subject.map { |result| result.advisory.id }
-        
-        expect(ids).not_to include('OSVDB-89026')
+        expect(ids).not_to include('OSVDB-89025')
       end
     end
   end
