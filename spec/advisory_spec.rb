@@ -143,6 +143,37 @@ describe Bundler::Audit::Advisory do
     end
   end
 
+  describe "#identifiers" do
+    it "should include all identifiers if defined" do
+      advisory = described_class.new.tap do |advisory|
+        advisory.cve = "2018-1234"
+        advisory.osvdb = "2019-2345"
+        advisory.ghsa = "2020-3456"
+      end
+
+      expect(advisory.identifiers).to eq([
+        "CVE-2018-1234",
+        "OSVDB-2019-2345",
+        "GHSA-2020-3456"
+      ])
+    end
+
+    it "should exclude nil identifiers" do
+      advisory = described_class.new
+      expect(advisory.identifiers).to eq([])
+
+      advisory = described_class.new.tap do |advisory|
+        advisory.cve = "2018-1234"
+      end
+      expect(advisory.identifiers).to eq(["CVE-2018-1234"])
+
+      advisory = described_class.new.tap do |advisory|
+        advisory.ghsa = "2020-3456"
+      end
+      expect(advisory.identifiers).to eq(["GHSA-2020-3456"])
+    end
+  end
+
   describe "#criticality" do
     context "when cvss_v2 is between 0.0 and 3.3" do
       subject do

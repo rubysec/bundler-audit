@@ -148,9 +148,7 @@ module Bundler
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
-            is_ignored = ignore.include?(advisory.cve_id) ||
-                         ignore.include?(advisory.osvdb_id) ||
-                         ignore.include?(advisory.ghsa_id)
+            is_ignored = ignore.intersect?(advisory.identifiers.to_set)
             next if is_ignored
 
             yield UnpatchedGem.new(gem,advisory)

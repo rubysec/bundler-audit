@@ -100,6 +100,16 @@ module Bundler
       end
 
       #
+      # Return a compacted list of all ids
+      def identifiers
+        [
+          cve_id,
+          osvdb_id,
+          ghsa_id
+        ].compact
+      end
+
+      #
       # Determines how critical the vulnerability is.
       #
       # @return [:low, :medium, :high]
