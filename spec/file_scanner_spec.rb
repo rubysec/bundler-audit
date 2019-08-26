@@ -1,7 +1,7 @@
 require 'spec_helper'
-require 'bundler/audit/scanner'
+require 'bundler/audit/file_scanner'
 
-describe Scanner do
+describe FileScanner do
   describe "#scan" do
     let(:bundle)    { 'unpatched_gems' }
     let(:directory) { File.join('spec','bundle',bundle) }
