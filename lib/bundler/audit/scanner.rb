@@ -25,26 +25,19 @@ module Bundler
       # Project root directory
       attr_reader :root
 
-      # The parsed `Gemfile.lock` from the project
-      #
-      # @return [Bundler::LockfileParser]
-      attr_reader :lockfile
-
       #
       # Initializes a scanner.
       #
       # @param [String] root
       #   The path to the project root.
       #
-      # @param [String] gemfile_lock
+      # @param [String] lockfile
       #   Alternative name for the `Gemfile.lock` file.
       #
-      def initialize(root=Dir.pwd,gemfile_lock='Gemfile.lock')
+      def initialize(root=Dir.pwd, options={})
         @root     = File.expand_path(root)
+        @ignore   = (options[:ignore] || Set.new).to_set
         @database = Database.new
-        @lockfile = LockfileParser.new(
-          File.read(File.join(@root,gemfile_lock))
-        )
       end
 
       #
@@ -65,14 +58,11 @@ module Bundler
       # @return [Enumerator]
       #   If no block is given, an Enumerator will be returned.
       #
-      def scan(options={},&block)
-        return enum_for(__method__,options) unless block
+      def scan(lockfile='Gemfile.lock', &block)
+        return enum_for(__method__, lockfile) unless block
 
-        ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
-
-        scan_sources(options,&block)
-        scan_specs(options,&block)
+        scan_sources(lockfile, &block)
+        scan_specs(lockfile, &block)
 
         return self
       end
@@ -96,10 +86,10 @@ module Bundler
       #
       # @since 0.4.0
       #
-      def scan_sources(options={})
-        return enum_for(__method__,options) unless block_given?
+      def scan_sources(lockfile='Gemfile.lock')
+        return enum_for(__method__, lockfile) unless block_given?
 
-        @lockfile.sources.map do |source|
+        gems(lockfile).sources.map do |source|
           case source
           when Source::Git
             case source.uri
@@ -140,15 +130,12 @@ module Bundler
       #
       # @since 0.4.0
       #
-      def scan_specs(options={})
-        return enum_for(__method__,options) unless block_given?
+      def scan_specs(lockfile='Gemfile.lock')
+        return enum_for(__method__, lockfile) unless block_given?
 
-        ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
-
-        @lockfile.specs.each do |gem|
+        gems(lockfile).specs.each do |gem|
           @database.check_gem(gem) do |advisory|
-            is_ignored = ignore.intersect?(advisory.identifiers.to_set)
+            is_ignored = @ignore.intersect?(advisory.identifiers.to_set)
             next if is_ignored
 
             yield UnpatchedGem.new(gem,advisory)
@@ -207,6 +194,12 @@ module Bundler
       #
       def internal_ip?(ip)
         INTERNAL_SUBNETS.any? { |subnet| subnet.include?(ip) }
+      end
+
+      def gems(lockfile)
+        LockfileParser.new(
+          File.read(File.join(root, lockfile))
+        )
       end
     end
   end
