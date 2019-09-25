@@ -50,14 +50,14 @@ describe Bundler::Audit::CLI do
 
     context "--quiet" do
       before do
-        allow(subject).to receive(:options).and_return(double("Options", quiet?: true))
+        allow(subject).to receive(:options).and_return(double("Options", quiet?: true, db_path: nil))
       end
 
       context "when update succeeds" do
 
         before do
           expect(Bundler::Audit::Database).to(
-            receive(:update!).with(quiet: true).and_return(true)
+            receive(:update!).with(quiet: true, db_path: nil).and_return(true)
           )
         end
 
@@ -70,7 +70,7 @@ describe Bundler::Audit::CLI do
 
         before do
           expect(Bundler::Audit::Database).to(
-            receive(:update!).with(quiet: true).and_return(false)
+            receive(:update!).with(quiet: true, db_path: nil).and_return(false)
           )
         end
 

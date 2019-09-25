@@ -49,6 +49,13 @@ describe Bundler::Audit::Database do
       Bundler::Audit::Database.update!(quiet: false)
       expect(File.directory?(mocked_user_path)).to be true
     end
+
+    it "should recieve db_path and allow a customizable directory" do
+      db_path = File.expand_path('../../tmp/customizable-ruby-advisory-db', __FILE__)
+
+      Bundler::Audit::Database.update!(quiet: false, db_path: db_path)
+      expect(File.directory?(db_path)).to be true
+    end
   end
 
   describe "#initialize" do

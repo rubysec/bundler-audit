@@ -95,10 +95,12 @@ module Bundler
       # @since 0.3.0
       #
       def self.update!(options={})
-        raise "Invalid option(s)" unless (options.keys - [:quiet]).empty?
-        if File.directory?(USER_PATH)
-          if File.directory?(File.join(USER_PATH, ".git"))
-            Dir.chdir(USER_PATH) do
+        raise "Invalid option(s)" unless (options.keys - [:quiet, :db_path]).empty?
+        db_path = options[:db_path] || USER_PATH
+
+        if File.directory?(db_path)
+          if File.directory?(File.join(db_path, ".git"))
+            Dir.chdir(db_path) do
               command = %w(git pull)
               command << '--quiet' if options[:quiet]
               command << 'origin' << 'master'
@@ -108,7 +110,7 @@ module Bundler
         else
           command = %w(git clone)
           command << '--quiet' if options[:quiet]
-          command << URL << USER_PATH
+          command << URL << db_path
           system *command
         end
       end

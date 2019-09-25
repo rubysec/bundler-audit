@@ -34,6 +34,7 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :db_path, :type => :string, :aliases => '-p', default: nil
 
       def check
         update if options[:update]
@@ -66,7 +67,7 @@ module Bundler
       def update
         say("Updating ruby-advisory-db ...") unless options.quiet?
 
-        case Database.update!(quiet: options.quiet?)
+        case Database.update!(quiet: options.quiet?, db_path: options.db_path)
         when true
           say("Updated ruby-advisory-db", :green) unless options.quiet?
         when false
