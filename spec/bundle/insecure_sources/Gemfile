@@ -1,4 +1,4 @@
 source 'http://rubygems.org'
 
-gem 'rails'
+gem 'rails', '~> 5.2' # rails >= 6 requires ruby >= 2.5.0
 gem 'jquery-rails', git: 'git://github.com/rails/jquery-rails.git'
