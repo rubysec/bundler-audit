@@ -116,6 +116,10 @@ Ignore specific advisories:
 
     $ bundle audit check --ignore OSVDB-108664
 
+Ignore gems from specific Gemfile groups:
+
+    $ bundle audit check --ignore-groups development test
+
 Rake task:
 
 ```ruby

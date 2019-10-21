@@ -33,6 +33,7 @@ describe Scanner do
     it "should match unpatched gems to their advisories" do
       ids = subject.map { |result| result.advisory.id }
       expect(ids).to include('OSVDB-89025')
+      expect(ids).to include('CVE-2017-1000248')
       expect(subject.all? { |result|
         result.advisory.vulnerable?(result.gem.version)
       }).to be_truthy
@@ -42,6 +43,15 @@ describe Scanner do
       subject { scanner.scan(:ignore => ['OSVDB-89025']) }
 
       it "should ignore the specified advisories" do
+        ids = subject.map { |result| result.advisory.id }
+        expect(ids).not_to include('OSVDB-89025')
+      end
+    end
+
+    context "when the :ignore_groups option is given" do
+      subject { scanner.scan(:ignore_groups => ['test']) }
+
+      it "should ignore gems from the specified groups" do
         ids = subject.map { |result| result.advisory.id }
         expect(ids).not_to include('OSVDB-89025')
       end
