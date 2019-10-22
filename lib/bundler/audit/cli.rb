@@ -73,6 +73,10 @@ module Bundler
           say "Failed updating ruby-advisory-db!", :red
           exit 1
         when nil
+          unless Bundler.git_present?
+            say "Git is not installed!", :red
+            exit 1
+          end
           say "Skipping update", :yellow
         end
 
