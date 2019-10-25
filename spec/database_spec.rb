@@ -34,6 +34,21 @@ describe Bundler::Audit::Database do
     end
   end
 
+  describe "USER_PATH" do
+    it "should not raise when HOME env variable is not set" do
+      begin
+        with_env_variable_unset("HOME") do
+          expect {
+            load File.expand_path("../lib/bundler/audit/database.rb", __dir__)
+          }.not_to raise_error
+        end
+      ensure
+        # return to previous definition
+        load File.expand_path("../lib/bundler/audit/database.rb", __dir__)
+      end
+    end
+  end
+
   describe "update!" do
     it "should create the USER_PATH path as needed" do
       Bundler::Audit::Database.update!(quiet: false)
@@ -134,5 +149,13 @@ describe Bundler::Audit::Database do
     it "should produce a Ruby-ish instance descriptor" do
       expect(Bundler::Audit::Database.new.inspect).to eq("#<Bundler::Audit::Database:#{Bundler::Audit::Database::VENDORED_PATH}>")
     end
+  end
+
+  def with_env_variable_unset(name)
+    prev = ENV[name]
+    ENV.delete(name)
+    yield
+  ensure
+    ENV[name] = prev
   end
 end
