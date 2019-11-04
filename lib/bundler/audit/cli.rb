@@ -34,7 +34,7 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
-      method_option :db_path, :type => :string, :aliases => '-p', :default => File.join(Dir.home, '.local', 'share', 'ruby-advisory-db')
+      method_option :db_path, :type => :string, :aliases => '-p', :default => Bundler::Audit::Database::USER_PATH
 
       def check
         update if options[:update]
