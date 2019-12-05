@@ -29,35 +29,24 @@ module Bundler
       default_task :check
       map '--version' => :version
 
-      desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
+      desc 'check [lockfile ...]', 'Checks specified lockfiles (the default is Gemfile.lock) for insecure dependencies'
       method_option :quiet, :type => :boolean, :aliases => '-q'
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
 
-      def check
+      def check(*lockfiles)
         update if options[:update]
 
-        scanner    = Scanner.new
+        lockfiles << 'Gemfile.lock' if lockfiles.empty?
+        scanner = Scanner.new(Dir.pwd, :ignore => options.ignore)
         vulnerable = false
 
-        scanner.scan(:ignore => options.ignore) do |result|
-          vulnerable = true
-
-          case result
-          when Scanner::InsecureSource
-            print_warning "Insecure Source URI found: #{result.source}"
-          when Scanner::UnpatchedGem
-            print_advisory result.gem, result.advisory
-          end
+        lockfiles.each do |lockfile|
+          vulnerable = check_lockfile(lockfile, scanner) || vulnerable
         end
 
-        if vulnerable
-          say "Vulnerabilities found!", :red
-          exit 1
-        else
-          say("No vulnerabilities found", :green) unless options.quiet?
-        end
+        exit 1 if vulnerable
       end
 
       desc 'update', 'Updates the ruby-advisory-db'
@@ -90,6 +79,32 @@ module Bundler
 
       protected
 
+      def check_lockfile(lockfile, scanner)
+        print_header(lockfile)
+
+        vulnerable = false
+
+        scanner.scan(lockfile) do |result|
+          vulnerable = true
+
+          case result
+          when Scanner::InsecureSource
+            print_warning "Insecure Source URI found: #{result.source}"
+          when Scanner::UnpatchedGem
+            print_advisory result.gem, result.advisory
+          end
+        end
+
+        if vulnerable
+          say("Vulnerabilities found!", :red)
+        else
+          say("No vulnerabilities found", :green) unless options.quiet?
+        end
+        say
+
+        vulnerable
+      end
+
       def say(message="", color=nil)
         color = nil unless $stdout.tty?
         super(message.to_s, color)
@@ -97,6 +112,11 @@ module Bundler
 
       def print_warning(message)
         say message, :yellow
+      end
+
+      def print_header(lockfile)
+        say lockfile, :bold
+        say
       end
 
       def print_advisory(gem, advisory)

@@ -33,6 +33,25 @@ Solution: upgrade to (~>|>=) \d+\.\d+\.\d+(\.\d+)?(, (~>|>=) \d+\.\d+\.\d+(\.\d+
     end
   end
 
+  context "when auditing multiple bundles" do
+    let(:bundle)    { 'unpatched_gems' }
+    let(:directory) { File.join('spec','bundle',bundle) }
+    let(:command) do
+      File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundler-audit check Gemfile.lock ../insecure_sources/Gemfile.lock'))
+    end
+
+    subject do
+      Dir.chdir(directory) { sh(command, :fail => true) }
+    end
+
+    it "should print advisory information for multiple lockfiles" do
+      output = subject
+      expect(output).to include('Gemfile.lock')
+      expect(output).to include('../insecure_sources/Gemfile.lock')
+      expect(output.scan("Vulnerabilities found!").size).to eq(2)
+    end
+  end
+
   context "when auditing a bundle with ignored gems" do
     let(:bundle)    { 'unpatched_gems' }
     let(:directory) { File.join('spec','bundle',bundle) }
@@ -75,7 +94,7 @@ Insecure Source URI found: http://rubygems.org/
     end
 
     it "should print nothing when everything is fine" do
-      expect(subject.strip).to eq("No vulnerabilities found")
+      expect(subject.strip).to match("No vulnerabilities found")
     end
   end
 

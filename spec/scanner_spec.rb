@@ -39,7 +39,7 @@ describe Scanner do
     end
 
     context "when the :ignore option is given" do
-      subject { scanner.scan(:ignore => ['OSVDB-89025']) }
+      let(:scanner) { described_class.new(directory, :ignore => ['OSVDB-89025']) }
 
       it "should ignore the specified advisories" do
         ids = subject.map { |result| result.advisory.id }
