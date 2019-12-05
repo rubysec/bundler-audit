@@ -33,6 +33,7 @@ module Bundler
       method_option :quiet, :type => :boolean, :aliases => '-q'
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
+      method_option :ignore_groups, :type => :array
       method_option :update, :type => :boolean, :aliases => '-u'
 
       def check
@@ -41,7 +42,7 @@ module Bundler
         scanner    = Scanner.new
         vulnerable = false
 
-        scanner.scan(:ignore => options.ignore) do |result|
+        scanner.scan(:ignore => options.ignore, :ignore_groups => options.ignore_groups) do |result|
           vulnerable = true
 
           case result

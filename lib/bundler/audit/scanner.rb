@@ -1,5 +1,6 @@
 require 'bundler'
 require 'bundler/audit/database'
+require 'bundler/audit/gemfile'
 require 'bundler/lockfile_parser'
 
 require 'ipaddr'
@@ -68,9 +69,6 @@ module Bundler
       def scan(options={},&block)
         return enum_for(__method__,options) unless block
 
-        ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
-
         scan_sources(options,&block)
         scan_specs(options,&block)
 
@@ -127,6 +125,9 @@ module Bundler
       # @option options [Array<String>] :ignore
       #   The advisories to ignore.
       #
+      # @option options [Array<String>] :ignore_groups
+      #   The groups from Gemfile to ignore.
+      #
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
@@ -146,7 +147,12 @@ module Bundler
         ignore = Set[]
         ignore += options[:ignore] if options[:ignore]
 
+        gem_names = gems_to_check(options)
+
         @lockfile.specs.each do |gem|
+          is_ignored = gem_names != :all && !gem_names.include?(gem.name)
+          next if is_ignored
+
           @database.check_gem(gem) do |advisory|
             is_ignored = ignore.intersect?(advisory.identifiers.to_set)
             next if is_ignored
@@ -207,6 +213,17 @@ module Bundler
       #
       def internal_ip?(ip)
         INTERNAL_SUBNETS.any? { |subnet| subnet.include?(ip) }
+      end
+
+      def gems_to_check(options)
+        if options[:ignore_groups]
+          ENV["BUNDLE_GEMFILE"] = File.join(@root, "Gemfile")
+          gemfile = Gemfile.new(Bundler.load)
+          groups_to_check = gemfile.groups - options[:ignore_groups].map!(&:to_sym)
+          gemfile.dependencies_for(groups_to_check).map(&:name).to_set
+        else
+          :all
+        end
       end
     end
   end
