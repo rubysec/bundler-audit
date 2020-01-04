@@ -1,4 +1,8 @@
 language: ruby
+
+before_script:
+  - gem install bundler
+
 rvm:
   - 2.3
   - 2.4
