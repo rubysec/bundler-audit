@@ -167,7 +167,7 @@ module Bundler
       # @return [Boolean]
       #
       def internal_source?(uri)
-        uri = URI(uri)
+        uri = URI.parse(uri.to_s)
 
         internal_host?(uri.host) if uri.host
       end
