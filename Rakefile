@@ -36,19 +36,21 @@ end
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new
 
-namespace :spec do
-  task :bundle do
-    root = 'spec/bundle'
+%w[secure unpatched_gems insecure_sources].each do |bundle|
+  bundle_dir   = File.join('spec/bundle',bundle)
+  gemfile      = File.join(bundle_dir,'Gemfile')
+  gemfile_lock = File.join(bundle_dir,'Gemfile.lock')
 
-    %w[secure unpatched_gems insecure_sources].each do |bundle|
-      chdir(File.join(root,bundle)) do
-        sh 'unset BUNDLE_BIN_PATH BUNDLE_GEMFILE RUBYOPT && bundle install --path ../../../vendor/bundle'
-      end
+  file gemfile_lock => gemfile do
+    chdir(bundle_dir) do
+      sh 'unset BUNDLE_BIN_PATH BUNDLE_GEMFILE RUBYOPT && bundle install --path ../../../vendor/bundle'
     end
   end
-end
-task :spec => 'spec:bundle'
 
+  task 'spec:bundle' => gemfile_lock
+end
+
+task :spec    => 'spec:bundle'
 task :test    => :spec
 task :default => :spec
 
