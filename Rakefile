@@ -50,7 +50,6 @@ RSpec::Core::RakeTask.new
   task 'spec:bundle' => gemfile_lock
 end
 
-task :spec    => 'spec:bundle'
 task :test    => :spec
 task :default => :spec
 
