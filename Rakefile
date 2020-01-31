@@ -47,6 +47,7 @@ RSpec::Core::RakeTask.new
     end
   end
 
+  desc "Generates the spec/bundler/*/Gemfile.lock files"
   task 'spec:bundle' => gemfile_lock
 end
 
