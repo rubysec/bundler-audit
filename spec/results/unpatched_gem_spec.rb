@@ -23,6 +23,46 @@ describe Bundler::Audit::Results::UnpatchedGem do
 
       it { expect(subject == other).to be(false) }
     end
+
+    context "when the other's gem name is different" do
+      let(:other_gem) do
+        instance_double(
+          'Gem::Specification', name: 'bar',
+                                version: gem.version
+        )
+      end
+
+      let(:other) { described_class.new(other_gem,advisory) }
+
+      it { expect(subject == other).to be(false) }
+    end
+
+    context "when the other's gem version is different" do
+      let(:other_gem) do
+        instance_double(
+          'Gem::Specification', name: gem.name,
+                                version: '9.9.9'
+        )
+      end
+
+      let(:other) { described_class.new(other_gem,advisory) }
+
+      it { expect(subject == other).to be(false) }
+    end
+
+    context "when the other's advisory is different" do
+      let(:other_advisory) do
+        instance_double(
+          'Bundler::Audit::Advisory', id: 'CVE-9999-999',
+        )
+      end
+
+      let(:other) { described_class.new(gem,other_advisory) }
+
+      before { expect(other_advisory).to receive(:==).and_return(false) }
+
+      it { expect(subject == other).to be(false) }
+    end
   end
 
   describe "#to_h" do
