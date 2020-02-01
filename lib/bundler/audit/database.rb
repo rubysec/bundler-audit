@@ -89,13 +89,19 @@ module Bundler
       #   Specifies whether the update was successful.
       #   A `nil` indicates no update was performed.
       #
+      # @raise [ArgumentError]
+      #   Invalid options were given.
+      #
       # @note
       #   Requires network access.
       #
       # @since 0.3.0
       #
       def self.update!(options={})
-        raise "Invalid option(s)" unless (options.keys - [:quiet]).empty?
+        unless (options.keys - [:quiet]).empty?
+          raise(ArgumentError,"Invalid option(s)")
+        end
+
         if File.directory?(USER_PATH)
           if File.directory?(File.join(USER_PATH, ".git"))
             Dir.chdir(USER_PATH) do
