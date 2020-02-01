@@ -80,6 +80,35 @@ module Bundler
       end
 
       #
+      # Downloads the ruby-advisory-db.
+      #
+      # @param [String] path
+      #   The destination path for the new ruby-advisory-db.
+      #
+      # @param [Boolean, quiet]
+      #   Specify whether `git` should be `--quiet`.
+      #
+      # @return [Boolean, nil]
+      #   Specifies whether the download was successful.
+      #   A `nil` indicates no download was performed.
+      #
+      # @note
+      #   Requires network access.
+      #
+      # @since 0.7.0
+      #
+      def self.download(path,options={})
+        unless (options.keys - [:quiet]).empty?
+          raise(ArgumentError,"Invalid option(s)")
+        end
+
+        command = %w(git clone)
+        command << '--quiet' if options[:quiet]
+        command << URL << path
+        system *command
+      end
+
+      #
       # Updates the ruby-advisory-db.
       #
       # @param [Boolean, quiet]
@@ -103,10 +132,7 @@ module Bundler
         if File.directory?(USER_PATH)
           new(USER_PATH).update!(options)
         else
-          command = %w(git clone)
-          command << '--quiet' if options[:quiet]
-          command << URL << USER_PATH
-          system *command
+          download(USER_PATH,options)
         end
       end
 
