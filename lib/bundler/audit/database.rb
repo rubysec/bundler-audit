@@ -80,6 +80,20 @@ module Bundler
       end
 
       #
+      # Tests whether the database exists.
+      #
+      # @param [String] path
+      #   The given path of the database to check.
+      #
+      # @return [Boolean]
+      # 
+      # @since 0.7.0
+      #
+      def self.exists?(path=USER_PATH)
+        File.directory?(path) && !(Dir.entries(path) - %w[. ..]).empty?
+      end
+
+      #
       # Downloads the ruby-advisory-db.
       #
       # @param [String] path
