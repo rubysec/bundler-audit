@@ -134,7 +134,7 @@ task default: 'bundle:audit'
 
 ## Install
 
-    $ gem install bundler-audit
+    $ [sudo] gem install bundler-audit
 
 ## Contributing
 
