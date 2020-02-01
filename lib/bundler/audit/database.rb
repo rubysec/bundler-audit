@@ -40,6 +40,9 @@ module Bundler
       # Path to the user's copy of the ruby-advisory-db
       USER_PATH = File.expand_path(File.join(ENV['HOME'],'.local','share','ruby-advisory-db'))
 
+      # Default path to the ruby-advisory-db
+      DEFAULT_PATH = ENV['BUNDLER_AUDIT_DB'] || USER_PATH
+
       # The path to the advisory database
       attr_reader :path
 
@@ -67,11 +70,11 @@ module Bundler
       #   The path to the database directory.
       #
       def self.path
-        if File.directory?(USER_PATH)
-          t1 = Dir.chdir(USER_PATH) { Time.parse(`git log --date=iso8601 --pretty="%cd" -1`) }
+        if File.directory?(DEFAULT_PATH)
+          t1 = Dir.chdir(DEFAULT_PATH) { Time.parse(`git log --date=iso8601 --pretty="%cd" -1`) }
           t2 = VENDORED_TIMESTAMP
 
-          if t1 >= t2 then USER_PATH
+          if t1 >= t2 then DEFAULT_PATH
           else             VENDORED_PATH
           end
         else
@@ -89,7 +92,7 @@ module Bundler
       # 
       # @since 0.7.0
       #
-      def self.exists?(path=USER_PATH)
+      def self.exists?(path=DEFAULT_PATH)
         File.directory?(path) && !(Dir.entries(path) - %w[. ..]).empty?
       end
 
@@ -143,10 +146,10 @@ module Bundler
       def self.update!(options={})
         raise "Invalid option(s)" unless (options.keys - [:quiet]).empty?
 
-        if File.directory?(USER_PATH)
-          new(USER_PATH).update!(options)
+        if File.directory?(DEFAULT_PATH)
+          new(DEFAULT_PATH).update!(options)
         else
-          download(USER_PATH,options)
+          download(DEFAULT_PATH,options)
         end
       end
 
