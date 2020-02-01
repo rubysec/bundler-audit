@@ -52,6 +52,12 @@ describe Bundler::Audit::Database do
       subject.update!(quiet: false)
       expect(File.directory?(mocked_user_path)).to be true
     end
+
+    context "when given an invalid option" do
+      it do
+        expect { subject.update!(foo: 1) }.to raise_error(ArgumentError)
+      end
+    end
   end
 
   describe "#initialize" do
