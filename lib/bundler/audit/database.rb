@@ -120,6 +120,17 @@ module Bundler
       end
 
       #
+      # Determines if the database is a git repository.
+      #
+      # @return [Boolean]
+      #
+      # @since 0.7.0
+      #
+      def git?
+        File.directory?(File.join(@path,'.git'))
+      end
+
+      #
       # Enumerates over every advisory in the database.
       #
       # @yield [advisory]
