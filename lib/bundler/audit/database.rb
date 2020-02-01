@@ -145,6 +145,23 @@ module Bundler
       end
 
       #
+      # Determines the time when the database was last updated.
+      #
+      # @return [Time]
+      #
+      # @since 0.7.0
+      #
+      def last_updated_at
+        if git?
+          Dir.chdir(@path) do
+            Time.parse(`git log --date=iso8601 --pretty="%cd" -1`)
+          end
+        else
+          File.mtime(@path)
+        end
+      end
+
+      #
       # Enumerates over every advisory in the database.
       #
       # @yield [advisory]
