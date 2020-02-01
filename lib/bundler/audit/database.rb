@@ -28,6 +28,12 @@ module Bundler
     #
     class Database
 
+      class DownloadFailed < RuntimeError
+      end
+
+      class UpdateFailed < RuntimeError
+      end
+
       # Git URL of the ruby-advisory-db
       URL = 'https://github.com/rubysec/ruby-advisory-db.git'
 
@@ -99,30 +105,42 @@ module Bundler
       #
       # Downloads the ruby-advisory-db.
       #
-      # @param [String] path
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [String] :path (DEFAULT_PATH)
       #   The destination path for the new ruby-advisory-db.
       #
-      # @param [Boolean, quiet]
+      # @option options [Boolean] :quiet
       #   Specify whether `git` should be `--quiet`.
       #
-      # @return [Boolean, nil]
-      #   Specifies whether the download was successful.
-      #   A `nil` indicates no download was performed.
+      # @return [Dataase]
+      #   The newly downloaded database.
+      #
+      # @raise [DownloadFailed]
+      #   Indicates that the download failed.
       #
       # @note
       #   Requires network access.
       #
       # @since 0.7.0
       #
-      def self.download(path,options={})
-        unless (options.keys - [:quiet]).empty?
+      def self.download(options={})
+        unless (options.keys - [:path, :quiet]).empty?
           raise(ArgumentError,"Invalid option(s)")
         end
+
+        path = options.fetch(:path,DEFAULT_PATH)
 
         command = %w(git clone)
         command << '--quiet' if options[:quiet]
         command << URL << path
-        system *command
+
+        unless system(*command)
+          raise(DownloadFailed,"failed to download #{URL} to #{path.inspect}")
+        end
+
+        return new(path)
       end
 
       #
@@ -147,9 +165,15 @@ module Bundler
         raise "Invalid option(s)" unless (options.keys - [:quiet]).empty?
 
         if File.directory?(DEFAULT_PATH)
-          new(DEFAULT_PATH).update!(options)
+          begin
+            new(DEFAULT_PATH).update!(options)
+          rescue UpdateFailed then false
+          end
         else
-          download(DEFAULT_PATH,options)
+          begin
+            download(DEFAULT_PATH,options)
+          rescue DownloadFailed then false
+          end
         end
       end
 
@@ -170,9 +194,10 @@ module Bundler
       # @param [Boolean, quiet]
       #   Specify whether `git` should be `--quiet`.
       #
-      # @return [Boolean, nil]
-      #   Specifies whether the update was successful.
-      #   A `nil` indicates no update was performed.
+      # @return [true, nil]
+      #   `true` indicates that the update was successful.
+      #   `nil` indicates the database is not a git repository, thus not
+      #   capable of being updated.
       #
       # @since 0.7.0
       #
@@ -182,7 +207,12 @@ module Bundler
             command = %w(git pull)
             command << '--quiet' if options[:quiet]
             command << 'origin' << 'master'
-            system *command
+
+            unless system(*command)
+              raise(UpdateFailed,"failed to update #{@path.inspect}")
+            end
+
+            return true
           end
         end
       end
