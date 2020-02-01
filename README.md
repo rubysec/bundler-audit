@@ -139,8 +139,8 @@ task default: 'bundle:audit'
 ## Contributing
 
 1. Clone the repo
-1. `git submodule update --init` # To populate data/ruby-advisory-db
-1. `bundle exec rake`
+2. `git submodule update --init` # To populate data/ruby-advisory-db
+3. `bundle exec rake`
 
 ## License
 
