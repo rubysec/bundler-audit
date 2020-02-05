@@ -40,7 +40,7 @@ module Bundler
                              :aliases => '-F'
       method_option :output, :type => :string, :aliases => '-o'
 
-      def check
+      def check(dir=Dir.pwd)
         begin
           extend Formats.load(options[:format])
         rescue Formats::FormatNotFound
@@ -51,7 +51,7 @@ module Bundler
         update if options[:update]
 
         database = Database.new(options[:database])
-        scanner  = Scanner.new(Dir.pwd,'Gemfile.lock',database)
+        scanner  = Scanner.new(dir,'Gemfile.lock',database)
         report   = scanner.report(:ignore => options.ignore)
 
         output = if options[:output] then File.new(options[:output],'w')
