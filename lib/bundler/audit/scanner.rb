@@ -34,9 +34,12 @@ module Bundler
       # @param [String] gemfile_lock
       #   Alternative name for the `Gemfile.lock` file.
       #
-      def initialize(root=Dir.pwd,gemfile_lock='Gemfile.lock')
+      # @param [Database] database
+      #   The database to scan against.
+      #
+      def initialize(root=Dir.pwd,gemfile_lock='Gemfile.lock',database=Database.new)
         @root     = File.expand_path(root)
-        @database = Database.new
+        @database = database
         @lockfile = LockfileParser.new(
           File.read(File.join(@root,gemfile_lock))
         )
