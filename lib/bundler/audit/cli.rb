@@ -74,7 +74,9 @@ module Bundler
       def stats(path=Database.path)
         database = Database.new(path)
 
-        puts "ruby-advisory-db: #{database.size} advisories"
+        puts "ruby-advisory-db:"
+        puts "  advisories: #{database.size} advisories"
+        puts "  last updated: #{database.last_updated_at}"
       end
 
       desc 'download', 'Downloads ruby-advisory-db'
