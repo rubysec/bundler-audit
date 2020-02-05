@@ -38,6 +38,7 @@ module Bundler
       method_option :database, :type => :string, :aliases => '-D', :default => Database::USER_PATH
       method_option :format, :type => :string, :default => 'text',
                              :aliases => '-F'
+      method_option :gemfile_lock, :type => :string, :aliases => '-G', :default => 'Gemfile.lock'
       method_option :output, :type => :string, :aliases => '-o'
 
       def check(dir=Dir.pwd)
@@ -51,7 +52,7 @@ module Bundler
         update if options[:update]
 
         database = Database.new(options[:database])
-        scanner  = Scanner.new(dir,'Gemfile.lock',database)
+        scanner  = Scanner.new(dir,gemfile_lock,database)
         report   = scanner.report(:ignore => options.ignore)
 
         output = if options[:output] then File.new(options[:output],'w')
