@@ -49,7 +49,11 @@ module Bundler
           exit 1
         end
 
-        update if options[:update]
+        if !Database.exists?
+          download(options[:database])
+        elsif options[:update]
+          update(options[:database])
+        end
 
         database = Database.new(options[:database])
         scanner  = Scanner.new(dir,gemfile_lock,database)
@@ -64,10 +68,45 @@ module Bundler
         output.close if options[:output]
       end
 
+      desc 'stats', 'Prints ruby-advisory-db stats'
+      method_option :quiet, :type => :boolean, :aliases => '-q'
+
+      def stats(path=Database.path)
+        database = Database.new(path)
+
+        puts "ruby-advisory-db: #{database.size} advisories"
+      end
+
+      desc 'download', 'Downloads ruby-advisory-db'
+      method_option :quiet, :type => :boolean, :aliases => '-q'
+
+      def download(path=Database.path)
+        if Database.exists?(path)
+          say "Database already exists", :yellow
+          return
+        end
+
+        say("Download ruby-advisory-db ...") unless options.quiet?
+
+        begin
+          Database.download(path: path, quiet: options.quiet?)
+        rescue Database::DownloadFailed => error
+          say error.message, :red
+          exit 1
+        end
+
+        stats(path) unless options.quiet?
+      end
+
       desc 'update', 'Updates the ruby-advisory-db'
       method_option :quiet, :type => :boolean, :aliases => '-q'
 
       def update(path=Database.path)
+        unless Database.exists?(path)
+          download(path)
+          return
+        end
+
         say("Updating ruby-advisory-db ...") unless options.quiet?
 
         database = Database.new(path)
@@ -82,9 +121,7 @@ module Bundler
           say "Skipping update", :yellow
         end
 
-        unless options.quiet?
-          puts "ruby-advisory-db: #{database.size} advisories"
-        end
+        stats(path) unless options.quiet?
       end
 
       desc 'version', 'Prints the bundler-audit version'
