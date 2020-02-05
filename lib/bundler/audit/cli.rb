@@ -67,10 +67,12 @@ module Bundler
       desc 'update', 'Updates the ruby-advisory-db'
       method_option :quiet, :type => :boolean, :aliases => '-q'
 
-      def update
+      def update(path=Database.path)
         say("Updating ruby-advisory-db ...") unless options.quiet?
 
-        case Database.update!(quiet: options.quiet?)
+        database = Database.new(path)
+
+        case database.update!(quiet: options.quiet?)
         when true
           say("Updated ruby-advisory-db", :green) unless options.quiet?
         when false
@@ -81,7 +83,7 @@ module Bundler
         end
 
         unless options.quiet?
-          puts "ruby-advisory-db: #{Database.new.size} advisories"
+          puts "ruby-advisory-db: #{database.size} advisories"
         end
       end
 
