@@ -49,8 +49,9 @@ module Bundler
 
         update if options[:update]
 
-        scanner = Scanner.new
-        report  = scanner.report(:ignore => options.ignore)
+        database = Database.new
+        scanner  = Scanner.new(Dir.pwd,'Gemfile.lock',database)
+        report   = scanner.report(:ignore => options.ignore)
 
         output = if options[:output] then File.new(options[:output],'w')
                  else                     $stdout
