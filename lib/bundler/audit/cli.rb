@@ -35,6 +35,7 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :database, :type => :string, :aliases => '-D', :default => Database::USER_PATH
       method_option :format, :type => :string, :default => 'text',
                              :aliases => '-F'
       method_option :output, :type => :string, :aliases => '-o'
@@ -49,7 +50,7 @@ module Bundler
 
         update if options[:update]
 
-        database = Database.new
+        database = Database.new(options[:database])
         scanner  = Scanner.new(Dir.pwd,'Gemfile.lock',database)
         report   = scanner.report(:ignore => options.ignore)
 
