@@ -75,8 +75,8 @@ module Bundler
         database = Database.new(path)
 
         puts "ruby-advisory-db:"
-        puts "  advisories: #{database.size} advisories"
-        puts "  last updated: #{database.last_updated_at}"
+        puts "  advisories:\t#{database.size} advisories"
+        puts "  last updated:\t#{database.last_updated_at}"
       end
 
       desc 'download', 'Downloads ruby-advisory-db'
