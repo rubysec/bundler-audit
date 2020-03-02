@@ -88,6 +88,18 @@ module Bundler
         puts "#{File.basename($0)} #{VERSION} (advisories: #{database.size})"
       end
 
+      desc 'cve', 'Prints the advisory CVEs only'
+      def cve
+        scanner = Scanner.new
+
+        scanner.scan do |result|
+          case result
+          when Scanner::UnpatchedGem
+            print_only_cve result.advisory
+          end
+        end
+      end
+
       protected
 
       def say(message="", color=nil)
@@ -148,6 +160,16 @@ module Bundler
         end
 
         say
+      end
+
+      def print_only_cve(advisory)
+        if advisory.cve
+          say advisory.cve_id
+        elsif advisory.osvdb
+          say advisory.osvdb_id
+        elsif advisory.ghsa
+          say advisory.ghsa_id
+        end
       end
 
     end

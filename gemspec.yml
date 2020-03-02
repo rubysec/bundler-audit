@@ -1,10 +1,10 @@
-name: bundler-audit
+name: scott-bundler-audit
 summary: Patch-level verification for Bundler
-description: bundler-audit provides patch-level verification for Bundled apps.
+description: bundler-audit provides patch-level verification for Bundled apps. Personalized version with specific added use
 license: GPL-3.0+
-authors: Postmodern
-email: postmodern.mod3@gmail.com
-homepage: https://github.com/rubysec/bundler-audit#readme
+authors: Postmodern (small addition from dudleysr)
+email: dudleysr@gmail.com
+homepage: https://github.com/dudleysr/bundler-audit#readme
 
 required_ruby_version: ">= 1.9.3"
 required_rubygems_version: ">= 1.8.0"
