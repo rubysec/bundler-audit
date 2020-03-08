@@ -1,6 +1,8 @@
 require 'bundler'
 require 'bundler/audit/database'
 require 'bundler/audit/report'
+require 'bundler/audit/results/insecure_source'
+require 'bundler/audit/results/unpatched_gem'
 require 'bundler/lockfile_parser'
 
 require 'ipaddr'
