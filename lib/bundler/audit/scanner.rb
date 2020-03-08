@@ -177,7 +177,7 @@ module Bundler
             is_ignored = ignore.intersect?(advisory.identifiers.to_set)
             next if is_ignored
 
-            yield UnpatchedGem.new(gem,advisory)
+            yield Results::UnpatchedGem.new(gem,advisory)
           end
         end
       end
