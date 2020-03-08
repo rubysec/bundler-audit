@@ -4,55 +4,80 @@ require 'tmpdir'
 
 describe Bundler::Audit::Database do
   let(:vendored_advisories) do
-    Dir[File.join(Bundler::Audit::Database::VENDORED_PATH, 'gems/*/*.yml')].sort
+    Dir[File.join(Fixtures::DATABASE_PATH, 'gems/*/*.yml')].sort
   end
 
-  describe "path" do
+  describe ".path" do
     subject { described_class.path }
 
     it "it should be a directory" do
       expect(File.directory?(subject)).to be_truthy
     end
-
-    it "should prefer the user repo, iff it's as up to date, or more up to date than the vendored one" do
-      described_class.update!(quiet: false)
-
-      Dir.chdir(described_class::USER_PATH) do
-        puts "Timestamp:"
-        system 'git log --pretty="%cd" -1'
-      end
-
-      # As up to date...
-      expect(Bundler::Audit::Database.path).to eq mocked_default_path
-
-      # More up to date...
-      fake_a_commit_in_the_user_repo
-      expect(Bundler::Audit::Database.path).to eq mocked_default_path
-
-      roll_user_repo_back(20)
-      expect(subject).to eq described_class::VENDORED_PATH
-    end
   end
 
-  describe "update!" do
-    it "should create the DEFAULT_PATH path as needed" do
-      Bundler::Audit::Database.update!(quiet: false)
-      expect(File.directory?(mocked_default_path)).to be true
+  describe ".exists?" do
+  end
+
+  describe ".download!" do
+  end
+
+  describe ".update!" do
+    subject { described_class }
+
+    context "when :path does not yet exist" do
+      let(:dest_dir) { Fixtures.join('new-ruby-advisory-db') }
+
+      before { stub_const("#{described_class}::DEFAULT_PATH",dest_dir) }
+
+      let(:url)  { described_class::URL          }
+      let(:path) { described_class::DEFAULT_PATH }
+
+      it "should execute `git clone` and call .new" do
+        expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(true)
+        expect(subject).to receive(:new)
+
+        subject.update!(quiet: false)
+      end
+
+      context "when the `git clone` fails" do
+        before { stub_const("#{described_class}::URL",'https://example.com/') }
+
+        it do
+          expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(false)
+
+          expect(subject.update!(quiet: false)).to eq(false)
+        end
+      end
+
+      after { FileUtils.rm_rf(dest_dir) }
     end
 
-    it "should create the repo, then update it given multple successive calls." do
-      expect_update_to_clone_repo!
-      Bundler::Audit::Database.update!(quiet: false)
-      expect(File.directory?(mocked_default_path)).to be true
+    context "when :path already exists" do
+      let(:dest_dir) { Fixtures.join('existing-ruby-advisory-db') }
 
-      expect_update_to_update_repo!
-      Bundler::Audit::Database.update!(quiet: false)
-      expect(File.directory?(mocked_default_path)).to be true
+      before { FileUtils.cp_r(Fixtures::DATABASE_PATH,dest_dir) }
+      before { stub_const("#{described_class}::DEFAULT_PATH",dest_dir) }
+
+      it "should execute `git pull`" do
+        expect_any_instance_of(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(true)
+
+        subject.update!(quiet: false)
+      end
+
+      after { FileUtils.rm_rf(dest_dir) }
+
+      context "when the `git pull` fails" do
+        it do
+          expect_any_instance_of(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(false)
+
+          expect(subject.update!(quiet: false)).to eq(false)
+        end
+      end
     end
 
     context "when given an invalid option" do
       it do
-        expect { subject.update!(foo: 1) }.to raise_error(ArgumentError)
+        expect { subject.update!(foo: 1) }.to raise_error(RuntimeError)
       end
     end
   end
@@ -83,6 +108,29 @@ describe Bundler::Audit::Database do
         }.to raise_error(ArgumentError)
       end
     end
+  end
+
+  describe "#git?" do
+  end
+
+  describe "#update!" do
+  end
+
+  describe "#last_updated_at" do
+  end
+
+  describe "#advisories" do
+    it "should return a list of all advisories." do
+      actual_advisories = Bundler::Audit::Database.new.
+        advisories.
+        map(&:path).
+        sort
+
+      expect(actual_advisories).to eq vendored_advisories
+    end
+  end
+
+  describe "#advisories_for" do
   end
 
   describe "#check_gem" do
@@ -119,17 +167,6 @@ describe Bundler::Audit::Database do
     it { expect(subject.size).to eq vendored_advisories.count }
   end
 
-  describe "#advisories" do
-    it "should return a list of all advisories." do
-      actual_advisories = Bundler::Audit::Database.new.
-        advisories.
-        map(&:path).
-        sort
-
-      expect(actual_advisories).to eq vendored_advisories
-    end
-  end
-
   describe "#to_s" do
     it "should return the Database path" do
       expect(subject.to_s).to eq(subject.path)
@@ -138,7 +175,7 @@ describe Bundler::Audit::Database do
 
   describe "#inspect" do
     it "should produce a Ruby-ish instance descriptor" do
-      expect(Bundler::Audit::Database.new.inspect).to eq("#<Bundler::Audit::Database:#{Bundler::Audit::Database::VENDORED_PATH}>")
+      expect(subject.inspect).to eq("#<#{described_class}:#{subject.path}>")
     end
   end
 end

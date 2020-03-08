@@ -3,7 +3,7 @@ require 'bundler/audit/database'
 require 'bundler/audit/advisory'
 
 describe Bundler::Audit::Advisory do
-  let(:root) { Bundler::Audit::Database::VENDORED_PATH }
+  let(:root) { Fixtures::DATABASE_PATH }
   let(:gem)  { 'actionpack' }
   let(:id)   { 'OSVDB-84243' }
   let(:path) { File.join(root,'gems',gem,"#{id}.yml") }

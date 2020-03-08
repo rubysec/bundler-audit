@@ -37,12 +37,6 @@ module Bundler
       # Git URL of the ruby-advisory-db
       URL = 'https://github.com/rubysec/ruby-advisory-db.git'
 
-      # Default path to the ruby-advisory-db
-      VENDORED_PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db'))
-
-      # Timestamp for when the database was last updated
-      VENDORED_TIMESTAMP = Time.parse(File.read("#{VENDORED_PATH}.ts")).utc
-
       # Path to the user's copy of the ruby-advisory-db
       USER_PATH = File.expand_path(File.join(ENV['HOME'],'.local','share','ruby-advisory-db'))
 
@@ -76,16 +70,7 @@ module Bundler
       #   The path to the database directory.
       #
       def self.path
-        if File.directory?(DEFAULT_PATH)
-          t1 = Dir.chdir(DEFAULT_PATH) { Time.parse(`git log --date=iso8601 --pretty="%cd" -1`) }
-          t2 = VENDORED_TIMESTAMP
-
-          if t1 >= t2 then DEFAULT_PATH
-          else             VENDORED_PATH
-          end
-        else
-          VENDORED_PATH
-        end
+        DEFAULT_PATH
       end
 
       #
