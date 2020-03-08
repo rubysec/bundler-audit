@@ -156,7 +156,7 @@ module Bundler
           end
         else
           begin
-            download(DEFAULT_PATH,options)
+            download(options.merge(path: DEFAULT_PATH))
           rescue DownloadFailed then false
           end
         end
