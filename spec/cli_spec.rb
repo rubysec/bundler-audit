@@ -2,6 +2,70 @@ require 'spec_helper'
 require 'bundler/audit/cli'
 
 describe Bundler::Audit::CLI do
+
+  describe "#check" do
+    context "when check is vulnerable" do
+      before do
+        scanner = double
+        expect(Bundler::Audit::Scanner).to receive(:new).and_return(scanner)
+        allow(scanner).to receive(:scan).and_yield(true)
+      end
+
+      context "not --no_exit_on_warn (the default)" do
+        before do
+          options = double("Options", ignore: nil)
+          allow(options).to receive(:[]).with(:update).and_return(false)
+        end
+
+        it "prints message" do
+          expect do
+            begin
+              subject.check
+            rescue SystemExit
+            end
+          end.to output(/Vulnerabilities found!/).to_stdout
+        end
+
+        it "should exit 1" do
+          expect do
+            # Capture output of `check` only to keep spec output clean.
+            # The test regarding specific output is above.
+            expect { subject.check }.to output.to_stdout
+          end.to raise_error(SystemExit) do |error|
+            expect(error.success?).to eq(false)
+            expect(error.status).to eq(1)
+          end
+        end
+      end
+
+      context "--no_exit_on_warn" do
+        it "prints message" do
+          expect do
+            begin
+              subject.check
+            rescue SystemExit
+            end
+          end.to output(/Vulnerabilities found!/).to_stdout
+        end
+
+        it "should exit 0" do
+          options = double("Options", no_exit_on_warn?: true, ignore: nil)
+          allow(options).to receive(:[]).with(:update).and_return(false)
+          allow(subject).to receive(:options).and_return(options)
+
+          expect do
+            # Capture output of `check` only to keep spec output clean.
+            # The test regarding specific output is above.
+            expect { subject.check }.to output.to_stdout
+          end.to raise_error(SystemExit) do |error|
+            expect(error.success?).to eq(true)
+            expect(error.status).to eq(0)
+          end
+        end
+      end
+    end
+  end
+
   describe "#update" do
     context "not --quiet (the default)" do
       context "when update succeeds" do
