@@ -6,32 +6,34 @@ describe Bundler::Audit::CLI do
     context "not --quiet (the default)" do
       context "when update succeeds" do
 
-        before { expect(Bundler::Audit::Database).to receive(:update!).and_return(true) }
+        before do
+          expect_any_instance_of(Bundler::Audit::Database).to receive(:update!).and_return(true)
+        end
 
         it "prints updated message" do
           expect { subject.update }.to output(/Updated ruby-advisory-db/).to_stdout
         end
 
         it "prints total advisory count" do
-          database = double
-          expect(database).to receive(:size).and_return(1234)
-          expect(Bundler::Audit::Database).to receive(:new).and_return(database)
+          size = 1234
+          expect_any_instance_of(Bundler::Audit::Database).to receive(:size).and_return(size)
 
-          expect { subject.update }.to output(/ruby-advisory-db: 1234 advisories/).to_stdout
+          expect { subject.update }.to output(/advisories:\t#{size} advisories/).to_stdout
         end
       end
 
       context "when update fails" do
-
-        before { expect(Bundler::Audit::Database).to receive(:update!).and_return(false) }
+        before do
+          expect_any_instance_of(Bundler::Audit::Database).to receive(:update!).and_return(false)
+        end
 
         it "prints failure message" do
-          expect do
+          expect {
             begin
               subject.update
             rescue SystemExit
             end
-          end.to output(/Failed updating ruby-advisory-db!/).to_stdout
+          }.to output(/Failed updating ruby-advisory-db!/).to_stdout
         end
 
         it "exits with error status code" do
@@ -54,9 +56,8 @@ describe Bundler::Audit::CLI do
       end
 
       context "when update succeeds" do
-
         before do
-          expect(Bundler::Audit::Database).to(
+          expect_any_instance_of(Bundler::Audit::Database).to(
             receive(:update!).with(quiet: true).and_return(true)
           )
         end
@@ -67,20 +68,19 @@ describe Bundler::Audit::CLI do
       end
 
       context "when update fails" do
-
         before do
-          expect(Bundler::Audit::Database).to(
+          expect_any_instance_of(Bundler::Audit::Database).to(
             receive(:update!).with(quiet: true).and_return(false)
           )
         end
 
         it "prints failure message" do
-          expect do
+          expect {
             begin
               subject.update
             rescue SystemExit
             end
-          end.to output(/Failed updating ruby-advisory-db!/).to_stdout
+          }.to output(/Failed updating ruby-advisory-db!/).to_stdout
         end
 
         it "exits with error status code" do
