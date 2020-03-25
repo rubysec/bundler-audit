@@ -94,7 +94,7 @@ Insecure Source URI found: http://rubygems.org/
         expect(subject).not_to include("Fail")
         expect(subject).to include("Updating ruby-advisory-db ...\n")
         expect(subject).to include("Updated ruby-advisory-db\n")
-        expect(subject.lines.to_a.last).to match(/ruby-advisory-db: [1-9]\d+ advisories/)
+        expect(subject).to match(/ruby-advisory-db:\n  advisories:\s+[1-9]\d+ advisories/)
       end
     end
 
