@@ -5,13 +5,13 @@ require 'rspec'
 require 'bundler/audit/version'
 
 module Fixtures
-  ROOT = File.expand_path('../fixtures')
+  ROOT = File.expand_path('../fixtures',__FILE__)
 
   DATABASE_PATH = File.join(ROOT,'database')
 
   DATABASE_COMMIT = '89cdde9a725bb6f8a483bca97c5da344e060ac61'
 
-  TMP_DIR = File.expand_path('../tmp')
+  TMP_DIR = File.expand_path('../tmp',__FILE__)
 
   def self.join(*paths)
     File.join(ROOT,*paths)
