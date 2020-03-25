@@ -56,7 +56,7 @@ module Bundler
         end
 
         database = Database.new(options[:database])
-        scanner  = Scanner.new(dir,gemfile_lock,database)
+        scanner  = Scanner.new(dir,options[:gemfile_lock],database)
         report   = scanner.report(:ignore => options.ignore)
 
         output = if options[:output] then File.new(options[:output],'w')
