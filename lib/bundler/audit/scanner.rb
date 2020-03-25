@@ -9,6 +9,7 @@ require 'ipaddr'
 require 'resolv'
 require 'set'
 require 'uri'
+require 'yaml'
 
 module Bundler
   module Audit
@@ -27,6 +28,11 @@ module Bundler
       # @return [Bundler::LockfileParser]
       attr_reader :lockfile
 
+      # The configuration loaded from the `.bundler-audit.yml` file from the project
+      #
+      # @return [Hash]
+      attr_reader :config
+
       #
       # Initializes a scanner.
       #
@@ -39,11 +45,14 @@ module Bundler
       # @param [Database] database
       #   The database to scan against.
       #
-      def initialize(root=Dir.pwd,gemfile_lock='Gemfile.lock',database=Database.new)
+      def initialize(root=Dir.pwd,gemfile_lock='Gemfile.lock',database=Database.new,config_dot_file='.bundler-audit.yml')
         @root     = File.expand_path(root)
         @database = database
         @lockfile = LockfileParser.new(
           File.read(File.join(@root,gemfile_lock))
+        )
+        @config   = load_config_from_dot_file(
+          File.join(@root,config_dot_file)
         )
       end
 
@@ -95,9 +104,6 @@ module Bundler
       #
       def scan(options={},&block)
         return enum_for(__method__,options) unless block
-
-        ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
 
         scan_sources(options,&block)
         scan_specs(options,&block)
@@ -172,7 +178,7 @@ module Bundler
         return enum_for(__method__,options) unless block_given?
 
         ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
+        ignore += (options[:ignore] || config['ignore'] || [])
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
@@ -235,6 +241,20 @@ module Bundler
       #
       def internal_ip?(ip)
         INTERNAL_SUBNETS.any? { |subnet| subnet.include?(ip) }
+      end
+
+      #
+      # @param [String] config_dot_file_path
+      #   The path to the `.bundler-audit.yml` config file
+      #
+      # @return [Hash]
+      #
+      def load_config_from_dot_file(config_dot_file_path)
+        if File.exist?(config_dot_file_path)
+          YAML.load(File.read(config_dot_file_path))
+        else
+          {}
+        end
       end
     end
   end
