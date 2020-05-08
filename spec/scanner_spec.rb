@@ -46,6 +46,16 @@ describe Scanner do
         expect(ids).not_to include('CVE-2013-0155')
       end
     end
+
+    context "when the :filter option is given" do
+      subject { scanner.scan(filter: ['high']) }
+
+      it "should return only filtered criticalities" do
+        criticalities = subject.map { |result| result.advisory.criticality }
+        expect(criticalities).not_to include(:medium, :low, nil)
+        expect(criticalities).to include(:high)
+      end
+    end
   end
 
   context "when auditing a bundle with insecure sources" do

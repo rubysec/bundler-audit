@@ -56,6 +56,9 @@ module Bundler
       # @option options [Array<String>] :ignore
       #   The advisories to ignore.
       #
+      # @option options [Array<String>] :filter
+      #   The criticalities to filter.
+      #
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
@@ -68,13 +71,10 @@ module Bundler
       def scan(options={},&block)
         return enum_for(__method__,options) unless block
 
-        ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
-
         scan_sources(options,&block)
         scan_specs(options,&block)
 
-        return self
+        self
       end
 
       #
@@ -127,6 +127,9 @@ module Bundler
       # @option options [Array<String>] :ignore
       #   The advisories to ignore.
       #
+      # @option options [Array<String>] :filter
+      #   The criticalities to filter.
+      #
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
@@ -146,10 +149,15 @@ module Bundler
         ignore = Set[]
         ignore += options[:ignore] if options[:ignore]
 
+        filter = Set[]
+        filter += options[:filter].map! { |current_filter| current_filter.downcase.to_sym } if options[:filter]
+
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
             is_ignored = ignore.intersect?(advisory.identifiers.to_set)
             next if is_ignored
+
+            next unless filter.empty? || filter.include?(advisory.criticality)
 
             yield UnpatchedGem.new(gem,advisory)
           end

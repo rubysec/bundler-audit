@@ -116,6 +116,10 @@ Ignore specific advisories:
 
     $ bundle-audit check --ignore OSVDB-108664
 
+Filter results by criticality level (low, medium, high):
+
+    $ bundle-audit check --filter medium high
+
 Rake task:
 
 ```ruby
