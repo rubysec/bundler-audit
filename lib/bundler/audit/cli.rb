@@ -156,6 +156,10 @@ module Bundler
         say
       end
 
+      def self.exit_on_failure?
+        true
+      end
+
     end
   end
 end
