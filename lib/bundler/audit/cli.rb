@@ -15,7 +15,7 @@
 # along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-require 'bundler/audit/scanner'
+require 'bundler/audit/file_scanner'
 require 'bundler/audit/version'
 
 require 'thor'
@@ -38,7 +38,7 @@ module Bundler
       def check
         update if options[:update]
 
-        scanner    = Scanner.new
+        scanner    = FileScanner.new
         vulnerable = false
 
         scanner.scan(:ignore => options.ignore) do |result|
