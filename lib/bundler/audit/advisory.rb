@@ -114,15 +114,24 @@ module Bundler
       #
       # Determines how critical the vulnerability is.
       #
-      # @return [:low, :medium, :high]
-      #   The criticality of the vulnerability based on the CVSSv2 score.
+      # @return [:none, :low, :medium, :high, :critical]
+      #   The criticality of the vulnerability based on the CVSS score.
       #
       def criticality
-        cvss = cvss_v3 ? cvss_v3 : cvss_v2
-        case cvss
-        when 0.0..3.3  then :low
-        when 3.3..6.6  then :medium
-        when 6.6..10.0 then :high
+        if cvss_v3
+          case cvss_v3
+          when 0.0       then :none
+          when 0.1..3.9  then :low
+          when 4.0..6.9  then :medium
+          when 7.0..8.9  then :high
+          when 9.0..10.0 then :critical
+          end
+        elsif cvss_v2
+          case cvss_v2
+          when 0.0..3.9  then :low
+          when 4.0..6.9  then :medium
+          when 7.0..10.0 then :high
+          end
         end
       end
 

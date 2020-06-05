@@ -180,27 +180,27 @@ describe Bundler::Audit::Advisory do
   end
 
   describe "#criticality" do
-    context "when cvss_v2 is between 0.0 and 3.3" do
+    context "when cvss_v2 is between 0.0 and 3.9" do
       subject do
         described_class.new.tap do |advisory|
-          advisory.cvss_v2 = 3.3
+          advisory.cvss_v2 = 3.9
         end
       end
 
       it { expect(subject.criticality).to eq(:low) }
     end
 
-    context "when cvss_v2 is between 3.3 and 6.6" do
+    context "when cvss_v2 is between 4.0 and 6.9" do
       subject do
         described_class.new.tap do |advisory|
-          advisory.cvss_v2 = 6.6
+          advisory.cvss_v2 = 6.9
         end
       end
 
       it { expect(subject.criticality).to eq(:medium) }
     end
 
-    context "when cvss_v2 is between 6.6 and 10.0" do
+    context "when cvss_v2 is between 7.0 and 10.0" do
       subject do
         described_class.new.tap do |advisory|
           advisory.cvss_v2 = 10.0
@@ -210,34 +210,54 @@ describe Bundler::Audit::Advisory do
       it { expect(subject.criticality).to eq(:high) }
     end
 
-      context "when cvss_v3 is between 0.0 and 3.3" do
+    context "when cvss_v3 is 0.0" do
       subject do
         described_class.new.tap do |advisory|
-          advisory.cvss_v3 = 3.3
+          advisory.cvss_v3 = 0.0
+        end
+      end
+
+      it { expect(subject.criticality).to eq(:none) }
+    end
+
+    context "when cvss_v3 is between 0.1 and 3.9" do
+      subject do
+        described_class.new.tap do |advisory|
+          advisory.cvss_v3 = 3.9
         end
       end
 
       it { expect(subject.criticality).to eq(:low) }
     end
 
-    context "when cvss_v3 is between 3.3 and 6.6" do
+    context "when cvss_v3 is between 4.0 and 6.9" do
       subject do
         described_class.new.tap do |advisory|
-          advisory.cvss_v3 = 6.6
+          advisory.cvss_v3 = 6.9
         end
       end
 
       it { expect(subject.criticality).to eq(:medium) }
     end
 
-    context "when cvss_v3 is between 6.6 and 10.0" do
+    context "when cvss_v3 is between 7.0 and 8.9" do
+      subject do
+        described_class.new.tap do |advisory|
+          advisory.cvss_v3 = 8.9
+        end
+      end
+
+      it { expect(subject.criticality).to eq(:high) }
+    end
+
+    context "when cvss_v3 is between 9.0 and 10.0" do
       subject do
         described_class.new.tap do |advisory|
           advisory.cvss_v3 = 10.0
         end
       end
 
-      it { expect(subject.criticality).to eq(:high) }
+      it { expect(subject.criticality).to eq(:critical) }
     end
   end
 
