@@ -43,7 +43,7 @@ describe Bundler::Audit::Database do
       expect(File.directory?(mocked_user_path)).to be true
     end
 
-    it "should create the repo, then update it given multple successive calls." do
+    it "should create the repo, then update it given multiple successive calls." do
       expect_update_to_clone_repo!
       subject.update!(quiet: false)
       expect(File.directory?(mocked_user_path)).to be true

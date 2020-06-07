@@ -38,7 +38,7 @@ Solution: upgrade to (~>|>=) \d+\.\d+\.\d+(\.\d+)?(, (~>|>=) \d+\.\d+\.\d+(\.\d+
     let(:directory) { File.join('spec','bundle',bundle) }
 
     let(:command) do
-      File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundler-audit -i OSVDB-89026'))
+      File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundler-audit -i CVE-2013-0156'))
     end
 
     subject do
@@ -46,7 +46,7 @@ Solution: upgrade to (~>|>=) \d+\.\d+\.\d+(\.\d+)?(, (~>|>=) \d+\.\d+\.\d+(\.\d+
     end
 
     it "should not print advisory information for ignored gem" do
-      expect(subject).not_to include("OSVDB-89026")
+      expect(subject).not_to include("CVE-2013-0156")
     end
   end
 
