@@ -6,9 +6,9 @@ rvm:
   - 2.6
   - 2.7
   - jruby
-  - rbx-3
+  - truffleruby
 
 matrix:
   allow_failures:
     - rvm: jruby
-    - rvm: rbx-3
+    - rvm: truffleruby
