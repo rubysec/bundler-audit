@@ -19,7 +19,7 @@ describe Bundler::Audit::Database do
 
       Dir.chdir(described_class::USER_PATH) do
         puts "Timestamp:"
-        system 'git log --pretty="%cd" -1'
+        system 'git log --date=iso8601 --pretty="%cd" -1'
       end
 
       # As up to date...

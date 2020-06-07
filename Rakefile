@@ -23,7 +23,7 @@ namespace :db do
       sh 'git', 'pull', 'origin', 'master'
 
       File.open('../ruby-advisory-db.ts','w') do |file|
-        file.write Time.parse(`git log --pretty="%cd" -1`).utc
+        file.write Time.parse(`git log --date=iso8601 --pretty="%cd" -1`).utc
       end
     end
 
