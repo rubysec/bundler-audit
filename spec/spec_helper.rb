@@ -35,18 +35,6 @@ module Helpers
       with('git', 'pull', '--no-rebase', 'origin', 'master').
       and_call_original
   end
-
-  def fake_a_commit_in_the_user_repo
-    Dir.chdir(mocked_user_path) do
-      system 'git', 'commit', '--allow-empty', '-m', 'Dummy commit.'
-    end
-  end
-
-  def roll_user_repo_back(num_commits)
-    Dir.chdir(mocked_user_path) do
-      system 'git', 'reset', '--hard', "HEAD~#{num_commits}"
-    end
-  end
 end
 
 include Bundler::Audit

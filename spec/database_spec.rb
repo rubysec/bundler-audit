@@ -17,20 +17,37 @@ describe Bundler::Audit::Database do
     it "should prefer the user repo, iff it's as up to date, or more up to date than the vendored one" do
       described_class.update!(quiet: false)
 
-      Dir.chdir(described_class::USER_PATH) do
-        puts "Timestamp:"
-        system 'git log --date=iso8601 --pretty="%cd" -1'
+      ts_const = described_class::VENDORED_TIMESTAMP
+
+      current_user_ts = Dir.chdir(described_class::USER_PATH) do
+        Time.parse(`git log --date=iso8601 --pretty="%cd" -1`).utc
       end
 
+      puts "Timestamp: #{current_user_ts}"
+
       # As up to date...
-      expect(subject).to eq mocked_user_path
+      expect do
+        # Stub the vendor copy to be the exact same as the user path copy
+        stub_const(ts_const, current_user_ts)
+        # When they are the exact same, prefer the user copy
+        expect(subject).to eq mocked_user_path
+      end
 
-      # More up to date...
-      fake_a_commit_in_the_user_repo
-      expect(subject).to eq mocked_user_path
+      # Prefer the newest; in this case, user copy
+      expect do
+        # Stub the vendor copy to be older than the user path copy
+        stub_const(ts_const, current_user_ts-1)
+        # When vendor copy is older, prefer the user copy
+        expect(subject).to eq mocked_user_path
+      end
 
-      roll_user_repo_back(20)
-      expect(subject).to eq described_class::VENDORED_PATH
+      # Prefer the newest; in this case, vendor copy
+      expect do
+        # Stub the vendor copy to be newer than the user path copy
+        stub_const(ts_const, current_user_ts+1)
+        # When user copy is older, prefer the vendor copy
+        expect(subject).to eq described_class::VENDORED_PATH
+      end
     end
   end
 
