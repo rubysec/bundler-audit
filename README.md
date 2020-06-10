@@ -136,6 +136,19 @@ task default: 'bundle:audit'
 
     $ [sudo] gem install bundler-audit
 
+### Install using bundler
+
+Installation with `gem` (above) is preferred.
+
+```ruby
+# Gemfile
+group :development do
+  gem 'bundler-audit', require: false
+  # or, from source:
+  gem 'bundler-audit', github: 'rubysec/bundler-audit', require: false
+end
+```
+
 ## Contributing
 
 1. Clone the repo
