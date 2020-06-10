@@ -103,6 +103,9 @@ module Bundler
 
       #
       # Return a compacted list of all ids
+      #
+      # @return [Array<String>]
+      #
       def identifiers
         [
           cve_id,
