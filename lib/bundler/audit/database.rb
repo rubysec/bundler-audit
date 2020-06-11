@@ -82,7 +82,10 @@ module Bundler
       #
       # Updates the ruby-advisory-db.
       #
-      # @param [Boolean, quiet]
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Boolean] :quiet
       #   Specify whether `git` should be `--quiet`.
       #
       # @return [Boolean, nil]
