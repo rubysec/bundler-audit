@@ -1,3 +1,14 @@
+### 0.7.0 / 2020-06-12
+
+* Require [thor] >= 0.18, < 2.
+* Added {Bundler::Audit::Advisory#ghsa} (@rschultheis).
+* Added {Bundler::Audit::Advisory#cvss_v3} (@ahamlin-nr).
+* Added {Bundler::Audit::Advisory#identifiers} (@rschultheis).
+* Updated {Bundler::Audit::Advisory#criticality} ranges (@reedlonden).
+* Avoid rebasing the ruby-advisory-db when updating (@nicknovitski).
+* Fixed issue with Bundler 2.x where source URIs are no longer parsed as
+  `URI::HTTP` objects, but as `Bundler::URI::HTTP` objects. (@milgner)
+
 ### 0.6.1 / 2019-01-17
 
 * Require bundler `>= 1.2.0, < 3` to support [bundler] 2.0.
@@ -126,4 +137,5 @@
 * [CVE-2013-0333](http://osvdb.org/show/osvdb/89594)
 
 [bundler]: http://gembundler.com/
+[thor]: http://whatisthor.com/
 [ruby-advisory-db]: https://github.com/rubysec/ruby-advisory-db#readme
