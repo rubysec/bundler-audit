@@ -4,7 +4,7 @@
 * Added {Bundler::Audit::Advisory#ghsa} (@rschultheis).
 * Added {Bundler::Audit::Advisory#cvss_v3} (@ahamlin-nr).
 * Added {Bundler::Audit::Advisory#identifiers} (@rschultheis).
-* Updated {Bundler::Audit::Advisory#criticality} ranges (@reedlonden).
+* Updated {Bundler::Audit::Advisory#criticality} ranges (@reedloden).
 * Avoid rebasing the ruby-advisory-db when updating (@nicknovitski).
 * Fixed issue with Bundler 2.x where source URIs are no longer parsed as
   `URI::HTTP` objects, but as `Bundler::URI::HTTP` objects. (@milgner)
