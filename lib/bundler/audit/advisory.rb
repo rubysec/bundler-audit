@@ -97,6 +97,8 @@ module Bundler
       #
       # @return [String, nil]
       #
+      # @since 0.7.0
+      #
       def ghsa_id
         "GHSA-#{ghsa}" if ghsa
       end
@@ -105,6 +107,8 @@ module Bundler
       # Return a compacted list of all ids
       #
       # @return [Array<String>]
+      #
+      # @since 0.7.0
       #
       def identifiers
         [
