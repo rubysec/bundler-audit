@@ -20,9 +20,7 @@ module Bundler
           desc 'Updates the ruby-advisory-db then runs bundle-audit'
           task :audit do
             require 'bundler/audit/cli'
-            %w(update check).each do |command|
-              Bundler::Audit::CLI.start [command]
-            end
+            Bundler::Audit::CLI.start %w[check --update]
           end
         end
       end
