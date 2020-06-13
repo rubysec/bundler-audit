@@ -1,3 +1,7 @@
+### 0.7.0.1 / 2020-06-12
+
+* Forgot to populate `data/ruby-advisory-db`.
+
 ### 0.7.0 / 2020-06-12
 
 * Require [thor] >= 0.18, < 2.
