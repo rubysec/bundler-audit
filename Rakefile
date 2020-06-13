@@ -20,7 +20,7 @@ end
 
 namespace :db do
   desc 'Updates data/ruby-advisory-db'
-  task :update => 'data/ruuby-advsisory-db' do
+  task :update => 'data/ruby-advsisory-db' do
     timestamp = nil
 
     chdir 'data/ruby-advisory-db' do
