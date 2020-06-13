@@ -18,6 +18,6 @@
 module Bundler
   module Audit
     # bundler-audit version
-    VERSION = '0.7.1'
+    VERSION = '0.7.0.1'
   end
 end
