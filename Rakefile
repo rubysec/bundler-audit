@@ -14,13 +14,13 @@ require 'time'
 require 'rubygems/tasks'
 Gem::Tasks.new
 
-directory 'data/ruby-advisory-db' do
+directory 'data/c' do
   sh 'git', 'submodule', 'update', '--init'
 end
 
 namespace :db do
   desc 'Updates data/ruby-advisory-db'
-  task :update => 'data/ruby-advsisory-db' do
+  task :update => 'data/ruby-advisory-db' do
     timestamp = nil
 
     chdir 'data/ruby-advisory-db' do
