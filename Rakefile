@@ -14,7 +14,7 @@ require 'time'
 require 'rubygems/tasks'
 Gem::Tasks.new
 
-directory 'data/c' do
+directory 'data/ruby-advisory-db' do
   sh 'git', 'submodule', 'update', '--init'
 end
 
