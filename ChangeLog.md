@@ -12,7 +12,7 @@
 * Avoid rebasing the ruby-advisory-db when updating (@nicknovitski).
 * Fixed issue with Bundler 2.x where source URIs are no longer parsed as
   `URI::HTTP` objects, but as `Bundler::URI::HTTP` objects. (@milgner)
-* Fixed issue with database update when git is not installed (@fatkodima)
+* Make it more explicit that git is required for database updates (@fatkodima)
 
 ### 0.6.1 / 2019-01-17
 
