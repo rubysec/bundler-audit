@@ -1,4 +1,5 @@
 require 'bundler'
+require 'bundler/audit/configuration'
 require 'bundler/audit/database'
 require 'bundler/audit/report'
 require 'bundler/audit/results/insecure_source'
@@ -51,9 +52,13 @@ module Bundler
         @lockfile = LockfileParser.new(
           File.read(File.join(@root,gemfile_lock))
         )
-        @config   = load_config_from_dot_file(
-          File.join(@root,config_dot_file)
-        )
+
+        config_dot_file_full_path = File.join(@root, config_dot_file)
+        @config   = if File.exist?(config_dot_file_full_path)
+          Configuration.from_yaml_file(config_dot_file_full_path)
+        else
+          Configuration.empty
+        end
       end
 
       #
@@ -178,7 +183,7 @@ module Bundler
         return enum_for(__method__,options) unless block_given?
 
         ignore = Set[]
-        ignore += (options[:ignore] || config['ignore'] || [])
+        ignore += config.ignore(options[:ignore])
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
@@ -241,20 +246,6 @@ module Bundler
       #
       def internal_ip?(ip)
         INTERNAL_SUBNETS.any? { |subnet| subnet.include?(ip) }
-      end
-
-      #
-      # @param [String] config_dot_file_path
-      #   The path to the `.bundler-audit.yml` config file
-      #
-      # @return [Hash]
-      #
-      def load_config_from_dot_file(config_dot_file_path)
-        if File.exist?(config_dot_file_path)
-          YAML.load(File.read(config_dot_file_path))
-        else
-          {}
-        end
       end
     end
   end
