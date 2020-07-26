@@ -61,7 +61,7 @@ describe Bundler::Audit::Advisory do
 
     context "YAML data not representing a hash" do
       it "should raise an exception" do
-        path = File.expand_path('../fixtures/not_a_hash.yml', __FILE__)
+        path = File.expand_path('../fixtures/bad_yaml/not_a_hash.yml', __FILE__)
         expect {
           Advisory.load(path)
         }.to raise_exception("advisory data in #{path.dump} was not a Hash")
