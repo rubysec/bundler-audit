@@ -11,77 +11,73 @@ module Bundler
       class InvalidConfigurationError < StandardError; end
       class FileNotFound < StandardError; end
 
-      class << self
-        #
-        # A constructor method for loading configuration from a YAML file.
-        #
-        # @param [String] path
-        #   Path to the yaml file holding the configuration.
-        #
-        # @raise [FileNotFound]
-        #   Will raise a file not found error when the path to the
-        #   configuration YAML file does not exist.
-        #
-        # @raise [InvalidConfigurationError]
-        #   Will raise an invalid configuration error indicating what in the
-        #   YAML file is invalid for the configuration.
-        #
-        # @return [Configuration]
-        #   A Configuration object containing the config hash loaded from the
-        #   file passed.
-        #
-        def from_yaml_file(file_path)
-          raise(FileNotFound, "Configuration file '#{file_path}' does not exist") unless File.exist?(file_path)
+      #
+      # A constructor method for loading configuration from a YAML file.
+      #
+      # @param [String] path
+      #   Path to the yaml file holding the configuration.
+      #
+      # @raise [FileNotFound]
+      #   Will raise a file not found error when the path to the
+      #   configuration YAML file does not exist.
+      #
+      # @raise [InvalidConfigurationError]
+      #   Will raise an invalid configuration error indicating what in the
+      #   YAML file is invalid for the configuration.
+      #
+      # @return [Configuration]
+      #   A Configuration object containing the config hash loaded from the
+      #   file passed.
+      #
+      def self.from_yaml_file(file_path)
+        raise(FileNotFound, "Configuration file '#{file_path}' does not exist") unless File.exist?(file_path)
 
-          doc = YAML.parse(File.new(file_path))
+        doc = YAML.parse(File.new(file_path))
 
-          unless doc.root.kind_of?(YAML::Nodes::Mapping)
-            raise InvalidConfigurationError, "Configuration found in '#{file_path}' is not a Hash"
-          end
-
-          config = Hash[doc.root.children.each_slice(2).map do |key, value|
-            [key.value, value]
-          end]
-
-          new(
-            'ignore' => parse_ignore_list_from_yaml_doc(config['ignore'])
-          )
+        unless doc.root.kind_of?(YAML::Nodes::Mapping)
+          raise InvalidConfigurationError, "Configuration found in '#{file_path}' is not a Hash"
         end
 
-        #
-        # A constructor method for creating an empty configuration object.
-        #
-        # @return [Configuration]
-        #   A Configuration object containing an empty config hash.
-        #
-        def empty
-          new({})
-        end
+        config = Hash[doc.root.children.each_slice(2).map do |key, value|
+          [key.value, value]
+        end]
 
-        private
+        new(
+          'ignore' => parse_ignore_list_from_yaml_doc(config['ignore'])
+        )
+      end
 
-        #
-        # Validates and parses out the ignore list from a YAML doc.
-        #
-        # @param [YAML::Nodes::Sequence<YAML::Nodes::Scalar>]
-        #   A YAML doc representation of an Array of Strings.
-        #
-        # @raise [InvalidConfigurationError]
-        #   Will raise an invalid configuration error indicating what in the
-        #   ignore list is invalid for the configuration.
-        #
-        def parse_ignore_list_from_yaml_doc(ignore_list)
-          if ignore_list
-            unless ignore_list.is_a?(YAML::Nodes::Sequence)
-              raise InvalidConfigurationError, "Ignore key found in config file, but is not an Array"
-            end
+      #
+      # A constructor method for creating an empty configuration object.
+      #
+      # @return [Configuration]
+      #   A Configuration object containing an empty config hash.
+      #
+      def self.empty
+        new({})
+      end
 
-            unless ignore_list.children.all? { |node| node.is_a?(YAML::Nodes::Scalar) }
-              raise InvalidConfigurationError, "Ignore array in config file contains a non-String"
-            end
-
-            ignore_list.children.map { |cve| cve.value }
+      #
+      # Validates and parses out the ignore list from a YAML doc.
+      #
+      # @param [YAML::Nodes::Sequence<YAML::Nodes::Scalar>]
+      #   A YAML doc representation of an Array of Strings.
+      #
+      # @raise [InvalidConfigurationError]
+      #   Will raise an invalid configuration error indicating what in the
+      #   ignore list is invalid for the configuration.
+      #
+      def self.parse_ignore_list_from_yaml_doc(ignore_list)
+        if ignore_list
+          unless ignore_list.is_a?(YAML::Nodes::Sequence)
+            raise InvalidConfigurationError, "Ignore key found in config file, but is not an Array"
           end
+
+          unless ignore_list.children.all? { |node| node.is_a?(YAML::Nodes::Scalar) }
+            raise InvalidConfigurationError, "Ignore array in config file contains a non-String"
+          end
+
+          ignore_list.children.map { |cve| cve.value }
         end
       end
 
