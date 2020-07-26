@@ -48,16 +48,6 @@ module Bundler
       end
 
       #
-      # A constructor method for creating an empty configuration object.
-      #
-      # @return [Configuration]
-      #   A Configuration object containing an empty config hash.
-      #
-      def self.empty
-        new({})
-      end
-
-      #
       # Validates and parses out the ignore list from a YAML doc.
       #
       # @param [YAML::Nodes::Sequence<YAML::Nodes::Scalar>]
@@ -93,7 +83,7 @@ module Bundler
       #   Will raise an invalid configuration error indicating what in the YAML
       #   file is invalid for the configuration.
       #
-      def initialize(config)
+      def initialize(config={})
         @config = config
         validate_ignore! if config['ignore']
       end
