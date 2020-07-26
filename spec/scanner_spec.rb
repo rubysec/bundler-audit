@@ -66,6 +66,19 @@ describe Scanner do
         expect(subject).to be_empty
       end
     end
+
+    context "when the ignore option is configured in .bundler-audit.yml" do
+      let(:bundle)    { 'unpatched_gems_with_dot_configuration' }
+      let(:directory) { File.join('spec','bundle',bundle) }
+      let(:scanner)  { described_class.new(directory) }
+
+      subject { scanner.scan }
+
+      it "should ignore the specified advisories" do
+        ids = subject.map { |result| result.advisory.id }
+        expect(ids).not_to include('OSVDB-89025')
+      end
+    end
   end
 
   describe "#report" do

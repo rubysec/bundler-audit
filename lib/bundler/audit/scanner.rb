@@ -1,4 +1,5 @@
 require 'bundler'
+require 'bundler/audit/configuration'
 require 'bundler/audit/database'
 require 'bundler/audit/report'
 require 'bundler/audit/results/insecure_source'
@@ -9,6 +10,7 @@ require 'ipaddr'
 require 'resolv'
 require 'set'
 require 'uri'
+require 'yaml'
 
 module Bundler
   module Audit
@@ -27,6 +29,11 @@ module Bundler
       # @return [Bundler::LockfileParser]
       attr_reader :lockfile
 
+      # The configuration loaded from the `.bundler-audit.yml` file from the project
+      #
+      # @return [Hash]
+      attr_reader :config
+
       #
       # Initializes a scanner.
       #
@@ -39,12 +46,19 @@ module Bundler
       # @param [Database] database
       #   The database to scan against.
       #
-      def initialize(root=Dir.pwd,gemfile_lock='Gemfile.lock',database=Database.new)
+      def initialize(root=Dir.pwd,gemfile_lock='Gemfile.lock',database=Database.new,config_dot_file='.bundler-audit.yml')
         @root     = File.expand_path(root)
         @database = database
         @lockfile = LockfileParser.new(
           File.read(File.join(@root,gemfile_lock))
         )
+
+        config_dot_file_full_path = File.join(@root, config_dot_file)
+        @config   = if File.exist?(config_dot_file_full_path)
+          Configuration.from_yaml_file(config_dot_file_full_path)
+        else
+          Configuration.empty
+        end
       end
 
       #
@@ -95,9 +109,6 @@ module Bundler
       #
       def scan(options={},&block)
         return enum_for(__method__,options) unless block
-
-        ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
 
         scan_sources(options,&block)
         scan_specs(options,&block)
@@ -172,7 +183,7 @@ module Bundler
         return enum_for(__method__,options) unless block_given?
 
         ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
+        ignore += config.ignore(options[:ignore])
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|

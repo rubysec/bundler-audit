@@ -11,7 +11,7 @@ describe Bundler::Audit::Database do
     subject { described_class.path }
 
     it "it should be a directory" do
-      expect(File.directory?(subject)).to be_truthy
+      expect(described_class.path).to be_truthy
     end
   end
 
