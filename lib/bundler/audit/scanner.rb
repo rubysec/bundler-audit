@@ -53,12 +53,13 @@ module Bundler
           File.read(File.join(@root,gemfile_lock))
         )
 
-        config_dot_file_full_path = File.join(@root, config_dot_file)
-        @config   = if File.exist?(config_dot_file_full_path)
-          Configuration.from_yaml_file(config_dot_file_full_path)
-        else
-          Configuration.empty
-        end
+        config_dot_file_full_path = File.join(@root,config_dot_file)
+
+        @config = if File.exist?(config_dot_file_full_path)
+                    Configuration.load(config_dot_file_full_path)
+                  else
+                    Configuration.new
+                  end
       end
 
       #
@@ -182,8 +183,9 @@ module Bundler
       def scan_specs(options={})
         return enum_for(__method__,options) unless block_given?
 
-        ignore = Set[]
-        ignore += config.ignore(options[:ignore])
+        ignore = if options[:ignore] then Set.new(options[:ignore])
+                 else                     config.ignore
+                 end
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
