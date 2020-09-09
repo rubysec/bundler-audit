@@ -1,3 +1,7 @@
+### 0.7.1 / 2020-07-17
+
+* Added the `--lockfile` option to `bundle-audit check` command (@mariozaizar).
+
 ### 0.7.0.1 / 2020-06-12
 
 * Forgot to populate `data/ruby-advisory-db`.

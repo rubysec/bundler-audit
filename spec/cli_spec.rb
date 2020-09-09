@@ -15,6 +15,28 @@ describe Bundler::Audit::CLI do
     end
   end
 
+  describe "#check" do
+    it "prints check message" do
+      expect { subject.check }.to output(/No vulnerabilities found/).to_stdout
+    end
+
+    context "--lockfile" do
+      let(:options) { double("Options", lockfile: gemfile_lock) }
+      let(:gemfile_lock) { 'Gemfile.lock' }
+
+      before do
+        allow(options).to receive(:[])
+        allow(options).to receive(:ignore)
+        allow(options).to receive(:quiet?)
+        allow(subject).to receive(:options).and_return(options)
+      end
+
+      it "includes the gemfile.lock path in the check message" do
+        expect { subject.check }.to output(/No vulnerabilities found in #{gemfile_lock} lockfile/).to_stdout
+      end
+    end
+  end
+
   describe "#update" do
     context "not --quiet (the default)" do
       context "when update succeeds" do

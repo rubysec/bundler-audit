@@ -34,11 +34,18 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :lockfile, :type => :string, :aliases => '-l'
 
       def check
         update if options[:update]
 
-        scanner    = Scanner.new
+        if options.lockfile
+          details = " in #{options.lockfile} lockfile"
+          scanner = Scanner.new(path=Dir.pwd, gemfile_lock=options.lockfile)
+        else
+          scanner = Scanner.new
+        end
+
         vulnerable = false
 
         scanner.scan(:ignore => options.ignore) do |result|
@@ -53,10 +60,10 @@ module Bundler
         end
 
         if vulnerable
-          say "Vulnerabilities found!", :red
+          say("Vulnerabilities found#{details}!", :red)
           exit 1
         else
-          say("No vulnerabilities found", :green) unless options.quiet?
+          say("No vulnerabilities found#{details}", :green) unless options.quiet?
         end
       end
 
