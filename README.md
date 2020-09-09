@@ -1,6 +1,7 @@
 # bundler-audit
 [![Build Status](https://travis-ci.org/rubysec/bundler-audit.svg?branch=master)](https://travis-ci.org/rubysec/bundler-audit)
 [![Code Climate](https://codeclimate.com/github/rubysec/bundler-audit.svg)](https://codeclimate.com/github/rubysec/bundler-audit)
+[![CodeFactor](https://www.codefactor.io/repository/github/rubysec/bundler-audit/badge)](https://www.codefactor.io/repository/github/rubysec/bundler-audit)
 
 * [Homepage](https://github.com/rubysec/bundler-audit#readme)
 * [Issues](https://github.com/rubysec/bundler-audit/issues)
