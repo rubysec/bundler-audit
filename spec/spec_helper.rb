@@ -2,7 +2,7 @@ require 'simplecov'
 SimpleCov.start
 
 require 'rspec'
-require 'bundler/audit/version'
+require 'bundler/audit/database'
 
 module Fixtures
   ROOT = File.expand_path('../fixtures',__FILE__)
