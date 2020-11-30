@@ -6,5 +6,6 @@ doc/
 coverage/
 pkg/
 spec/bundle/*/.bundle/
+spec/fixtures/database
 vendor/bundle/
 tmp/
