@@ -137,6 +137,24 @@ task default: 'bundle:audit'
 
     $ [sudo] gem install bundler-audit
 
+### Git
+
+* Debian / Ubuntu:
+
+      $ sudo apt install git
+
+* RedHat / Fedora:
+
+      $ sudo dnf install git
+
+* Alpine Linux:
+
+      $ apk add git
+
+* macOS:
+
+      $ brew install git
+
 ## Contributing
 
 1. Clone the repo
