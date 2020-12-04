@@ -121,7 +121,7 @@ module Bundler
       #
       # Determines how critical the vulnerability is.
       #
-      # @return [:none, :low, :medium, :high, :critical]
+      # @return [:none, :low, :medium, :high, :critical, nil]
       #   The criticality of the vulnerability based on the CVSS score.
       #
       def criticality
