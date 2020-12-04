@@ -7,8 +7,13 @@ describe Bundler::Audit::Report do
     Bundler::Audit::Results::InsecureSource.new(uri)
   end
 
-  let(:gem)      { double('Gem::Specification') }
-  let(:advisory) { double('Bundler::Audit::Advisory') }
+  let(:gem) do
+    Gem::Specification.new do |spec|
+      spec.name = 'test'
+      spec.version = '0.0.0'
+    end
+  end
+  let(:advisory) { double('Bundler::Audit::Advisory', id: 'CVE-3000-1234') }
   let(:unpatched_gem) do
     Bundler::Audit::Results::UnpatchedGem.new(gem,advisory)
   end
