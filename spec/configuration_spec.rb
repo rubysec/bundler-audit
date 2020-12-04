@@ -3,10 +3,12 @@ require 'bundler/audit/configuration'
 
 describe Bundler::Audit::Configuration do
   describe "when building from a yaml file" do
+    let(:fixtures_dir) { File.expand_path('../fixtures/config',__FILE__) }
+
     subject { described_class.load(path) }
 
     context "when the file does not exist" do
-      let(:path) { File.expand_path('./fixtures/bad_yaml/does_not_exist.yml') }
+      let(:path) { File.join(fixtures_dir,'bad','does_not_exist.yml') }
 
       it 'raises an error' do
         expect { subject }.to raise_error(described_class::FileNotFound, /Configuration file '.*' does not exist/)
@@ -14,17 +16,14 @@ describe Bundler::Audit::Configuration do
     end
 
     context "when the file does exist" do
-      let(:fixtures_dir) { File.expand_path('./fixtures/config') }
-      let(:path)         { File.join(fixtures_dir,'valid.yml')   }
+      let(:path) { File.join(fixtures_dir,'valid.yml')   }
 
       it { should be_a(described_class) }
     end
 
     context "validations" do
-      let(:fixtures_dir) { File.expand_path('./fixtures/bad_yaml/config') }
-
       context "when ignore is not an array" do
-        let(:path) { File.join(fixtures_dir,'ignore_is_not_an_array.yml') }
+        let(:path) { File.join(fixtures_dir,'bad','ignore_is_not_an_array.yml') }
 
         it 'raises a validation error' do
           expect { subject }.to raise_error(described_class::InvalidConfigurationError)
@@ -33,14 +32,13 @@ describe Bundler::Audit::Configuration do
 
       context 'when ignore is an array' do
         context 'when ignore only contains strings' do
-          let(:fixtures_dir) { File.expand_path('./fixtures/config') }
-          let(:path)         { File.join(fixtures_dir,'valid.yml')   }
+          let(:path) { File.join(fixtures_dir,'valid.yml')   }
 
           it { should be_a(described_class) }
         end
 
         describe "when ignore contains non-strings" do
-          let(:path) { File.join(fixtures_dir,'ignore_contains_a_non_string.yml') }
+          let(:path) { File.join(fixtures_dir,'bad','ignore_contains_a_non_string.yml') }
 
           it "raises a validation error" do
             expect { subject }.to raise_error(described_class::InvalidConfigurationError)
