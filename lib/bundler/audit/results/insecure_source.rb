@@ -38,6 +38,16 @@ module Bundler
           @source.to_s
         end
 
+        #
+        # @return [Hash{Symbol => Object}]
+        #
+        def to_h
+          {
+            type: :insecure_source,
+            source: @source
+          }
+        end
+
       end
     end
   end

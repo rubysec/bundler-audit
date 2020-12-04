@@ -85,6 +85,36 @@ describe Bundler::Audit::Results::UnpatchedGem do
     end
   end
 
+  describe "#to_h" do
+    subject { super().to_h }
+
+    let(:advisory_hash) { {id: advisory.id} }
+    before { expect(advisory).to receive(:to_h).and_return(advisory_hash) }
+
+    it "must inclide type: :unpatched_gem" do
+      expect(subject[:type]).to be :unpatched_gem
+    end
+
+    it "must include a :gem key containing a Hash" do
+      expect(subject[:gem]).to be_kind_of(Hash)
+    end
+
+    context ":gem" do
+      it "must contain a :name key of the gem name" do
+        expect(subject[:gem][:name]).to be == gem.name
+      end
+
+      it "must contain a :version key of the gem name" do
+        expect(subject[:gem][:version]).to be == gem.version
+      end
+    end
+
+    it "must include a :advisory key containing a Hash of the advisory" do
+
+      expect(subject[:advisory]).to be == advisory_hash
+    end
+  end
+
   describe "#to_s" do
     it "should return the advisory ID" do
       expect(subject.to_s).to be == advisory.id

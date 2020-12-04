@@ -1,4 +1,7 @@
 require 'bundler/audit/results'
+require 'bundler/audit/version'
+
+require 'time'
 
 module Bundler
   module Audit
@@ -8,6 +11,16 @@ module Bundler
     class Report
 
       include Enumerable
+
+      # The version of `bundler-audit` which created the report object.
+      #
+      # @return [String]
+      attr_reader :version
+
+      # The time when the report was generated.
+      #
+      # @return [Time]
+      attr_reader :created_at
 
       # The list of all results.
       #
@@ -30,6 +43,9 @@ module Bundler
       # @param [#each] results
       #
       def initialize(results=[])
+        @version    = VERSION
+        @created_at = Time.now
+
         @results = []
         @insecure_sources = []
         @unpatched_gems = []
@@ -115,6 +131,17 @@ module Bundler
       #
       def vulnerable_gems
         @unpatched_gems.map(&:gem)
+      end
+
+      #
+      # @return [Hash{Symbol => Object}]
+      #
+      def to_h
+        {
+          version:    @version,
+          created_at: @created_at,
+          results:    @results.map(&:to_h)
+        }
       end
 
     end
