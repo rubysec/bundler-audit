@@ -1,4 +1,5 @@
 require 'yaml'
+require 'set'
 
 module Bundler
   module Audit
@@ -61,7 +62,7 @@ module Bundler
       #
       # The list of advisory IDs to ignore.
       #
-      # @return [Array<String>]
+      # @return [Set<String>]
       #
       attr_reader :ignore
 
@@ -79,7 +80,7 @@ module Bundler
       #   file is invalid for the configuration.
       #
       def initialize(config={})
-        @ignore = Array(config[:ignore])
+        @ignore = Set.new(config[:ignore])
       end
 
     end

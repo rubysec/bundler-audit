@@ -52,8 +52,8 @@ describe Bundler::Audit::Configuration do
 
   describe "#initialize" do
     context "when given no arguments" do
-      it "must set @ignore to an empty Array" do
-        expect(subject.ignore).to be_kind_of(Array)
+      it "must set @ignore to an empty Set" do
+        expect(subject.ignore).to be_kind_of(Set)
         expect(subject.ignore).to be_empty
       end
     end
@@ -64,8 +64,8 @@ describe Bundler::Audit::Configuration do
       subject { described_class.new(ignore: advisory_ids) }
 
       it "must initialize @ignore to contain :ignore" do
-        expect(subject.ignore).to be_kind_of(Array)
-        expect(subject.ignore).to be == advisory_ids
+        expect(subject.ignore).to be_kind_of(Set)
+        expect(subject.ignore).to be == Set.new(advisory_ids)
       end
     end
   end
