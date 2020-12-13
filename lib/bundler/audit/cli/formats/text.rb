@@ -76,7 +76,6 @@ module Bundler
               print_wrapped advisory.description, :indent => 2
               say
             else
-
               say "Title: ", :red
               say advisory.title
             end
