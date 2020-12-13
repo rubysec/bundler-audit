@@ -4,11 +4,14 @@ require 'bundler/audit/advisory'
 
 describe Bundler::Audit::Advisory do
   let(:root) { Fixtures::DATABASE_PATH }
-  let(:gem)  { 'actionpack' }
-  let(:id)   { 'OSVDB-84243' }
-  let(:path) { File.join(root,'gems',gem,"#{id}.yml") }
-  let(:an_unaffected_version) do
-    Bundler::Audit::Advisory.load(path).unaffected_versions.map { |version_rule|
+  let(:gem)  { 'test' }
+  let(:id)   { 'CVE-2020-1234' }
+  let(:path) { Fixtures.join('advisory',"#{id}.yml") }
+
+  subject { described_class.load(path) }
+
+  let(:a_patched_version) do
+    subject.patched_versions.map { |version_rule|
       # For all the rules, get the individual constraints out and see if we
       # can find a suitable one...
       version_rule.requirements.select { |(constraint, gem_version)|
@@ -24,7 +27,22 @@ describe Bundler::Audit::Advisory do
     }.flatten.first
   end
 
-  subject { described_class.load(path) }
+  let(:an_unaffected_version) do
+    subject.unaffected_versions.map { |version_rule|
+      # For all the rules, get the individual constraints out and see if we
+      # can find a suitable one...
+      version_rule.requirements.select { |(constraint, gem_version)|
+        # We only want constraints where the version number specified is
+        # one of the unaffected version.  I.E. we don't want ">", "<", or if
+        # such a thing exists, "!=" constraints.
+        ['~>', '>=', '=', '<='].include?(constraint)
+      }.map { |(constraint, gem_version)|
+        # Fetch just the version component, which is a Gem::Version,
+        # and extract the string representation of the version.
+        gem_version.version
+      }
+    }.flatten.first
+  end
 
   describe "load" do
     let(:data) { YAML.load_file(path) }
@@ -60,8 +78,11 @@ describe Bundler::Audit::Advisory do
     end
 
     context "YAML data not representing a hash" do
+      let(:path ) do
+        File.expand_path('../fixtures/bad_yaml/not_a_hash.yml', __FILE__)
+      end
+
       it "should raise an exception" do
-        path = File.expand_path('../fixtures/bad_yaml/not_a_hash.yml', __FILE__)
         expect {
           Advisory.load(path)
         }.to raise_exception("advisory data in #{path.dump} was not a Hash")
@@ -226,7 +247,7 @@ describe Bundler::Audit::Advisory do
 
   describe "#patched?" do
     context "when passed a version that matches one patched version" do
-      let(:version) { Gem::Version.new('3.1.11') }
+      let(:version) { Gem::Version.new(a_patched_version) }
 
       it "should return true" do
         expect(subject.patched?(version)).to be_truthy
@@ -234,7 +255,7 @@ describe Bundler::Audit::Advisory do
     end
 
     context "when passed a version that matches no patched version" do
-      let(:version) { Gem::Version.new('2.9.0') }
+      let(:version) { Gem::Version.new('0.1.1') }
 
       it "should return false" do
         expect(subject.patched?(version)).to be_falsey
@@ -244,7 +265,7 @@ describe Bundler::Audit::Advisory do
 
   describe "#vulnerable?" do
     context "when passed a version that matches one patched version" do
-      let(:version) { Gem::Version.new('3.1.11') }
+      let(:version) { Gem::Version.new(a_patched_version) }
 
       it "should return false" do
         expect(subject.vulnerable?(version)).to be_falsey
@@ -252,15 +273,13 @@ describe Bundler::Audit::Advisory do
     end
 
     context "when passed a version that matches no patched version" do
-      let(:version) { Gem::Version.new('2.9.0') }
+      let(:version) { Gem::Version.new('0.1.1') }
 
       it "should return true" do
         expect(subject.vulnerable?(version)).to be_truthy
       end
 
       context "when unaffected_versions is not empty" do
-        subject { described_class.load(path) }
-
         context "when passed a version that matches one unaffected version" do
           let(:version) { Gem::Version.new(an_unaffected_version) }
 
@@ -270,7 +289,7 @@ describe Bundler::Audit::Advisory do
         end
 
         context "when passed a version that matches no unaffected version" do
-          let(:version) { Gem::Version.new('1.2.3') }
+          let(:version) { Gem::Version.new('0.1.0') }
 
           it "should return true" do
             expect(subject.vulnerable?(version)).to be_truthy
