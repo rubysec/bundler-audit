@@ -66,6 +66,8 @@ module Bundler
         print_report(report,output)
 
         output.close if options[:output]
+
+        exit(1) if report.vulnerable?
       end
 
       desc 'stats', 'Prints ruby-advisory-db stats'

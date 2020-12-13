@@ -30,7 +30,6 @@ module Bundler
 
             if report.vulnerable?
               say "Vulnerabilities found!", :red
-              exit 1
             else
               say("No vulnerabilities found", :green) unless options.quiet?
             end
