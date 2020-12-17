@@ -17,7 +17,7 @@ module Bundler
       #
       def define
         namespace :bundle do
-          desc 'Updates the ruby-advisory-db then runs bundle-audit'
+          desc 'Checks the Gemfile.lock for insecure dependencies'
           task :audit do
             require 'bundler/audit/cli'
             Bundler::Audit::CLI.start %w[check]
