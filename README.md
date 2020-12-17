@@ -160,7 +160,7 @@ bundler-audit also supports a per-project configuration file:
 * [ruby] >= 1.9.3
 * [rubygems] >= 1.8
 * [thor] >= 0.18, < 2
-* [bundler] ~> 1.2
+* [bundler] >= 1.2.0, < 3
 
 ## Install
 
