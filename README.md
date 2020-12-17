@@ -156,6 +156,7 @@ task default: 'bundle:audit'
 ## Contributing
 
 1. Clone the repo
+2. `budle install`
 3. `bundle exec rake`
 
 ## License
