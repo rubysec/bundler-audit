@@ -34,6 +34,7 @@ module Bundler
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :filter, :type => :array, :aliases => '-f'
 
       def check
         update if options[:update]
@@ -41,7 +42,7 @@ module Bundler
         scanner    = Scanner.new
         vulnerable = false
 
-        scanner.scan(:ignore => options.ignore) do |result|
+        scanner.scan(ignore: options[:ignore], filter: options[:filter]) do |result|
           vulnerable = true
 
           case result

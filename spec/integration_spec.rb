@@ -50,6 +50,24 @@ Solution: upgrade to (~>|>=) \d+\.\d+\.\d+(\.\d+)?(, (~>|>=) \d+\.\d+\.\d+(\.\d+
     end
   end
 
+  context "when auditing a bundle with filtered criticality" do
+    let(:bundle)    { 'unpatched_gems' }
+    let(:directory) { File.join('spec','bundle',bundle) }
+
+    let(:command) do
+      File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundler-audit -f medium'))
+    end
+
+    subject do
+      Dir.chdir(directory) { sh(command, :fail => true) }
+    end
+
+    it "should print advisories for filtered criticality" do
+      expect(subject).not_to include("Criticality: High")
+      expect(subject).to include("Criticality: Medium")
+    end
+  end
+
   context "when auditing a bundle with insecure sources" do
     let(:bundle)    { 'insecure_sources' }
     let(:directory) { File.join('spec','bundle',bundle) }
