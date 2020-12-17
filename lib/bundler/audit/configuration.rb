@@ -32,7 +32,7 @@ module Bundler
       #
       # A constructor method for loading configuration from a YAML file.
       #
-      # @param [String] path
+      # @param [String] file_path
       #   Path to the yaml file holding the configuration.
       #
       # @raise [FileNotFound]
@@ -86,15 +86,11 @@ module Bundler
       #
       # Initializes the configuration.
       #
-      # @params [Hash] config
+      # @param [Hash] config
       #   The configuration hash.
       #
       # @option config [Array<String>] :ignore
       #   The list of advisory IDs to ignore.
-      #
-      # @raise [InvalidConfigurationError]
-      #   Will raise an invalid configuration error indicating what in the YAML
-      #   file is invalid for the configuration.
       #
       def initialize(config={})
         @ignore = Set.new(config[:ignore])

@@ -51,7 +51,7 @@ module Bundler
         #
         # Compares the unpatched gem to another result.
         #
-        # @param [Result] result
+        # @param [Result] other
         #
         # @return [Boolean]
         #
@@ -72,6 +72,8 @@ module Bundler
           @advisory.id
         end
 
+        #
+        # Converts the unpached gem to a Hash.
         #
         # @return [Hash{Symbol => Object}]
         #

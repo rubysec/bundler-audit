@@ -30,7 +30,7 @@ module Bundler
         #
         # Initializes the insecure source result.
         #
-        # @param [URI::Generic, URI::HTTP]
+        # @param [URI::Generic, URI::HTTP] source
         #   The insecure `git://` or `http://` URI.
         #
         def initialize(source)
@@ -51,10 +51,14 @@ module Bundler
         #
         # Converts the insecure source result to a String.
         #
+        # @return [String]
+        #
         def to_s
           @source.to_s
         end
 
+        #
+        # Converts the insecure source into a Hash.
         #
         # @return [Hash{Symbol => Object}]
         #
