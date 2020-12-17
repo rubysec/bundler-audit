@@ -21,7 +21,6 @@ require 'bundler/audit/cli/formats'
 
 require 'thor'
 require 'bundler'
-require 'bundler/vendored_thor'
 
 module Bundler
   module Audit
