@@ -22,14 +22,13 @@ module Bundler
     class CLI < ::Thor
       module Formats
         module Text
-
           #
           # Prints any findings as plain-text.
           #
           # @param [Report] report
           #   The results from the {Scanner}.
           #
-          # @param [IO] output
+          # @param [IO, File] output
           #   Optional output stream.
           #
           def print_report(report,output=$stdout)

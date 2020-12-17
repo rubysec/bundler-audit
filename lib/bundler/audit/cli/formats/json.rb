@@ -23,6 +23,16 @@ module Bundler
     class CLI < ::Thor
       module Formats
         module JSON
+          #
+          # Outputs the report as JSON. Will pretty-print JSON if `output`
+          # is a TTY, otherwise normal JSON will be outputted.
+          #
+          # @param [Report] report
+          #   The results from the {Scanner}.
+          #
+          # @param [IO, File] output
+          #   The output stream.
+          #
           def print_report(report,output=$stdout)
             hash = report.to_h
 
