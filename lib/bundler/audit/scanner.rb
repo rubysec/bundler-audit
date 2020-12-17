@@ -190,11 +190,15 @@ module Bundler
       #
       # @see https://tools.ietf.org/html/rfc1918#section-3
       # @see https://tools.ietf.org/html/rfc4193#section-8
+      # @see https://tools.ietf.org/html/rfc6890#section-2.2.2
+      # @see https://tools.ietf.org/html/rfc6890#section-2.2.3
       INTERNAL_SUBNETS = %w[
         10.0.0.0/8
         172.16.0.0/12
         192.168.0.0/16
         fc00::/7
+        127.0.0.0/8
+        ::1/128
       ].map(&IPAddr.method(:new))
 
       #
