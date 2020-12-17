@@ -30,7 +30,7 @@ module Bundler
       default_task :check
       map '--version' => :version
 
-      desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
+      desc 'check [DIR]', 'Checks the Gemfile.lock for insecure dependencies'
       method_option :quiet, :type => :boolean, :aliases => '-q'
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
