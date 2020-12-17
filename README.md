@@ -141,6 +141,19 @@ Bundler::Audit::Task.new
 task default: 'bundle:audit'
 ```
 
+## Configuration File
+
+bundler-audit also supports a per-project configuration file:
+
+`.bundler-audit.yml`:
+```yaml
+ignore:
+  - CVE-YYYY-XXXX
+  - ...
+```
+
+* `ignore:` \[Array\<String\>\] - A list of advisory IDs to ignore.
+
 ## Requirements
 
 * [git]
