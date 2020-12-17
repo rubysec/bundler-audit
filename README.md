@@ -112,9 +112,25 @@ Update the [ruby-advisory-db] and check `Gemfile.lock` (useful for CI runs):
 
     $ bundle-audit check --update
 
+Checking the `Gemfile.lock` without updating the [ruby-advisory-db]:
+
+    $ bundle-audit check --no-update
+
 Ignore specific advisories:
 
     $ bundle-audit check --ignore OSVDB-108664
+
+Checking a custom `Gemfile.lock` file:
+
+    $ bundle-audit check --gemfile Gemfile.custom.lock
+
+Output the audit's results in JSON:
+
+    $ bundle-audit check --format json
+
+Output the audit's results in JSON, to a file:
+
+    $ bundle-audit check --format json --output bundle-audit.json
 
 Rake task:
 
