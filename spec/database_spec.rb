@@ -16,6 +16,38 @@ describe Bundler::Audit::Database do
   end
 
   describe ".exists?" do
+    subject { described_class }
+
+    context "when the directory does not exist" do
+      let(:path) { '/does/not/exist' }
+
+      it { expect(subject.exists?(path)).to be(false) }
+    end
+
+    context "when the directory does exist" do
+      context "but is empty" do
+        let(:path) { Fixtures.join('empty_dir') }
+
+        before { FileUtils.mkdir(path) }
+
+        it { expect(subject.exists?(path)).to be(false) }
+
+        after { FileUtils.rmdir(path) }
+      end
+
+      context "and there are files within the directory" do
+        let(:path) { Fixtures.join('not_empty_dir') }
+
+        before do
+          FileUtils.mkdir(path)
+          FileUtils.touch(File.join(path,'file.txt'))
+        end
+
+        it { expect(subject.exists?(path)).to be(true) }
+
+        after { FileUtils.rm_r(path) }
+      end
+    end
   end
 
   describe ".download" do
