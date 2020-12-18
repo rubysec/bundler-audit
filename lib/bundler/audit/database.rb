@@ -38,7 +38,7 @@ module Bundler
       URL = 'https://github.com/rubysec/ruby-advisory-db.git'
 
       # Path to the user's copy of the ruby-advisory-db
-      USER_PATH = File.expand_path(File.join(ENV['HOME'],'.local','share','ruby-advisory-db'))
+      USER_PATH = File.expand_path(File.join(Gem.user_home,'.local','share','ruby-advisory-db'))
 
       # Default path to the ruby-advisory-db
       DEFAULT_PATH = ENV['BUNDLER_AUDIT_DB'] || USER_PATH
