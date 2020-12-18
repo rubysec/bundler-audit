@@ -97,7 +97,6 @@ Insecure Source URI found: http://rubygems.org/
   end
 
   describe "update" do
-
     let(:update_command) { "#{command} update" }
     let(:bundle)         { 'secure' }
     let(:directory)      { File.join('spec','bundle',bundle) }
@@ -114,7 +113,5 @@ Insecure Source URI found: http://rubygems.org/
         expect(subject).to match(/ruby-advisory-db:\n  advisories:\s+[1-9]\d+ advisories/)
       end
     end
-
   end
-
 end
