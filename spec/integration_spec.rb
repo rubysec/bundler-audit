@@ -79,6 +79,23 @@ Insecure Source URI found: http://rubygems.org/
     end
   end
 
+  context "when auditing a non-existent Gemfile.lock file" do
+    let(:bundle)    { 'secure' }
+    let(:directory) { File.join('spec','bundle',bundle) }
+    let(:root)      { File.expand_path(directory) }
+
+    let(:gemfile_lock) { 'Gemfile.foo.lock' }
+    let(:command) { "#{super()} --gemfile-lock #{gemfile_lock}" }
+
+    subject do
+      Dir.chdir(directory) { sh(command, :fail => true) }
+    end
+
+    it "should print an error message" do
+      expect(subject.strip).to eq("Could not find #{gemfile_lock.inspect} in #{root.inspect}")
+    end
+  end
+
   describe "update" do
 
     let(:update_command) { "#{command} update" }

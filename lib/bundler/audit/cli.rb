@@ -55,7 +55,12 @@ module Bundler
         end
 
         database = Database.new(options[:database])
-        scanner  = Scanner.new(dir,options[:gemfile_lock],database)
+        scanner  = begin
+                     Scanner.new(dir,options[:gemfile_lock],database)
+                   rescue Bundler::GemfileLockNotFound => exception
+                     say exception.message, :red
+                     exit 1
+                   end
         report   = scanner.report(:ignore => options.ignore)
 
         output = if options[:output] then File.new(options[:output],'w')

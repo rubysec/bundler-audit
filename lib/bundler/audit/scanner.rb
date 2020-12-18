@@ -63,12 +63,21 @@ module Bundler
       # @param [Database] database
       #   The database to scan against.
       #
+      # @raise [Bundler::GemfileLockNotFound]
+      #   The `gemfile_lock` file could not be found within the `root`
+      #   directory.
+      #
       def initialize(root=Dir.pwd,gemfile_lock='Gemfile.lock',database=Database.new,config_dot_file='.bundler-audit.yml')
         @root     = File.expand_path(root)
         @database = database
-        @lockfile = LockfileParser.new(
-          File.read(File.join(@root,gemfile_lock))
-        )
+
+        gemfile_lock_path = File.join(@root,gemfile_lock)
+
+        unless File.file?(gemfile_lock_path)
+          raise(Bundler::GemfileLockNotFound,"Could not find #{gemfile_lock.inspect} in #{@root.inspect}")
+        end
+
+        @lockfile = LockfileParser.new(File.read(gemfile_lock_path))
 
         config_dot_file_full_path = File.join(@root,config_dot_file)
 
