@@ -18,7 +18,7 @@ describe Bundler::Audit::Database do
   describe ".exists?" do
   end
 
-  describe ".download!" do
+  describe ".download" do
   end
 
   describe ".update!" do
