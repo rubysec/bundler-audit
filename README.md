@@ -168,9 +168,16 @@ bundler-audit also supports a per-project configuration file:
 
 ## Contributing
 
-1. Clone the repo
-2. `budle install`
-3. `bundle exec rake`
+1. https://github.com/rubysec/bundler-audit/fork
+2. `git clone YOUR_FORK_URI`
+3. `cd bundler-audit/`
+4. `budle install`
+5. `bundle exec rake spec`
+6. `git checkout -b YOUR_FEATURE`
+7. Make your changes
+8. `bundle exec rake spec`
+9. `git commit -a`
+10. `git push origin YOUR_FEATURE`
 
 ## License
 
