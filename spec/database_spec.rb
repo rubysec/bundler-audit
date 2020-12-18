@@ -120,13 +120,10 @@ describe Bundler::Audit::Database do
   end
 
   describe "#advisories" do
-    it "should return a list of all advisories." do
-      actual_advisories = Bundler::Audit::Database.new.
-        advisories.
-        map(&:path).
-        sort
+    subject { super().advisories }
 
-      expect(actual_advisories).to eq vendored_advisories
+    it "should return a list of all advisories." do
+      expect(subject.map(&:path)).to match_array(vendored_advisories)
     end
   end
 
