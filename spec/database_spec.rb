@@ -128,6 +128,16 @@ describe Bundler::Audit::Database do
   end
 
   describe "#advisories_for" do
+    let(:gem) { 'activesupport' }
+    let(:vendored_advisories_for) do
+      Dir[File.join(Fixtures::DATABASE_PATH, "gems/#{gem}/*.yml")].sort
+    end
+
+    subject { super().advisories_for(gem) }
+
+    it "should return a list of all advisories." do
+      expect(subject.map(&:path)).to match_array(vendored_advisories_for)
+    end
   end
 
   describe "#check_gem" do
