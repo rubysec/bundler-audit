@@ -4,7 +4,7 @@ require 'tmpdir'
 
 describe Bundler::Audit::Database do
   let(:vendored_advisories) do
-    Dir[File.join(Fixtures::DATABASE_PATH, 'gems/*/*.yml')].sort
+    Dir[File.join(Fixtures::Database::PATH, 'gems/*/*.yml')].sort
   end
 
   describe ".path" do
@@ -87,7 +87,7 @@ describe Bundler::Audit::Database do
     context "when :path already exists" do
       let(:dest_dir) { Fixtures.join('existing-ruby-advisory-db') }
 
-      before { FileUtils.cp_r(Fixtures::DATABASE_PATH,dest_dir) }
+      before { FileUtils.cp_r(Fixtures::Database::PATH,dest_dir) }
       before { stub_const("#{described_class}::DEFAULT_PATH",dest_dir) }
 
       it "should execute `git pull`" do
@@ -162,7 +162,7 @@ describe Bundler::Audit::Database do
   describe "#advisories_for" do
     let(:gem) { 'activesupport' }
     let(:vendored_advisories_for) do
-      Dir[File.join(Fixtures::DATABASE_PATH, "gems/#{gem}/*.yml")].sort
+      Dir[File.join(Fixtures::Database::PATH, "gems/#{gem}/*.yml")].sort
     end
 
     subject { super().advisories_for(gem) }

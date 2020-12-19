@@ -7,11 +7,23 @@ require 'bundler/audit/database'
 module Fixtures
   ROOT = File.expand_path('../fixtures',__FILE__)
 
-  DATABASE_PATH = File.join(ROOT,'database')
-
-  DATABASE_COMMIT = '89cdde9a725bb6f8a483bca97c5da344e060ac61'
-
   TMP_DIR = File.expand_path('../tmp',__FILE__)
+
+  module Database
+    PATH = File.join(ROOT,'database')
+
+    COMMIT = '89cdde9a725bb6f8a483bca97c5da344e060ac61'
+
+    def self.clone
+      system 'git', 'clone', '--quiet', Bundler::Audit::Database::URL, PATH
+    end
+
+    def self.reset!(commit=COMMIT)
+      Dir.chdir(PATH) do
+        system 'git', 'reset', '--hard', commit
+      end
+    end
+  end
 
   def self.join(*paths)
     File.join(ROOT,*paths)
@@ -36,19 +48,16 @@ RSpec.configure do |config|
   include Helpers
 
   config.before(:suite) do
-    unless File.directory?(Fixtures::DATABASE_PATH)
-      system 'git', 'clone', '--quiet', Bundler::Audit::Database::URL,
-                                        Fixtures::DATABASE_PATH
+    unless File.directory?(Fixtures::Database::PATH)
+      Fixtures::Database.clone
     end
 
-    Dir.chdir(Fixtures::DATABASE_PATH) do
-      system 'git', 'reset', '--hard', Fixtures::DATABASE_COMMIT
-    end
+    Fixtures::Database.reset!
 
     FileUtils.mkdir_p(Fixtures::TMP_DIR)
   end
 
   config.before(:each) do
-    stub_const("Bundler::Audit::Database::DEFAULT_PATH",Fixtures::DATABASE_PATH)
+    stub_const("Bundler::Audit::Database::DEFAULT_PATH",Fixtures::Database::PATH)
   end
 end
