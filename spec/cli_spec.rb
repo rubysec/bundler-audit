@@ -2,11 +2,11 @@ require 'spec_helper'
 require 'bundler/audit/cli'
 
 describe Bundler::Audit::CLI do
-  describe "#start" do
+  describe ".start" do
     context "with wrong arguments" do
       it "exits with error status code" do
         expect {
-          described_class.start ["check", "--ignore CVE-2015-9284"]
+          described_class.start ["check", "--foo"]
         }.to raise_error(SystemExit) do |error|
           expect(error.success?).to eq(false)
           expect(error.status).to eq(1)
