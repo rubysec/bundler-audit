@@ -51,6 +51,56 @@ describe Bundler::Audit::Database do
   end
 
   describe ".download" do
+    subject { described_class }
+
+    let(:url)  { described_class::URL          }
+    let(:path) { described_class::DEFAULT_PATH }
+
+    it "should execute `git clone` with URL and DEFAULT_PATH" do
+      expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(true)
+      expect(subject).to receive(:new)
+
+      subject.download
+    end
+
+    context "with :path" do
+      let(:url)  { described_class::URL          }
+      let(:path) { Fixtures.join('new-database') }
+
+      it "should execute `git clone` with the given output path" do
+        expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(true)
+        expect(subject).to receive(:new)
+
+        subject.download(path: path)
+      end
+    end
+
+    context "with :quiet" do
+      it "should execute `git clone` with the `--quiet` option" do
+        expect(subject).to receive(:system).with('git', 'clone', '--quiet', url, path).and_return(true)
+        expect(subject).to receive(:new)
+
+        subject.download(quiet: true)
+      end
+    end
+
+    context "when the command fails" do
+      it do
+        expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(false)
+
+        expect {
+          subject.download
+        }.to raise_error(described_class::DownloadFailed)
+      end
+    end
+
+    context "with an unknown option" do
+      it do
+        expect {
+          subject.download(foo: true)
+        }.to raise_error(ArgumentError)
+      end
+    end
   end
 
   describe ".update!" do
