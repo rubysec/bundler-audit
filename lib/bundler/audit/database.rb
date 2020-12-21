@@ -149,6 +149,8 @@ module Bundler
       #
       # @since 0.3.0
       #
+      # @deprecated Use {#update!} instead.
+      #
       def self.update!(options={})
         raise "Invalid option(s)" unless (options.keys - [:quiet]).empty?
 
