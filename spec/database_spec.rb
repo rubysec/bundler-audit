@@ -222,6 +222,45 @@ describe Bundler::Audit::Database do
   end
 
   describe "#update!" do
+    context "when the database is a git repository" do
+      it do
+        expect(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(true)
+
+        subject.update!
+      end
+
+      context "when the :quiet option is given" do
+        it do
+          expect(subject).to receive(:system).with('git', 'pull', '--quiet', 'origin', 'master').and_return(true)
+
+          subject.update!(quiet: true)
+        end
+      end
+
+      context "when the `git pull` command fails" do
+        it do
+          expect(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(false)
+
+          expect {
+            subject.update!
+          }.to raise_error(described_class::UpdateFailed)
+        end
+      end
+    end
+
+    context "when the database is a bare directory" do
+      let(:path) { Fixtures.join('mock-bare-database') }
+
+      before { FileUtils.mkdir(path) }
+
+      subject { described_class.new(path) }
+
+      it do
+        expect(subject.update!).to be(nil)
+      end
+
+      after { FileUtils.rmdir(path) }
+    end
   end
 
   describe "#last_updated_at" do
