@@ -264,6 +264,32 @@ describe Bundler::Audit::Database do
   end
 
   describe "#last_updated_at" do
+    context "when the database is a git repository" do
+      let(:last_commit) { Fixtures::Database::COMMIT }
+      let(:last_commit_timestamp) do
+        Dir.chdir(Fixtures::Database::PATH) do
+          Time.parse(`git log --date=iso8601 --pretty="%cd" #{last_commit}`)
+        end
+      end
+
+      it "should return the timestamp of the last commit" do
+        expect(subject.last_updated_at).to be == last_commit_timestamp
+      end
+    end
+
+    context "when the database is a bare directory" do
+      let(:path) { Fixtures.join('mock-database-dir') }
+
+      before { FileUtils.mkdir(path) }
+
+      subject { described_class.new(path) }
+
+      it "should return the mtime of the directory" do
+        expect(subject.last_updated_at).to be == File.mtime(path)
+      end
+
+      after { FileUtils.rmdir(path) }
+    end
   end
 
   describe "#advisories" do
