@@ -193,6 +193,32 @@ describe Bundler::Audit::Database do
   end
 
   describe "#git?" do
+    subject { described_class.new(path) }
+
+    context "when a '.git' directory exists within the database" do
+      let(:path) { Fixtures.join('mock-git-database') }
+
+      before do
+        FileUtils.mkdir(path)
+        FileUtils.mkdir(File.join(path,'.git'))
+      end
+
+      it { expect(subject.git?).to be(true) }
+
+      after { FileUtils.rm_rf(path) }
+    end
+
+    context "when no '.git' directory exists within the database" do
+      let(:path) { Fixtures.join('mock-bare-database') }
+
+      before do
+        FileUtils.mkdir(path)
+      end
+
+      it { expect(subject.git?).to be(false) }
+
+      after { FileUtils.rm_rf(path) }
+    end
   end
 
   describe "#update!" do
