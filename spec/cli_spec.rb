@@ -18,7 +18,6 @@ describe Bundler::Audit::CLI do
   describe "#update" do
     context "not --quiet (the default)" do
       context "when update succeeds" do
-
         before do
           expect_any_instance_of(Bundler::Audit::Database).to receive(:update!).and_return(true)
         end
