@@ -28,17 +28,20 @@ module Bundler
     #
     class Database
 
+      class DownloadFailed < RuntimeError
+      end
+
+      class UpdateFailed < RuntimeError
+      end
+
       # Git URL of the ruby-advisory-db
       URL = 'https://github.com/rubysec/ruby-advisory-db.git'
 
-      # Default path to the ruby-advisory-db
-      VENDORED_PATH =  File.expand_path(File.join(File.dirname(__FILE__),'..','..','..','data','ruby-advisory-db'))
-
-      # Timestamp for when the database was last updated
-      VENDORED_TIMESTAMP = Time.parse(File.read("#{VENDORED_PATH}.ts")).utc
-
       # Path to the user's copy of the ruby-advisory-db
-      USER_PATH = File.expand_path(File.join(ENV['HOME'],'.local','share','ruby-advisory-db'))
+      USER_PATH = File.expand_path(File.join(Gem.user_home,'.local','share','ruby-advisory-db'))
+
+      # Default path to the ruby-advisory-db
+      DEFAULT_PATH = ENV['BUNDLER_AUDIT_DB'] || USER_PATH
 
       # The path to the advisory database
       attr_reader :path
@@ -67,16 +70,62 @@ module Bundler
       #   The path to the database directory.
       #
       def self.path
-        if File.directory?(USER_PATH)
-          t1 = Dir.chdir(USER_PATH) { Time.parse(`git log --date=iso8601 --pretty="%cd" -1`).utc }
-          t2 = VENDORED_TIMESTAMP
+        DEFAULT_PATH
+      end
 
-          if t1 >= t2 then USER_PATH
-          else             VENDORED_PATH
-          end
-        else
-          VENDORED_PATH
+      #
+      # Tests whether the database exists.
+      #
+      # @param [String] path
+      #   The given path of the database to check.
+      #
+      # @return [Boolean]
+      # 
+      # @since 0.7.0
+      #
+      def self.exists?(path=DEFAULT_PATH)
+        File.directory?(path) && !(Dir.entries(path) - %w[. ..]).empty?
+      end
+
+      #
+      # Downloads the ruby-advisory-db.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [String] :path (DEFAULT_PATH)
+      #   The destination path for the new ruby-advisory-db.
+      #
+      # @option options [Boolean] :quiet
+      #   Specify whether `git` should be `--quiet`.
+      #
+      # @return [Dataase]
+      #   The newly downloaded database.
+      #
+      # @raise [DownloadFailed]
+      #   Indicates that the download failed.
+      #
+      # @note
+      #   Requires network access.
+      #
+      # @since 0.7.0
+      #
+      def self.download(options={})
+        unless (options.keys - [:path, :quiet]).empty?
+          raise(ArgumentError,"Invalid option(s)")
         end
+
+        path = options.fetch(:path,DEFAULT_PATH)
+
+        command = %w(git clone)
+        command << '--quiet' if options[:quiet]
+        command << URL << path
+
+        unless system(*command)
+          raise(DownloadFailed,"failed to download #{URL} to #{path.inspect}")
+        end
+
+        return new(path)
       end
 
       #
@@ -100,25 +149,81 @@ module Bundler
       #
       # @since 0.3.0
       #
+      # @deprecated Use {#update!} instead.
+      #
       def self.update!(options={})
-        unless (options.keys - [:quiet]).empty?
-          raise(ArgumentError,"Invalid option(s)")
-        end
+        raise "Invalid option(s)" unless (options.keys - [:quiet]).empty?
 
-        if File.directory?(USER_PATH)
-          if File.directory?(File.join(USER_PATH, ".git"))
-            Dir.chdir(USER_PATH) do
-              command = %w(git pull --no-rebase)
-              command << '--quiet' if options[:quiet]
-              command << 'origin' << 'master'
-              system *command
-            end
+        if File.directory?(DEFAULT_PATH)
+          begin
+            new(DEFAULT_PATH).update!(options)
+          rescue UpdateFailed then false
           end
         else
-          command = %w(git clone)
-          command << '--quiet' if options[:quiet]
-          command << URL << USER_PATH
-          system *command
+          begin
+            download(options.merge(path: DEFAULT_PATH))
+          rescue DownloadFailed then false
+          end
+        end
+      end
+
+      #
+      # Determines if the database is a git repository.
+      #
+      # @return [Boolean]
+      #
+      # @since 0.7.0
+      #
+      def git?
+        File.directory?(File.join(@path,'.git'))
+      end
+
+      #
+      # Updates the ruby-advisory-db.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Boolean] :quiet
+      #   Specify whether `git` should be `--quiet`.
+      #
+      # @return [true, nil]
+      #   `true` indicates that the update was successful.
+      #   `nil` indicates the database is not a git repository, thus not
+      #   capable of being updated.
+      #
+      # @since 0.7.0
+      #
+      def update!(options={})
+        if git?
+          Dir.chdir(@path) do
+            command = %w(git pull)
+            command << '--quiet' if options[:quiet]
+            command << 'origin' << 'master'
+
+            unless system(*command)
+              raise(UpdateFailed,"failed to update #{@path.inspect}")
+            end
+
+            return true
+          end
+        end
+      end
+
+      #
+      # Determines the time when the database was last updated.
+      #
+      # @return [Time]
+      #
+      # @since 0.7.0
+      #
+      def last_updated_at
+        if git?
+          Dir.chdir(@path) do
+            Time.parse(`git log --date=iso8601 --pretty="%cd" -1`)
+          end
+        else
+          File.mtime(@path)
         end
       end
 

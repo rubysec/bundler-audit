@@ -26,13 +26,6 @@ Gem::Specification.new do |gem|
   gem.files = `git ls-files`.split($/)
   gem.files = glob[gemspec['files']] if gemspec['files']
 
-  # add paths from data/ruby-advisory-db/
-  gem.files += Dir.chdir('data/ruby-advisory-db') do
-    `git ls-files`.split($/).map do |sub_path|
-      File.join('data','ruby-advisory-db',sub_path)
-    end
-  end
-
   gem.executables = gemspec.fetch('executables') do
     glob['bin/*'].map { |path| File.basename(path) }
   end

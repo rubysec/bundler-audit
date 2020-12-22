@@ -4,75 +4,162 @@ require 'tmpdir'
 
 describe Bundler::Audit::Database do
   let(:vendored_advisories) do
-    Dir[File.join(Bundler::Audit::Database::VENDORED_PATH, 'gems/*/*.yml')].sort
+    Dir[File.join(Fixtures::Database::PATH, 'gems/*/*.yml')].sort
   end
 
-  describe "path" do
+  describe ".path" do
     subject { described_class.path }
 
     it "it should be a directory" do
-      expect(File.directory?(subject)).to be_truthy
+      expect(described_class.path).to be_truthy
+    end
+  end
+
+  describe ".exists?" do
+    subject { described_class }
+
+    context "when the directory does not exist" do
+      let(:path) { '/does/not/exist' }
+
+      it { expect(subject.exists?(path)).to be(false) }
     end
 
-    it "should prefer the user repo, iff it's as up to date, or more up to date than the vendored one" do
-      described_class.update!(quiet: false)
+    context "when the directory does exist" do
+      context "but is empty" do
+        let(:path) { Fixtures.join('empty_dir') }
 
-      ts_const = described_class::VENDORED_TIMESTAMP
+        before { FileUtils.mkdir(path) }
 
-      current_user_ts = Dir.chdir(described_class::USER_PATH) do
-        Time.parse(`git log --date=iso8601 --pretty="%cd" -1`).utc
+        it { expect(subject.exists?(path)).to be(false) }
+
+        after { FileUtils.rmdir(path) }
       end
 
-      puts "Timestamp: #{current_user_ts}"
+      context "and there are files within the directory" do
+        let(:path) { Fixtures.join('not_empty_dir') }
 
-      # As up to date...
-      expect do
-        # Stub the vendor copy to be the exact same as the user path copy
-        stub_const(ts_const, current_user_ts)
-        # When they are the exact same, prefer the user copy
-        expect(subject).to eq mocked_user_path
-      end
+        before do
+          FileUtils.mkdir(path)
+          FileUtils.touch(File.join(path,'file.txt'))
+        end
 
-      # Prefer the newest; in this case, user copy
-      expect do
-        # Stub the vendor copy to be older than the user path copy
-        stub_const(ts_const, current_user_ts-1)
-        # When vendor copy is older, prefer the user copy
-        expect(subject).to eq mocked_user_path
-      end
+        it { expect(subject.exists?(path)).to be(true) }
 
-      # Prefer the newest; in this case, vendor copy
-      expect do
-        # Stub the vendor copy to be newer than the user path copy
-        stub_const(ts_const, current_user_ts+1)
-        # When user copy is older, prefer the vendor copy
-        expect(subject).to eq described_class::VENDORED_PATH
+        after { FileUtils.rm_r(path) }
       end
     end
   end
 
-  describe "update!" do
+  describe ".download" do
     subject { described_class }
 
-    it "should create the USER_PATH path as needed" do
-      subject.update!(quiet: false)
+    let(:url)  { described_class::URL          }
+    let(:path) { described_class::DEFAULT_PATH }
 
-      expect(File.directory?(mocked_user_path)).to be true
+    it "should execute `git clone` with URL and DEFAULT_PATH" do
+      expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(true)
+      expect(subject).to receive(:new)
+
+      subject.download
     end
 
-    it "should create the repo, then update it given multiple successive calls." do
-      expect_update_to_clone_repo!
-      subject.update!(quiet: false)
-      expect(File.directory?(mocked_user_path)).to be true
+    context "with :path" do
+      let(:url)  { described_class::URL          }
+      let(:path) { Fixtures.join('new-database') }
 
-      expect_update_to_update_repo!
-      subject.update!(quiet: false)
-      expect(File.directory?(mocked_user_path)).to be true
+      it "should execute `git clone` with the given output path" do
+        expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(true)
+        expect(subject).to receive(:new)
+
+        subject.download(path: path)
+      end
+    end
+
+    context "with :quiet" do
+      it "should execute `git clone` with the `--quiet` option" do
+        expect(subject).to receive(:system).with('git', 'clone', '--quiet', url, path).and_return(true)
+        expect(subject).to receive(:new)
+
+        subject.download(quiet: true)
+      end
+    end
+
+    context "when the command fails" do
+      it do
+        expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(false)
+
+        expect {
+          subject.download
+        }.to raise_error(described_class::DownloadFailed)
+      end
+    end
+
+    context "with an unknown option" do
+      it do
+        expect {
+          subject.download(foo: true)
+        }.to raise_error(ArgumentError)
+      end
+    end
+  end
+
+  describe ".update!" do
+    subject { described_class }
+
+    context "when :path does not yet exist" do
+      let(:dest_dir) { Fixtures.join('new-ruby-advisory-db') }
+
+      before { stub_const("#{described_class}::DEFAULT_PATH",dest_dir) }
+
+      let(:url)  { described_class::URL          }
+      let(:path) { described_class::DEFAULT_PATH }
+
+      it "should execute `git clone` and call .new" do
+        expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(true)
+        expect(subject).to receive(:new)
+
+        subject.update!(quiet: false)
+      end
+
+      context "when the `git clone` fails" do
+        before { stub_const("#{described_class}::URL",'https://example.com/') }
+
+        it do
+          expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(false)
+
+          expect(subject.update!(quiet: false)).to eq(false)
+        end
+      end
+
+      after { FileUtils.rm_rf(dest_dir) }
+    end
+
+    context "when :path already exists" do
+      let(:dest_dir) { Fixtures.join('existing-ruby-advisory-db') }
+
+      before { FileUtils.cp_r(Fixtures::Database::PATH,dest_dir) }
+      before { stub_const("#{described_class}::DEFAULT_PATH",dest_dir) }
+
+      it "should execute `git pull`" do
+        expect_any_instance_of(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(true)
+
+        subject.update!(quiet: false)
+      end
+
+      after { FileUtils.rm_rf(dest_dir) }
+
+      context "when the `git pull` fails" do
+        it do
+          expect_any_instance_of(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(false)
+
+          expect(subject.update!(quiet: false)).to eq(false)
+        end
+      end
     end
 
     context "when given an invalid option" do
       it do
-        expect { subject.update!(foo: 1) }.to raise_error(ArgumentError)
+        expect { subject.update!(foo: 1) }.to raise_error(RuntimeError)
       end
     end
   end
@@ -102,6 +189,127 @@ describe Bundler::Audit::Database do
           described_class.new('/foo/bar/baz')
         }.to raise_error(ArgumentError)
       end
+    end
+  end
+
+  describe "#git?" do
+    subject { described_class.new(path) }
+
+    context "when a '.git' directory exists within the database" do
+      let(:path) { Fixtures.join('mock-git-database') }
+
+      before do
+        FileUtils.mkdir(path)
+        FileUtils.mkdir(File.join(path,'.git'))
+      end
+
+      it { expect(subject.git?).to be(true) }
+
+      after { FileUtils.rm_rf(path) }
+    end
+
+    context "when no '.git' directory exists within the database" do
+      let(:path) { Fixtures.join('mock-bare-database') }
+
+      before do
+        FileUtils.mkdir(path)
+      end
+
+      it { expect(subject.git?).to be(false) }
+
+      after { FileUtils.rm_rf(path) }
+    end
+  end
+
+  describe "#update!" do
+    context "when the database is a git repository" do
+      it do
+        expect(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(true)
+
+        subject.update!
+      end
+
+      context "when the :quiet option is given" do
+        it do
+          expect(subject).to receive(:system).with('git', 'pull', '--quiet', 'origin', 'master').and_return(true)
+
+          subject.update!(quiet: true)
+        end
+      end
+
+      context "when the `git pull` command fails" do
+        it do
+          expect(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(false)
+
+          expect {
+            subject.update!
+          }.to raise_error(described_class::UpdateFailed)
+        end
+      end
+    end
+
+    context "when the database is a bare directory" do
+      let(:path) { Fixtures.join('mock-bare-database') }
+
+      before { FileUtils.mkdir(path) }
+
+      subject { described_class.new(path) }
+
+      it do
+        expect(subject.update!).to be(nil)
+      end
+
+      after { FileUtils.rmdir(path) }
+    end
+  end
+
+  describe "#last_updated_at" do
+    context "when the database is a git repository" do
+      let(:last_commit) { Fixtures::Database::COMMIT }
+      let(:last_commit_timestamp) do
+        Dir.chdir(Fixtures::Database::PATH) do
+          Time.parse(`git log --date=iso8601 --pretty="%cd" #{last_commit}`)
+        end
+      end
+
+      it "should return the timestamp of the last commit" do
+        expect(subject.last_updated_at).to be == last_commit_timestamp
+      end
+    end
+
+    context "when the database is a bare directory" do
+      let(:path) { Fixtures.join('mock-database-dir') }
+
+      before { FileUtils.mkdir(path) }
+
+      subject { described_class.new(path) }
+
+      it "should return the mtime of the directory" do
+        expect(subject.last_updated_at).to be == File.mtime(path)
+      end
+
+      after { FileUtils.rmdir(path) }
+    end
+  end
+
+  describe "#advisories" do
+    subject { super().advisories }
+
+    it "should return a list of all advisories." do
+      expect(subject.map(&:path)).to match_array(vendored_advisories)
+    end
+  end
+
+  describe "#advisories_for" do
+    let(:gem) { 'activesupport' }
+    let(:vendored_advisories_for) do
+      Dir[File.join(Fixtures::Database::PATH, "gems/#{gem}/*.yml")].sort
+    end
+
+    subject { super().advisories_for(gem) }
+
+    it "should return a list of all advisories." do
+      expect(subject.map(&:path)).to match_array(vendored_advisories_for)
     end
   end
 
@@ -139,17 +347,6 @@ describe Bundler::Audit::Database do
     it { expect(subject.size).to eq vendored_advisories.count }
   end
 
-  describe "#advisories" do
-    it "should return a list of all advisories." do
-      actual_advisories = Bundler::Audit::Database.new.
-        advisories.
-        map(&:path).
-        sort
-
-      expect(actual_advisories).to eq vendored_advisories
-    end
-  end
-
   describe "#to_s" do
     it "should return the Database path" do
       expect(subject.to_s).to eq(subject.path)
@@ -158,7 +355,7 @@ describe Bundler::Audit::Database do
 
   describe "#inspect" do
     it "should produce a Ruby-ish instance descriptor" do
-      expect(Bundler::Audit::Database.new.inspect).to eq("#<Bundler::Audit::Database:#{Bundler::Audit::Database::VENDORED_PATH}>")
+      expect(subject.inspect).to eq("#<#{described_class}:#{subject.path}>")
     end
   end
 end

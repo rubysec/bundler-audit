@@ -112,9 +112,25 @@ Update the [ruby-advisory-db] and check `Gemfile.lock` (useful for CI runs):
 
     $ bundle-audit check --update
 
+Checking the `Gemfile.lock` without updating the [ruby-advisory-db]:
+
+    $ bundle-audit check --no-update
+
 Ignore specific advisories:
 
     $ bundle-audit check --ignore OSVDB-108664
+
+Checking a custom `Gemfile.lock` file:
+
+    $ bundle-audit check --gemfile Gemfile.custom.lock
+
+Output the audit's results in JSON:
+
+    $ bundle-audit check --format json
+
+Output the audit's results in JSON, to a file:
+
+    $ bundle-audit check --format json --output bundle-audit.json
 
 Rake task:
 
@@ -125,13 +141,26 @@ Bundler::Audit::Task.new
 task default: 'bundle:audit'
 ```
 
+## Configuration File
+
+bundler-audit also supports a per-project configuration file:
+
+`.bundler-audit.yml`:
+
+    ---
+    ignore:
+      - CVE-YYYY-XXXX
+      - ...
+
+* `ignore:` \[Array\<String\>\] - A list of advisory IDs to ignore.
+
 ## Requirements
 
+* [git]
 * [ruby] >= 1.9.3
 * [rubygems] >= 1.8
 * [thor] >= 0.18, < 2
-* [bundler] ~> 1.2
-* [git]
+* [bundler] >= 1.2.0, < 3
 
 ## Install
 
@@ -157,9 +186,16 @@ task default: 'bundle:audit'
 
 ## Contributing
 
-1. Clone the repo
-2. `git submodule update --init` # To populate data/ruby-advisory-db
-3. `bundle exec rake`
+1. https://github.com/rubysec/bundler-audit/fork
+2. `git clone YOUR_FORK_URI`
+3. `cd bundler-audit/`
+4. `budle install`
+5. `bundle exec rake spec`
+6. `git checkout -b YOUR_FEATURE`
+7. Make your changes
+8. `bundle exec rake spec`
+9. `git commit -a`
+10. `git push origin YOUR_FEATURE`
 
 ## License
 
@@ -178,6 +214,7 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
 
+[git]: https://git-scm.com
 [ruby]: https://ruby-lang.org
 [rubygems]: https://rubygems.org
 [thor]: http://whatisthor.com/

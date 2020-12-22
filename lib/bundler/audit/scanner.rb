@@ -1,21 +1,37 @@
+#
+# Copyright (c) 2013-2020 Hal Brodigan (postmodern.mod3 at gmail.com)
+#
+# bundler-audit is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# bundler-audit is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
+#
+
 require 'bundler'
+require 'bundler/audit/configuration'
 require 'bundler/audit/database'
+require 'bundler/audit/report'
+require 'bundler/audit/results/insecure_source'
+require 'bundler/audit/results/unpatched_gem'
 require 'bundler/lockfile_parser'
 
 require 'ipaddr'
 require 'resolv'
 require 'set'
 require 'uri'
+require 'yaml'
 
 module Bundler
   module Audit
     class Scanner
-
-      # Represents a plain-text source
-      InsecureSource = Struct.new(:source)
-
-      # Represents a gem that is covered by an Advisory
-      UnpatchedGem = Struct.new(:gem, :advisory)
 
       # The advisory database
       #
@@ -30,6 +46,11 @@ module Bundler
       # @return [Bundler::LockfileParser]
       attr_reader :lockfile
 
+      # The configuration loaded from the `.bundler-audit.yml` file from the project
+      #
+      # @return [Hash]
+      attr_reader :config
+
       #
       # Initializes a scanner.
       #
@@ -39,12 +60,88 @@ module Bundler
       # @param [String] gemfile_lock
       #   Alternative name for the `Gemfile.lock` file.
       #
-      def initialize(root=Dir.pwd,gemfile_lock='Gemfile.lock')
+      # @param [Database] database
+      #   The database to scan against.
+      #
+      # @raise [Bundler::GemfileLockNotFound]
+      #   The `gemfile_lock` file could not be found within the `root`
+      #   directory.
+      #
+      def initialize(root=Dir.pwd,gemfile_lock='Gemfile.lock',database=Database.new,config_dot_file='.bundler-audit.yml')
         @root     = File.expand_path(root)
-        @database = Database.new
-        @lockfile = LockfileParser.new(
-          File.read(File.join(@root,gemfile_lock))
-        )
+        @database = database
+
+        gemfile_lock_path = File.join(@root,gemfile_lock)
+
+        unless File.file?(gemfile_lock_path)
+          raise(Bundler::GemfileLockNotFound,"Could not find #{gemfile_lock.inspect} in #{@root.inspect}")
+        end
+
+        @lockfile = LockfileParser.new(File.read(gemfile_lock_path))
+
+        config_dot_file_full_path = File.join(@root,config_dot_file)
+
+        @config = if File.exist?(config_dot_file_full_path)
+                    Configuration.load(config_dot_file_full_path)
+                  else
+                    Configuration.new
+                  end
+      end
+
+      #
+      # Preforms a {#scan} and collects the results into a {Report report}.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
+      # @yield [result]
+      #   The given block will be passed the results of the scan.
+      #
+      # @yieldparam [Results::InsecureSource, Results::UnpatchedGem] result
+      #   A result from the scan.
+      #
+      # @return [Report]
+      #
+      def report(options={})
+        report = Report.new()
+
+        scan(options) do |result|
+          report << result
+          yield result if block_given?
+        end
+
+        return report
+      end
+
+      #
+      # Preforms a {#scan} and collects the results into a {Report report}.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
+      # @yield [result]
+      #   The given block will be passed the results of the scan.
+      #
+      # @yieldparam [Results::InsecureSource, Results::UnpatchedGem] result
+      #   A result from the scan.
+      #
+      # @return [Report]
+      #
+      def report(options={})
+        report = Report.new()
+
+        scan(options) do |result|
+          report << result
+          yield result if block_given?
+        end
+
+        return report
       end
 
       #
@@ -59,7 +156,7 @@ module Bundler
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
-      # @yieldparam [InsecureSource, UnpatchedGem] result
+      # @yieldparam [Results::InsecureSource, Results::UnpatchedGem] result
       #   A result from the scan.
       #
       # @return [Enumerator]
@@ -67,9 +164,6 @@ module Bundler
       #
       def scan(options={},&block)
         return enum_for(__method__,options) unless block
-
-        ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
 
         scan_sources(options,&block)
         scan_specs(options,&block)
@@ -86,7 +180,7 @@ module Bundler
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
-      # @yieldparam [InsecureSource] result
+      # @yieldparam [Results::InsecureSource] result
       #   A result from the scan.
       #
       # @return [Enumerator]
@@ -105,13 +199,13 @@ module Bundler
             case source.uri
             when /^git:/, /^http:/
               unless internal_source?(source.uri)
-                yield InsecureSource.new(source.uri)
+                yield Results::InsecureSource.new(source.uri)
               end
             end
           when Source::Rubygems
             source.remotes.each do |uri|
               if (uri.scheme == 'http' && !internal_source?(uri))
-                yield InsecureSource.new(uri.to_s)
+                yield Results::InsecureSource.new(uri.to_s)
               end
             end
           end
@@ -130,7 +224,7 @@ module Bundler
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
-      # @yieldparam [UnpatchedGem] result
+      # @yieldparam [Results::UnpatchedGem] result
       #   A result from the scan.
       #
       # @return [Enumerator]
@@ -143,15 +237,16 @@ module Bundler
       def scan_specs(options={})
         return enum_for(__method__,options) unless block_given?
 
-        ignore = Set[]
-        ignore += options[:ignore] if options[:ignore]
+        ignore = if options[:ignore] then Set.new(options[:ignore])
+                 else                     config.ignore
+                 end
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
             is_ignored = ignore.intersect?(advisory.identifiers.to_set)
             next if is_ignored
 
-            yield UnpatchedGem.new(gem,advisory)
+            yield Results::UnpatchedGem.new(gem,advisory)
           end
         end
       end

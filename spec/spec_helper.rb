@@ -2,38 +2,43 @@ require 'simplecov'
 SimpleCov.start
 
 require 'rspec'
-require 'bundler/audit/version'
 require 'bundler/audit/database'
+
+module Fixtures
+  ROOT = File.expand_path('../fixtures',__FILE__)
+
+  TMP_DIR = File.expand_path('../tmp',__FILE__)
+
+  module Database
+    PATH = File.join(ROOT,'database')
+
+    COMMIT = '89cdde9a725bb6f8a483bca97c5da344e060ac61'
+
+    def self.clone
+      system 'git', 'clone', '--quiet', Bundler::Audit::Database::URL, PATH
+    end
+
+    def self.reset!(commit=COMMIT)
+      Dir.chdir(PATH) do
+        system 'git', 'reset', '--hard', commit
+      end
+    end
+  end
+
+  def self.join(*paths)
+    File.join(ROOT,*paths)
+  end
+end
 
 module Helpers
   def sh(command, options={})
-    Bundler.with_clean_env do
-      result = `#{command} 2>&1`
-      raise "FAILED #{command}\n#{result}" if $?.success? == !!options[:fail]
-      result
-    end
+    result = `#{command} 2>&1`
+    raise "FAILED #{command}\n#{result}" if $?.success? == !!options[:fail]
+    result
   end
 
   def decolorize(string)
     string.gsub(/\e\[\d+m/, "")
-  end
-
-  def mocked_user_path
-    File.expand_path('../../tmp/ruby-advisory-db', __FILE__)
-  end
-
-  def expect_update_to_clone_repo!
-    expect(Bundler::Audit::Database).
-      to receive(:system).
-      with('git', 'clone', Bundler::Audit::Database::VENDORED_PATH, mocked_user_path).
-      and_call_original
-  end
-
-  def expect_update_to_update_repo!
-    expect(Bundler::Audit::Database).
-      to receive(:system).
-      with('git', 'pull', '--no-rebase', 'origin', 'master').
-      and_call_original
   end
 end
 
@@ -42,9 +47,17 @@ include Bundler::Audit
 RSpec.configure do |config|
   include Helpers
 
+  config.before(:suite) do
+    unless File.directory?(Fixtures::Database::PATH)
+      Fixtures::Database.clone
+    end
+
+    Fixtures::Database.reset!
+
+    FileUtils.mkdir_p(Fixtures::TMP_DIR)
+  end
+
   config.before(:each) do
-    stub_const("Bundler::Audit::Database::URL", Bundler::Audit::Database::VENDORED_PATH)
-    stub_const("Bundler::Audit::Database::USER_PATH", mocked_user_path)
-    FileUtils.rm_rf(mocked_user_path) if File.exist?(mocked_user_path)
+    stub_const("Bundler::Audit::Database::DEFAULT_PATH",Fixtures::Database::PATH)
   end
 end

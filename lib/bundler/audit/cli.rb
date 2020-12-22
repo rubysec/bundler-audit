@@ -17,10 +17,10 @@
 
 require 'bundler/audit/scanner'
 require 'bundler/audit/version'
+require 'bundler/audit/cli/formats'
 
 require 'thor'
 require 'bundler'
-require 'bundler/vendored_thor'
 
 module Bundler
   module Audit
@@ -29,44 +29,97 @@ module Bundler
       default_task :check
       map '--version' => :version
 
-      desc 'check', 'Checks the Gemfile.lock for insecure dependencies'
+      desc 'check [DIR]', 'Checks the Gemfile.lock for insecure dependencies'
       method_option :quiet, :type => :boolean, :aliases => '-q'
       method_option :verbose, :type => :boolean, :aliases => '-v'
       method_option :ignore, :type => :array, :aliases => '-i'
       method_option :update, :type => :boolean, :aliases => '-u'
+      method_option :database, :type => :string, :aliases => '-D', :default => Database::USER_PATH
+      method_option :format, :type => :string, :default => 'text',
+                             :aliases => '-F'
+      method_option :gemfile_lock, :type => :string, :aliases => '-G', :default => 'Gemfile.lock'
+      method_option :output, :type => :string, :aliases => '-o'
 
-      def check
-        update if options[:update]
-
-        scanner    = Scanner.new
-        vulnerable = false
-
-        scanner.scan(:ignore => options.ignore) do |result|
-          vulnerable = true
-
-          case result
-          when Scanner::InsecureSource
-            print_warning "Insecure Source URI found: #{result.source}"
-          when Scanner::UnpatchedGem
-            print_advisory result.gem, result.advisory
-          end
-        end
-
-        if vulnerable
-          say "Vulnerabilities found!", :red
+      def check(dir=Dir.pwd)
+        begin
+          extend Formats.load(options[:format])
+        rescue Formats::FormatNotFound
+          say "Unknown format: #{options[:format]}", :red
           exit 1
-        else
-          say("No vulnerabilities found", :green) unless options.quiet?
         end
+
+        if !Database.exists?
+          download(options[:database])
+        elsif options[:update]
+          update(options[:database])
+        end
+
+        database = Database.new(options[:database])
+        scanner  = begin
+                     Scanner.new(dir,options[:gemfile_lock],database)
+                   rescue Bundler::GemfileLockNotFound => exception
+                     say exception.message, :red
+                     exit 1
+                   end
+        report   = scanner.report(:ignore => options.ignore)
+
+        output = if options[:output] then File.new(options[:output],'w')
+                 else                     $stdout
+                 end
+
+        print_report(report,output)
+
+        output.close if options[:output]
+
+        exit(1) if report.vulnerable?
+      end
+
+      desc 'stats', 'Prints ruby-advisory-db stats'
+      method_option :quiet, :type => :boolean, :aliases => '-q'
+
+      def stats(path=Database.path)
+        database = Database.new(path)
+
+        puts "ruby-advisory-db:"
+        puts "  advisories:\t#{database.size} advisories"
+        puts "  last updated:\t#{database.last_updated_at}"
+      end
+
+      desc 'download', 'Downloads ruby-advisory-db'
+      method_option :quiet, :type => :boolean, :aliases => '-q'
+
+      def download(path=Database.path)
+        if Database.exists?(path)
+          say "Database already exists", :yellow
+          return
+        end
+
+        say("Download ruby-advisory-db ...") unless options.quiet?
+
+        begin
+          Database.download(path: path, quiet: options.quiet?)
+        rescue Database::DownloadFailed => error
+          say error.message, :red
+          exit 1
+        end
+
+        stats(path) unless options.quiet?
       end
 
       desc 'update', 'Updates the ruby-advisory-db'
       method_option :quiet, :type => :boolean, :aliases => '-q'
 
-      def update
+      def update(path=Database.path)
+        unless Database.exists?(path)
+          download(path)
+          return
+        end
+
         say("Updating ruby-advisory-db ...") unless options.quiet?
 
-        case Database.update!(quiet: options.quiet?)
+        database = Database.new(path)
+
+        case database.update!(quiet: options.quiet?)
         when true
           say("Updated ruby-advisory-db", :green) unless options.quiet?
         when false
@@ -80,9 +133,7 @@ module Bundler
           say "Skipping update", :yellow
         end
 
-        unless options.quiet?
-          puts("ruby-advisory-db: #{Database.new.size} advisories")
-        end
+        stats(path) unless options.quiet?
       end
 
       desc 'version', 'Prints the bundler-audit version'
@@ -94,66 +145,16 @@ module Bundler
 
       protected
 
+      #
+      # @abstract
+      #
+      def print_report(report)
+        raise(NotImplementedError,"#{self.class}##{__method__} not defined")
+      end
+
       def say(message="", color=nil)
         color = nil unless $stdout.tty?
         super(message.to_s, color)
-      end
-
-      def print_warning(message)
-        say message, :yellow
-      end
-
-      def print_advisory(gem, advisory)
-        say "Name: ", :red
-        say gem.name
-
-        say "Version: ", :red
-        say gem.version
-
-        say "Advisory: ", :red
-
-        if advisory.cve
-          say advisory.cve_id
-        elsif advisory.osvdb
-          say advisory.osvdb_id
-        elsif advisory.ghsa
-          say advisory.ghsa_id
-        end
-
-        say "Criticality: ", :red
-        case advisory.criticality
-        when :none     then say "None"
-        when :low      then say "Low"
-        when :medium   then say "Medium", :yellow
-        when :high     then say "High", [:red, :bold]
-        when :critical then say "Critical", [:red, :bold]
-        else                say "Unknown"
-        end
-
-        say "URL: ", :red
-        say advisory.url
-
-        if options.verbose?
-          say "Description:", :red
-          say
-
-          print_wrapped advisory.description, :indent => 2
-          say
-        else
-
-          say "Title: ", :red
-          say advisory.title
-        end
-
-        unless advisory.patched_versions.empty?
-          say "Solution: upgrade to ", :red
-          say advisory.patched_versions.join(', ')
-        else
-          say "Solution: ", :red
-          say "remove or disable this gem until a patch is available!", [:red, :bold]
-        end
-
-        say
       end
 
       def self.exit_on_failure?

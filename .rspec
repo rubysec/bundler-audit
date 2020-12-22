@@ -1,1 +1,1 @@
---colour --format documentation
+--colour --format documentation --exclude-pattern spec/fixtures/**/*_spec.rb

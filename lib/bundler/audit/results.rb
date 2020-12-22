@@ -15,9 +15,5 @@
 # along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-module Bundler
-  module Audit
-    # bundler-audit version
-    VERSION = '0.8.0'
-  end
-end
+require 'bundler/audit/results/insecure_source'
+require 'bundler/audit/results/unpatched_gem'
