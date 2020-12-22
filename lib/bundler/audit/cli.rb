@@ -157,10 +157,6 @@ module Bundler
         super(message.to_s, color)
       end
 
-      def self.exit_on_failure?
-        true
-      end
-
     end
   end
 end
