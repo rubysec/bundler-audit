@@ -6,7 +6,7 @@ describe Bundler::Audit::CLI do
     context "with wrong arguments" do
       it "exits with error status code" do
         expect {
-          described_class.start ["check", "--foo"]
+          described_class.start ["check", "foo/bar/baz"]
         }.to raise_error(SystemExit) do |error|
           expect(error.success?).to eq(false)
           expect(error.status).to eq(1)

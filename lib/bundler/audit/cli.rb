@@ -41,6 +41,11 @@ module Bundler
       method_option :output, :type => :string, :aliases => '-o'
 
       def check(dir=Dir.pwd)
+        unless File.directory?(dir)
+          say "No such file or directory: #{dir}", :red
+          exit 1
+        end
+
         begin
           extend Formats.load(options[:format])
         rescue Formats::FormatNotFound
