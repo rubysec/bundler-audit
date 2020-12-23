@@ -105,6 +105,8 @@ module Bundler
       #
       # @return [Report]
       #
+      # @since 0.8.0
+      #
       def report(options={})
         report = Report.new()
 
