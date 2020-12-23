@@ -41,6 +41,8 @@ module Bundler
       USER_PATH = File.expand_path(File.join(Gem.user_home,'.local','share','ruby-advisory-db'))
 
       # Default path to the ruby-advisory-db
+      #
+      # @since 0.8.0
       DEFAULT_PATH = ENV['BUNDLER_AUDIT_DB'] || USER_PATH
 
       # The path to the advisory database
