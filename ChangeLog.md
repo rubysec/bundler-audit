@@ -1,3 +1,59 @@
+### 0.8.0 / 2020-12-XX
+
+* No longer vendor [ruby-advisory-db].
+* Added {Bundler::Audit::Configuration}.
+  * Supports loading YAML configuration data from a `.bundler-audit.yml` file.
+* Added {Bundler::Audit::Results}.
+* Added {Bundler::Audit::Report}.
+* Added {Bundler::Audit::CLI::Formats}.
+* Added {Bundler::Audit::CLI::Formats::Text}.
+* Added {Bundler::Audit::CLI::Formats::JSON}.
+* Added {Bundler::Audit::Database::DEFAULT_PATH}.
+* Added {Bundler::Audit::Database.exists?}.
+* Added {Bundler::Audit::Database#git?}.
+* Added {Bundler::Audit::Database#update!}.
+  * Will raise a {Bundler::Audit::Database::UpdateFailed UpdateFailed}
+    exception, if the `git pull` command fails.
+* Added {Bundler::Audit::Database#last_updated_at}.
+* Added {Bundler::Audit::Scanner#report}.
+* {Bundler::Audit::Database::USER_PATH} is now `Gem.user_home` aware.
+  * `Gem.user_home` will try to infer `HOME`, even if it is not set.
+* {Bundler::Audit::Database#download} will now raise a
+  {Bundler::Audit::Database::DownloadFailed DownloadFailed} exception, if the
+  `git clone` command fails.
+* {Bundler::Audit::Scanner#initialize}:
+  * Now accepts an additional `database` and `config_dot_file` arguments.
+  * Will now raise a `Bundler::GemfileLockNotFound` exception,
+    if the given `Gemfile.lock` file cannot be found.
+* {Bundler::Audit::Scanner#scan_sources} will now ignore any source with a
+  `127.0.0.0/8` or `::1/128` IP address.
+* {Bundler::Audit::Scanner#scan_specs} will ignore any advisories listed in
+  {Bundler::Audit::Configuration#ignore}, which is loaded from the
+  `.bundler-audit.yml` file.
+* Deprecated {Bundler::Audit::Database.update!} in favor of
+  {Bundler::Audit::Database#update! #update!}.
+* Removed `Bundler::Audit::Database::VENDORED_PATH`.
+* Removed `Bundler::Audit::Database::VENDORED_TIMESTAMP`.
+
+#### CLI
+
+* Added `bundle-audit stats`.
+* Added `bundle-audit download`.
+* `bundle-audit check`:
+  * Now accepts a optional `DIR` argument for the project directory.
+    * `bundle-audit check` will now print an explicit error message and exit,
+      if the given `DIR` does not exist.
+  * Will now auto-download/auto-update [ruby-advisory-db] to
+    ensure the latest advisory information.
+  * Now supports a `--database` option for specifying a path
+    to an alternative [ruby-advisory-db] copy.
+  * Now supports a `--gemfile-lock` option for specifying a
+    custom `Gemfile.lock` file within the project directory.
+  * Now supports a `--format` option for specifying the
+    desired format. `text` and `json` are supported, but other custom formats
+    can be loaded. See {Bundler::Audit::CLI::Formats}.
+  * Now supports a `--output` option for writing the report output to a file.
+
 ### 0.7.0.1 / 2020-06-12
 
 * Forgot to populate `data/ruby-advisory-db`.
