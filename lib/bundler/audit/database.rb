@@ -83,7 +83,7 @@ module Bundler
       #
       # @return [Boolean]
       # 
-      # @since 0.7.0
+      # @since 0.8.0
       #
       def self.exists?(path=DEFAULT_PATH)
         File.directory?(path) && !(Dir.entries(path) - %w[. ..]).empty?
@@ -110,7 +110,7 @@ module Bundler
       # @note
       #   Requires network access.
       #
-      # @since 0.7.0
+      # @since 0.8.0
       #
       def self.download(options={})
         unless (options.keys - [:path, :quiet]).empty?
@@ -174,7 +174,7 @@ module Bundler
       #
       # @return [Boolean]
       #
-      # @since 0.7.0
+      # @since 0.8.0
       #
       def git?
         File.directory?(File.join(@path,'.git'))
@@ -194,7 +194,7 @@ module Bundler
       #   `nil` indicates the database is not a git repository, thus not
       #   capable of being updated.
       #
-      # @since 0.7.0
+      # @since 0.8.0
       #
       def update!(options={})
         if git?
@@ -217,7 +217,7 @@ module Bundler
       #
       # @return [Time]
       #
-      # @since 0.7.0
+      # @since 0.8.0
       #
       def last_updated_at
         if git?
