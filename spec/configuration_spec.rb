@@ -22,6 +22,14 @@ describe Bundler::Audit::Configuration do
     end
 
     context "validations" do
+      context "when the file is empty" do
+        let(:path) { File.join(fixtures_dir,'bad','empty.yml') }
+
+        it 'raises a validation error' do
+          expect { subject }.to raise_error(described_class::InvalidConfigurationError)
+        end
+      end
+
       context "when ignore is not an array" do
         let(:path) { File.join(fixtures_dir,'bad','ignore_is_not_an_array.yml') }
 

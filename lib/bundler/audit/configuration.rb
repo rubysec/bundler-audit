@@ -52,6 +52,10 @@ module Bundler
 
         doc = YAML.parse(File.new(file_path))
 
+        unless doc.kind_of?(YAML::Nodes::Document)
+          raise(InvalidConfigurationError,"Configuration found in '#{file_path}' is not YAML")
+        end
+
         unless doc.root.kind_of?(YAML::Nodes::Mapping)
           raise(InvalidConfigurationError,"Configuration found in '#{file_path}' is not a Hash")
         end
