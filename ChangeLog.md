@@ -43,8 +43,8 @@
   * Now accepts a optional `DIR` argument for the project directory.
     * `bundle-audit check` will now print an explicit error message and exit,
       if the given `DIR` does not exist.
-  * Will now auto-download/auto-update [ruby-advisory-db] to
-    ensure the latest advisory information.
+  * Will now auto-download [ruby-advisory-db] to ensure the latest advisory
+    information is used on first run.
   * Now supports a `--database` option for specifying a path
     to an alternative [ruby-advisory-db] copy.
   * Now supports a `--gemfile-lock` option for specifying a
