@@ -90,8 +90,8 @@ describe Bundler::Audit::CLI do
     end
 
     context "--quiet" do
-      before do
-        allow(subject).to receive(:options).and_return(double("Options", quiet?: true))
+      subject do
+        described_class.new([], {quiet: true})
       end
 
       context "when update succeeds" do
