@@ -15,7 +15,7 @@ jobs:
           - 2.7
           - 3.0
           - jruby
-          # - truffleruby
+          - truffleruby-head
     name: Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v2
