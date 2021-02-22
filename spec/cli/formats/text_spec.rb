@@ -76,8 +76,32 @@ describe Bundler::Audit::CLI::Formats::Text do
           expect(output_lines).to include("Version: #{gem.version}")
         end
 
-        it "must print 'Advisory: CVE-YYYY-NNNN'" do
-          expect(output_lines).to include("Advisory: CVE-#{advisory.cve}")
+        context "when the advisory has a CVE ID" do
+          it "must print 'CVE: CVE-YYYY-NNNN'" do
+            expect(output_lines).to include("CVE: CVE-#{advisory.cve}")
+          end
+        end
+
+        context "when the advisory does not have a CVE ID" do
+          before { advisory.cve = nil }
+
+          it "must not print 'CVE: CVE-YYYY-NNNN'" do
+            expect(output_lines).to_not include("CVE: CVE-#{advisory.cve}")
+          end
+        end
+
+        context "when the advisory has a GHSA ID" do
+          it "must print 'GHSA: GHSA-xxxx-xxxx-xxxx'" do
+            expect(output_lines).to include("GHSA: GHSA-#{advisory.ghsa}")
+          end
+        end
+
+        context "when the advisory does not have a GHSA ID" do
+          before { advisory.ghsa = nil }
+
+          it "must not print 'GHSA: GHSA-xxxx-xxxx-xxxx'" do
+            expect(output_lines).to_not include("GHSA: GHSA-#{advisory.ghsa}")
+          end
         end
 
         context "when Advisory#criticality is :low" do

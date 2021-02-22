@@ -22,7 +22,7 @@ describe "CLI" do
     it "should print advisory information for the vulnerable gems" do
       advisory_pattern = %r{(Name: [^\n]+
 Version: \d+\.\d+\.\d+(\.\d+)?
-Advisory: CVE-[0-9]{4}-[0-9]{4}
+CVE: CVE-[0-9]{4}-[0-9]{4}
 Criticality: (Critical|High|Medium|Low|None|Unknown)
 URL: https?://(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#!?&//=]*)
 Title: [^\n]*?

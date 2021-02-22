@@ -66,8 +66,15 @@ module Bundler
             say "Version: ", :red
             say gem.version
 
-            say "Advisory: ", :red
-            say advisory.id
+            if advisory.cve
+              say "CVE: ", :red
+              say advisory.cve_id
+            end
+
+            if advisory.ghsa
+              say "GHSA: ", :red
+              say advisory.ghsa_id
+            end
 
             say "Criticality: ", :red
             case advisory.criticality
