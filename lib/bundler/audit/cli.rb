@@ -157,11 +157,6 @@ module Bundler
         raise(NotImplementedError,"#{self.class}##{__method__} not defined")
       end
 
-      def say(message="", color=nil)
-        color = nil unless $stdout.tty?
-        super(message.to_s, color)
-      end
-
     end
   end
 end
