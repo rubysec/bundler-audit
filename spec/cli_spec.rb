@@ -45,7 +45,7 @@ describe Bundler::Audit::CLI do
               subject.update
             rescue SystemExit
             end
-          }.to output(/Failed updating ruby-advisory-db!/).to_stdout
+          }.to output(/Failed updating ruby-advisory-db!/).to_stderr
         end
 
         it "exits with error status code" do
@@ -73,7 +73,7 @@ describe Bundler::Audit::CLI do
               subject.update
             rescue SystemExit
             end
-          end.to output(/Git is not installed!/).to_stdout
+          end.to output(/Git is not installed!/).to_stderr
         end
 
         it "exits with error status code" do
@@ -119,7 +119,7 @@ describe Bundler::Audit::CLI do
               subject.update
             rescue SystemExit
             end
-          }.to output(/Failed updating ruby-advisory-db!/).to_stdout
+          }.to output(/Failed updating ruby-advisory-db!/).to_stderr
         end
 
         it "exits with error status code" do

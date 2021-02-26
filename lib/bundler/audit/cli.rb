@@ -20,6 +20,7 @@ require 'bundler/audit/version'
 require 'bundler/audit/cli/formats'
 
 require 'thor'
+require 'thor_ext/shell/basic/say_error'
 require 'bundler'
 
 module Bundler
@@ -42,14 +43,14 @@ module Bundler
 
       def check(dir=Dir.pwd)
         unless File.directory?(dir)
-          say "No such file or directory: #{dir}", :red
+          say_error "No such file or directory: #{dir}", :red
           exit 1
         end
 
         begin
           extend Formats.load(options[:format])
         rescue Formats::FormatNotFound
-          say "Unknown format: #{options[:format]}", :red
+          say_error "Unknown format: #{options[:format]}", :red
           exit 1
         end
 
@@ -128,13 +129,14 @@ module Bundler
         when true
           say("Updated ruby-advisory-db", :green) unless options.quiet?
         when false
-          say "Failed updating ruby-advisory-db!", :red
+          say_error "Failed updating ruby-advisory-db!", :red
           exit 1
         when nil
           unless Bundler.git_present?
-            say "Git is not installed!", :red
+            say_error "Git is not installed!", :red
             exit 1
           end
+
           say "Skipping update", :yellow
         end
 
