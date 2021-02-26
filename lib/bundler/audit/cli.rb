@@ -54,7 +54,7 @@ module Bundler
           exit 1
         end
 
-        if !Database.exists?
+        if !Database.exists?(options[:database])
           download(options[:database])
         elsif options[:update]
           update(options[:database])
