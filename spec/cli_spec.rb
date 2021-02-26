@@ -119,7 +119,7 @@ describe Bundler::Audit::CLI do
               subject.update
             rescue SystemExit
             end
-          }.to output(/Failed updating ruby-advisory-db!/).to_stderr
+          }.to_not output.to_stderr
         end
 
         it "exits with error status code" do
