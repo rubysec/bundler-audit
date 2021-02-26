@@ -6,9 +6,9 @@ describe "CLI" do
   let(:bundler_audit) do
     File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundler-audit'))
   end
-  let(:command) do
-    "#{bundler_audit} check -D #{Fixtures::Database::PATH}"
-  end
+
+  let(:database_path) { Fixtures::Database::PATH }
+  let(:command) { "#{bundler_audit} check -D #{database_path}" }
 
   context "when auditing a bundle with unpatched gems" do
     let(:bundle)    { 'unpatched_gems' }
@@ -97,7 +97,7 @@ Insecure Source URI found: http://rubygems.org/
   end
 
   describe "update" do
-    let(:command)   { "#{bundler_audit} update" }
+    let(:command)   { "#{bundler_audit} update #{database_path}" }
     let(:bundle)    { 'secure' }
     let(:directory) { File.join('spec','bundle',bundle) }
 
