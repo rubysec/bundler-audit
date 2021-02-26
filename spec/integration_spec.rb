@@ -3,8 +3,11 @@ require 'spec_helper'
 describe "CLI" do
   include Helpers
 
-  let(:command) do
+  let(:bundler_audit) do
     File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundler-audit'))
+  end
+  let(:command) do
+    "#{bundler_audit} check -D #{Fixtures::Database::PATH}"
   end
 
   context "when auditing a bundle with unpatched gems" do
@@ -36,10 +39,7 @@ Solution: upgrade to (~>|>=) \d+\.\d+\.\d+(\.\d+)?(, (~>|>=) \d+\.\d+\.\d+(\.\d+
   context "when auditing a bundle with ignored gems" do
     let(:bundle)    { 'unpatched_gems' }
     let(:directory) { File.join('spec','bundle',bundle) }
-
-    let(:command) do
-      File.expand_path(File.join(File.dirname(__FILE__),'..','bin','bundler-audit -i CVE-2013-0156'))
-    end
+    let(:command)   { "#{super()} -i CVE-2013-0156" }
 
     subject do
       Dir.chdir(directory) { sh(command, :fail => true) }
@@ -85,7 +85,7 @@ Insecure Source URI found: http://rubygems.org/
     let(:root)      { File.expand_path(directory) }
 
     let(:gemfile_lock) { 'Gemfile.foo.lock' }
-    let(:command) { "#{super()} --gemfile-lock #{gemfile_lock}" }
+    let(:command)      { "#{super()} --gemfile-lock #{gemfile_lock}" }
 
     subject do
       Dir.chdir(directory) { sh(command, :fail => true) }
@@ -97,12 +97,12 @@ Insecure Source URI found: http://rubygems.org/
   end
 
   describe "update" do
-    let(:update_command) { "#{command} update" }
-    let(:bundle)         { 'secure' }
-    let(:directory)      { File.join('spec','bundle',bundle) }
+    let(:command)   { "#{bundler_audit} update" }
+    let(:bundle)    { 'secure' }
+    let(:directory) { File.join('spec','bundle',bundle) }
 
     subject do
-      Dir.chdir(directory) { sh(update_command) }
+      Dir.chdir(directory) { sh(command) }
     end
 
     context "when advisories update successfully" do
