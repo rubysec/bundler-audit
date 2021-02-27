@@ -20,7 +20,7 @@ require 'bundler/audit/version'
 require 'bundler/audit/cli/formats'
 
 require 'thor'
-require 'thor_ext/shell/basic/say_error'
+require 'bundler/audit/cli/thor_ext/shell/basic/say_error'
 require 'bundler'
 
 module Bundler
