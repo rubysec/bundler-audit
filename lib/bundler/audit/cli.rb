@@ -145,9 +145,7 @@ module Bundler
 
       desc 'version', 'Prints the bundler-audit version'
       def version
-        database = Database.new
-
-        puts "#{File.basename($0)} #{VERSION} (advisories: #{database.size})"
+        puts "#{File.basename($0)} #{VERSION}"
       end
 
       protected
