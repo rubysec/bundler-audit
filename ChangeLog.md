@@ -38,11 +38,11 @@
 #### CLI
 
 * Require [thor] ~> 1.0.
-* Added `bundle-audit stats`.
-* Added `bundle-audit download`.
-* `bundle-audit check`:
+* Added `bundler-audit stats`.
+* Added `bundler-audit download`.
+* `bundler-audit check`:
   * Now accepts a optional `DIR` argument for the project directory.
-    * `bundle-audit check` will now print an explicit error message and exit,
+    * `bundler-audit check` will now print an explicit error message and exit,
       if the given `DIR` does not exist.
   * Will now auto-download [ruby-advisory-db] to ensure the latest advisory
     information is used on first run.
@@ -56,7 +56,7 @@
   * Now supports a `--output` option for writing the report output to a file.
   * Prints both CVE and GHSA IDs.
 * Print all error messages to stderr.
-* No longer print number of advisories in `bundle-audit version`.
+* No longer print number of advisories in `bundler-audit version`.
 
 ### 0.7.0.1 / 2020-06-12
 
@@ -95,9 +95,9 @@
 
 #### CLI
 
-* Added the `--update` option to `bundle-audit check`.
-* `bundle-audit update` now returns a non-zero exit status on error.
-* `bundle-audit update` only updates `~/.local/share/ruby-advisory-db`, if it is a git
+* Added the `--update` option to `bundler-audit check`.
+* `bundler-audit update` now returns a non-zero exit status on error.
+* `bundler-audit update` only updates `~/.local/share/ruby-advisory-db`, if it is a git
   repository.
 
 ### 0.4.0 / 2015-06-30
@@ -135,7 +135,7 @@
 
 #### CLI
 
-* Added the `bundle-audit update` sub-command.
+* Added the `bundler-audit update` sub-command.
 
 ### 0.2.0 / 2013-03-05
 
