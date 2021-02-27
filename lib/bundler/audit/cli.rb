@@ -145,7 +145,7 @@ module Bundler
 
       desc 'version', 'Prints the bundler-audit version'
       def version
-        puts "#{File.basename($0)} #{VERSION}"
+        puts "bundler-audit #{VERSION}"
       end
 
       protected
