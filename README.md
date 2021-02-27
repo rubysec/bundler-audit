@@ -156,7 +156,7 @@ bundler-audit also supports a per-project configuration file:
 ## Requirements
 
 * [git]
-* [ruby] >= 1.9.3
+* [ruby] >= 2.0.0
 * [rubygems] >= 1.8
 * [thor] ~> 1.0
 * [bundler] >= 1.2.0, < 3
