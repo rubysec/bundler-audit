@@ -37,6 +37,7 @@
 
 #### CLI
 
+* Require [thor] ~> 1.0.
 * Added `bundle-audit stats`.
 * Added `bundle-audit download`.
 * `bundle-audit check`:
@@ -53,6 +54,9 @@
     desired format. `text` and `json` are supported, but other custom formats
     can be loaded. See {Bundler::Audit::CLI::Formats}.
   * Now supports a `--output` option for writing the report output to a file.
+  * Prints both CVE and GHSA IDs.
+* Print all error messages to stderr.
+* No longer print number of advisories in `bundle-audit version`.
 
 ### 0.7.0.1 / 2020-06-12
 
