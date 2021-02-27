@@ -1,4 +1,4 @@
-### 0.8.0 / 2020-12-XX
+### 0.8.0 / 2021-03-XX
 
 * No longer vendor [ruby-advisory-db].
 * Added {Bundler::Audit::Configuration}.
