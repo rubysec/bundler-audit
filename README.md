@@ -217,7 +217,7 @@ along with bundler-audit.  If not, see <http://www.gnu.org/licenses/>.
 [ruby]: https://ruby-lang.org
 [rubygems]: https://rubygems.org
 [thor]: http://whatisthor.com/
-[bundler]: https://github.com/carlhuda/bundler#readme
+[bundler]: https://bundler.io
 
 [OSVDB]: http://osvdb.org/
 [ruby-advisory-db]: https://github.com/rubysec/ruby-advisory-db
