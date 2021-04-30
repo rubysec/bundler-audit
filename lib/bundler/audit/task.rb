@@ -13,7 +13,7 @@ module Bundler
       protected
 
       #
-      # Defines the `bundle:audit` and `bundle:audit_update` task.
+      # Defines the `bundle:audit` and `bundle:audit:update` task.
       #
       def define
         namespace :bundle do
@@ -23,10 +23,12 @@ module Bundler
             Bundler::Audit::CLI.start %w[check]
           end
 
-          desc 'Updates the bundler-audit vulnerability database'
-          task :audit_update do
-            require 'bundler/audit/cli'
-            Bundler::Audit::CLI.start %w[update]
+          namespace :audit do
+            desc 'Updates the bundler-audit vulnerability database'
+            task :update do
+              require 'bundler/audit/cli'
+              Bundler::Audit::CLI.start %w[update]
+            end
           end
         end
       end

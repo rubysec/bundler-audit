@@ -138,7 +138,7 @@ its vulnerability database:
 
 ```bash
 rake bundle:audit
-rake bundle:audit_update
+rake bundle:audit:update
 ```
 
 ## Configuration File
