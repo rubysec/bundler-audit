@@ -33,6 +33,10 @@ module Bundler
 
           task :audit => 'audit:check'
         end
+
+        task 'bundler:audit'        => 'bundle:audit'
+        task 'bundler:audit:check'  => 'bundle:audit:check'
+        task 'bundler:audit:update' => 'bundle:audit:update'
       end
     end
   end
