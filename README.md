@@ -131,13 +131,14 @@ Output the audit's results in JSON, to a file:
 
     $ bundle-audit check --format json --output bundle-audit.json
 
-Rake task:
+## Rake Tasks
 
-```ruby
-require 'bundler/audit/task'
-Bundler::Audit::Task.new
+Bundler-audit provides Rake tasks for checking the code and for updating
+its vulnerability database:
 
-task default: 'bundle:audit'
+```bash
+rake bundle:audit
+rake bundle:audit_update
 ```
 
 ## Configuration File
