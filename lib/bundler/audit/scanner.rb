@@ -215,7 +215,18 @@ module Bundler
                  else                     config.ignore
                  end
 
-        @lockfile.specs.each do |gem|
+        specs = @lockfile.specs
+
+        # Bundler itself doesn't appear in the list of specs in the lockfile,
+        # but the lockfile does provide a version for it
+        if @lockfile.bundler_version
+          specs << Gem::Specification.new do |s|
+            s.name = 'bundler'
+            s.version = @lockfile.bundler_version
+          end
+        end
+
+        specs.each do |gem|
           @database.check_gem(gem) do |advisory|
             is_ignored = ignore.intersect?(advisory.identifiers.to_set)
             next if is_ignored
