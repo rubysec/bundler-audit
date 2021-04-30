@@ -17,19 +17,21 @@ module Bundler
       #
       def define
         namespace :bundle do
-          desc 'Checks the Gemfile.lock for insecure dependencies'
-          task :audit do
-            require 'bundler/audit/cli'
-            Bundler::Audit::CLI.start %w[check]
-          end
-
           namespace :audit do
+            desc 'Checks the Gemfile.lock for insecure dependencies'
+            task :check do
+              require 'bundler/audit/cli'
+              Bundler::Audit::CLI.start %w[check]
+            end
+
             desc 'Updates the bundler-audit vulnerability database'
             task :update do
               require 'bundler/audit/cli'
               Bundler::Audit::CLI.start %w[update]
             end
           end
+
+          task :audit => 'audit:check'
         end
       end
     end
