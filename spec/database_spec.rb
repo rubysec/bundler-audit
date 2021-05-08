@@ -84,6 +84,15 @@ describe Bundler::Audit::Database do
       end
     end
 
+    context "with :depth" do
+      it "should execute `git clone` with the `--depth` option" do
+        expect(subject).to receive(:system).with('git', 'clone', '--depth=1', url, path).and_return(true)
+        expect(subject).to receive(:new)
+
+        subject.download(depth: 1)
+      end
+    end
+
     context "when the command fails" do
       it do
         expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(false)

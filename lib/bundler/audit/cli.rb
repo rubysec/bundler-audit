@@ -40,6 +40,7 @@ module Bundler
                              :aliases => '-F'
       method_option :gemfile_lock, :type => :string, :aliases => '-G', :default => 'Gemfile.lock'
       method_option :output, :type => :string, :aliases => '-o'
+      method_option :depth, :type => :numeric, :aliases => '-d'
 
       def check(dir=Dir.pwd)
         unless File.directory?(dir)
@@ -55,7 +56,7 @@ module Bundler
         end
 
         if !Database.exists?(options[:database])
-          download(options[:database])
+          download(options[:database], options.depth)
         elsif options[:update]
           update(options[:database])
         end
@@ -93,17 +94,19 @@ module Bundler
 
       desc 'download', 'Downloads ruby-advisory-db'
       method_option :quiet, :type => :boolean, :aliases => '-q'
+      method_option :depth, :type => :numeric, :aliases => '-d'
 
-      def download(path=Database.path)
+      def download(path=Database.path, depth=nil)
         if Database.exists?(path)
           say "Database already exists", :yellow
           return
         end
 
         say("Download ruby-advisory-db ...") unless options.quiet?
+        depth ||= options.depth
 
         begin
-          Database.download(path: path, quiet: options.quiet?)
+          Database.download(path: path, quiet: options.quiet?, depth: depth)
         rescue Database::DownloadFailed => error
           say error.message, :red
           exit 1

@@ -101,6 +101,9 @@ module Bundler
       # @option options [Boolean] :quiet
       #   Specify whether `git` should be `--quiet`.
       #
+      # @option options [Integer] :depth
+      #   Specify whether `git` should be `--depth=N`.
+      #
       # @return [Dataase]
       #   The newly downloaded database.
       #
@@ -113,21 +116,27 @@ module Bundler
       # @since 0.8.0
       #
       def self.download(options={})
-        unless (options.keys - [:path, :quiet]).empty?
+        unless (options.keys - %i[path quiet depth]).empty?
           raise(ArgumentError,"Invalid option(s)")
         end
 
-        path = options.fetch(:path,DEFAULT_PATH)
-
-        command = %w(git clone)
-        command << '--quiet' if options[:quiet]
-        command << URL << path
-
-        unless system(*command)
+        unless system(*build_command_for_download(options))
           raise(DownloadFailed,"failed to download #{URL} to #{path.inspect}")
         end
 
         return new(path)
+      end
+
+      #
+      # Build command for download database
+      #
+      def self.build_command_for_download(options)
+        path = options.fetch(:path, DEFAULT_PATH)
+
+        command = %w(git clone)
+        command << '--quiet' if options[:quiet]
+        command << "--depth=#{options[:depth]}" if options[:depth]
+        command << URL << path
       end
 
       #
@@ -199,7 +208,7 @@ module Bundler
       def update!(options={})
         if git?
           Dir.chdir(@path) do
-            command = %w(git pull)
+            command = %w[git pull]
             command << '--quiet' if options[:quiet]
             command << 'origin' << 'master'
 
