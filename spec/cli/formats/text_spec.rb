@@ -104,39 +104,110 @@ describe Bundler::Audit::CLI::Formats::Text do
           end
         end
 
-        context "when Advisory#criticality is :low" do
-          let(:advisory) do
-            super().tap do |advisory|
-              advisory.cvss_v2 = 0.0
+        context "when CVSS v3 is present" do
+          context "when Advisory#criticality is :none (cvss_v3 only)" do
+            let(:advisory) do
+              super().tap do |advisory|
+                advisory.cvss_v3 = 0.0
+              end
+            end
+
+            it "must print 'Criticality: None'" do
+              expect(output_lines).to include("Criticality: None")
+            end
+          end
+          
+          context "when Advisory#criticality is :low" do
+            let(:advisory) do
+              super().tap do |advisory|
+                advisory.cvss_v3 = 0.1
+              end
+            end
+
+            it "must print 'Criticality: Low'" do
+              expect(output_lines).to include("Criticality: Low")
             end
           end
 
-          it "must print 'Criticality: Low'" do
-            expect(output_lines).to include("Criticality: Low")
+          context "when Advisory#criticality is :medium" do
+            let(:advisory) do
+              super().tap do |advisory|
+
+                advisory.cvss_v3 = 4.0
+              end
+            end
+
+            it "must print 'Criticality: Medium'" do
+              expect(output_lines).to include("Criticality: Medium")
+            end
+          end
+
+          context "when Advisory#criticality is :high" do
+            let(:advisory) do
+              super().tap do |advisory|
+                advisory.cvss_v3 = 7.0
+              end
+            end
+
+            it "must print 'Criticality: High'" do
+              expect(output_lines).to include("Criticality: High")
+            end
+          end
+
+          context "when Advisory#criticality is :critical (cvss_v3 only)" do
+            let(:advisory) do
+              super().tap do |advisory|
+                advisory.cvss_v3 = 9.0
+              end
+            end
+
+            it "must print 'Criticality: High'" do
+              expect(output_lines).to include("Criticality: Critical")
+            end
           end
         end
 
-        context "when Advisory#criticality is :medium" do
+        context "when CVSS v2 is present" do
           let(:advisory) do
             super().tap do |advisory|
-              advisory.cvss_v2 = 6.9
+              advisory.cvss_v3 = nil
             end
           end
 
-          it "must print 'Criticality: Medium'" do
-            expect(output_lines).to include("Criticality: Medium")
-          end
-        end
+          context "when Advisory#criticality is :low" do
+            let(:advisory) do
+              super().tap do |advisory|
+                advisory.cvss_v2 = 0.0
+              end
+            end
 
-        context "when Advisory#criticality is :high" do
-          let(:advisory) do
-            super().tap do |advisory|
-              advisory.cvss_v2 = 10.0
+            it "must print 'Criticality: Low'" do
+              expect(output_lines).to include("Criticality: Low")
             end
           end
 
-          it "must print 'Criticality: High'" do
-            expect(output_lines).to include("Criticality: High")
+          context "when Advisory#criticality is :medium" do
+            let(:advisory) do
+              super().tap do |advisory|
+                advisory.cvss_v2 = 4.0
+              end
+            end
+
+            it "must print 'Criticality: Medium'" do
+              expect(output_lines).to include("Criticality: Medium")
+            end
+          end
+
+          context "when Advisory#criticality is :high" do
+            let(:advisory) do
+              super().tap do |advisory|
+                advisory.cvss_v2 = 7.0
+              end
+            end
+
+            it "must print 'Criticality: High'" do
+              expect(output_lines).to include("Criticality: High")
+            end
           end
         end
 
