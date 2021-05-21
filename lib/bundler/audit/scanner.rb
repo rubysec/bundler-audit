@@ -79,7 +79,7 @@ module Bundler
 
         @lockfile = LockfileParser.new(File.read(gemfile_lock_path))
 
-        config_dot_file_full_path = File.join(@root,config_dot_file)
+        config_dot_file_full_path = File.absolute_path(config_dot_file, @root)
 
         @config = if File.exist?(config_dot_file_full_path)
                     Configuration.load(config_dot_file_full_path)
