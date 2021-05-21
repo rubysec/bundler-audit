@@ -38,6 +38,7 @@ module Bundler
       method_option :database, :type => :string, :aliases => '-D', :default => Database::USER_PATH
       method_option :format, :type => :string, :default => 'text',
                              :aliases => '-F'
+      method_option :config, :type => :string, :aliases => '-c', :default => '.bundler-audit.yml'
       method_option :gemfile_lock, :type => :string, :aliases => '-G', :default => 'Gemfile.lock'
       method_option :output, :type => :string, :aliases => '-o'
 
@@ -62,7 +63,7 @@ module Bundler
 
         database = Database.new(options[:database])
         scanner  = begin
-                     Scanner.new(dir,options[:gemfile_lock],database)
+                     Scanner.new(dir,options[:gemfile_lock],database, options[:config])
                    rescue Bundler::GemfileLockNotFound => exception
                      say exception.message, :red
                      exit 1
