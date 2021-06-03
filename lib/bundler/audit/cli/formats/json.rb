@@ -34,12 +34,35 @@ module Bundler
           #   The output stream.
           #
           def print_report(report,output=$stdout)
+            results = report.results.map do |result|
+              advisory = result.advisory
+              advisory_hash = advisory.to_h
+
+              advisory_hash[:critical_level] = criticality_label advisory
+
+              {
+                type: result.class,
+                gem: result.gem,
+                advisory: advisory_hash
+              }
+            end
+
             hash = report.to_h
+            hash[:results] = results
 
             if output.tty?
               output.puts ::JSON.pretty_generate(hash)
             else
               output.write(::JSON.generate(hash))
+            end
+          end
+
+          def criticality_label advisory
+            case advisory.criticality
+              when :low    then "low"
+              when :medium then "medium"
+              when :high   then "high"
+              else "unknown"
             end
           end
         end
