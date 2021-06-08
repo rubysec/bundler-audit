@@ -20,14 +20,12 @@ module Bundler
           namespace :audit do
             desc 'Checks the Gemfile.lock for insecure dependencies'
             task :check do
-              require 'bundler/audit/cli'
-              Bundler::Audit::CLI.start %w[check]
+              system 'bundler-audit', 'check'
             end
 
             desc 'Updates the bundler-audit vulnerability database'
             task :update do
-              require 'bundler/audit/cli'
-              Bundler::Audit::CLI.start %w[update]
+              system 'bundler-audit', 'update'
             end
           end
 
