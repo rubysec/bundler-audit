@@ -35,16 +35,18 @@ module Bundler
           #
           def print_report(report,output=$stdout)
             results = report.results.map do |result|
-              advisory = result.advisory
-              advisory_hash = advisory.to_h
+              mapped_result = result.to_h
 
-              advisory_hash[:critical_level] = criticality_label advisory
+              case result
+              when Results::InsecureSource
+              when Results::UnpatchedGem
+                advisory = result.advisory
+                advisory_hash = advisory.to_h
+                advisory_hash[:criticality] = criticality_label advisory
+                mapped_result[:advisory] = advisory_hash
+              end
 
-              {
-                type: result.class,
-                gem: result.gem,
-                advisory: advisory_hash
-              }
+              mapped_result
             end
 
             hash = report.to_h
@@ -59,9 +61,11 @@ module Bundler
 
           def criticality_label advisory
             case advisory.criticality
-              when :low    then "low"
-              when :medium then "medium"
-              when :high   then "high"
+              when :none     then "none"
+              when :low      then "low"
+              when :medium   then "medium"
+              when :high     then "high"
+              when :critical then "critical"
               else "unknown"
             end
           end

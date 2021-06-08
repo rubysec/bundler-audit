@@ -97,6 +97,7 @@ describe Bundler::Audit::CLI::Formats::JSON do
           expect(output_json[:results][0][:advisory][:cve]).to be == advisory.cve
           expect(output_json[:results][0][:advisory][:osvdb]).to be == advisory.osvdb
           expect(output_json[:results][0][:advisory][:ghsa]).to be == advisory.ghsa
+          expect(output_json[:results][0][:advisory][:criticality]).to be == advisory.criticality.to_s.downcase
           expect(output_json[:results][0][:advisory][:unaffected_versions]).to be == advisory.unaffected_versions.map(&:to_s)
           expect(output_json[:results][0][:advisory][:patched_versions]).to be == advisory.patched_versions.map(&:to_s)
         end
