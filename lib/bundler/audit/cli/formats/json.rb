@@ -34,23 +34,7 @@ module Bundler
           #   The output stream.
           #
           def print_report(report,output=$stdout)
-            results = report.results.map do |result|
-              mapped_result = result.to_h
-
-              case result
-              when Results::InsecureSource
-              when Results::UnpatchedGem
-                advisory = result.advisory
-                advisory_hash = advisory.to_h
-                advisory_hash[:criticality] = criticality_label advisory
-                mapped_result[:advisory] = advisory_hash
-              end
-
-              mapped_result
-            end
-
             hash = report.to_h
-            hash[:results] = results
 
             if output.tty?
               output.puts ::JSON.pretty_generate(hash)

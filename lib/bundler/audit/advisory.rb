@@ -200,6 +200,12 @@ module Bundler
         id == other.id
       end
 
+      def to_h
+        super.merge({
+          criticality: criticality
+        })
+      end
+
       alias to_s id
 
     end
