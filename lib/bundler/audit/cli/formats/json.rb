@@ -42,6 +42,17 @@ module Bundler
               output.write(::JSON.generate(hash))
             end
           end
+
+          def criticality_label advisory
+            case advisory.criticality
+              when :none     then "none"
+              when :low      then "low"
+              when :medium   then "medium"
+              when :high     then "high"
+              when :critical then "critical"
+              else "unknown"
+            end
+          end
         end
 
         Formats.register :json, JSON

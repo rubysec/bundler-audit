@@ -200,6 +200,17 @@ module Bundler
         id == other.id
       end
 
+      #
+      # Converts the advisory to a Hash.
+      #
+      # @return [Hash{Symbol => Object}]
+      #
+      def to_h
+        super.merge({
+          criticality: criticality
+        })
+      end
+
       alias to_s id
 
     end

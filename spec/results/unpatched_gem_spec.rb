@@ -91,7 +91,7 @@ describe Bundler::Audit::Results::UnpatchedGem do
     let(:advisory_hash) { {id: advisory.id} }
     before { expect(advisory).to receive(:to_h).and_return(advisory_hash) }
 
-    it "must inclide type: :unpatched_gem" do
+    it "must include type: :unpatched_gem" do
       expect(subject[:type]).to be :unpatched_gem
     end
 

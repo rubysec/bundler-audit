@@ -353,4 +353,12 @@ describe Bundler::Audit::Advisory do
       end
     end
   end
+
+  describe "#to_h" do
+    subject { super().to_h }
+
+    it "must include criticality: :critical" do
+      expect(subject[:criticality]).to be :critical
+    end
+  end
 end
