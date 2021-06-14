@@ -31,15 +31,16 @@ module Bundler
       map '--version' => :version
 
       desc 'check [DIR]', 'Checks the Gemfile.lock for insecure dependencies'
-      method_option :quiet, :type => :boolean, :aliases => '-q'
-      method_option :verbose, :type => :boolean, :aliases => '-v'
-      method_option :ignore, :type => :array, :aliases => '-i'
-      method_option :update, :type => :boolean, :aliases => '-u'
-      method_option :database, :type => :string, :aliases => '-D', :default => Database::USER_PATH
-      method_option :format, :type => :string, :default => 'text',
-                             :aliases => '-F'
-      method_option :gemfile_lock, :type => :string, :aliases => '-G', :default => 'Gemfile.lock'
-      method_option :output, :type => :string, :aliases => '-o'
+      method_option :quiet, type: :boolean, aliases: '-q'
+      method_option :verbose, type: :boolean, aliases: '-v'
+      method_option :ignore, type: :array, aliases: '-i'
+      method_option :update, type: :boolean, aliases: '-u'
+      method_option :database, type: :string, aliases: '-D',
+                               default: Database::USER_PATH
+      method_option :format, type: :string, default: 'text', aliases: '-F'
+      method_option :gemfile_lock, type: :string, aliases: '-G',
+                                   default: 'Gemfile.lock'
+      method_option :output, type: :string, aliases: '-o'
 
       def check(dir=Dir.pwd)
         unless File.directory?(dir)
@@ -67,7 +68,7 @@ module Bundler
                      say exception.message, :red
                      exit 1
                    end
-        report   = scanner.report(:ignore => options.ignore)
+        report   = scanner.report(ignore: options.ignore)
 
         output = if options[:output] then File.new(options[:output],'w')
                  else                     $stdout
@@ -81,7 +82,7 @@ module Bundler
       end
 
       desc 'stats', 'Prints ruby-advisory-db stats'
-      method_option :quiet, :type => :boolean, :aliases => '-q'
+      method_option :quiet, type: :boolean, aliases: '-q'
 
       def stats(path=Database.path)
         database = Database.new(path)
@@ -92,7 +93,7 @@ module Bundler
       end
 
       desc 'download', 'Downloads ruby-advisory-db'
-      method_option :quiet, :type => :boolean, :aliases => '-q'
+      method_option :quiet, type: :boolean, aliases: '-q'
 
       def download(path=Database.path)
         if Database.exists?(path)
@@ -113,7 +114,7 @@ module Bundler
       end
 
       desc 'update', 'Updates the ruby-advisory-db'
-      method_option :quiet, :type => :boolean, :aliases => '-q'
+      method_option :quiet, type: :boolean, aliases: '-q'
 
       def update(path=Database.path)
         unless Database.exists?(path)
