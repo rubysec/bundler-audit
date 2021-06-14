@@ -154,6 +154,10 @@ bundler-audit also supports a per-project configuration file:
 
 * `ignore:` \[Array\<String\>\] - A list of advisory IDs to ignore.
 
+You can provide a path to a config file using the `--config` flag:
+
+    $ bundle-audit check --config bundler-audit.custom.yaml
+
 ## Requirements
 
 * [git]

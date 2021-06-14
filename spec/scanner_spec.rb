@@ -79,6 +79,30 @@ describe Scanner do
 
         expect(ids).not_to include('OSVDB-89025')
       end
+
+      context "when config path is absolute" do
+        let(:bundle) { 'unpatched_gems' }
+        let(:absolute_config_path) { File.absolute_path(File.join('spec','bundle','unpatched_gems_with_dot_configuration', '.bundler-audit.yml')) }
+        let(:scanner) { described_class.new(directory,'Gemfile.lock',Database.new,absolute_config_path) }
+
+        it "should read the config just fine" do
+          ids = subject.map { |result| result.advisory.id }
+
+          expect(ids).not_to include('OSVDB-89025')
+        end
+      end
+
+      context "when config path is relative" do
+        let(:bundle) { 'unpatched_gems' }
+        let(:relative_config_path) { File.join('..', 'unpatched_gems_with_dot_configuration', '.bundler-audit.yml') }
+        let(:scanner) { described_class.new(directory,'Gemfile.lock',Database.new,relative_config_path) }
+
+        it "should read the config just fine" do
+          ids = subject.map { |result| result.advisory.id }
+
+          expect(ids).not_to include('OSVDB-89025')
+        end
+      end
     end
   end
 
