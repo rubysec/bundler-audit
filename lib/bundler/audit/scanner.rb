@@ -63,6 +63,9 @@ module Bundler
       # @param [Database] database
       #   The database to scan against.
       #
+      # @param [String] config_dot_file
+      #   The file name of the bundler-audit config file.
+      #
       # @raise [Bundler::GemfileLockNotFound]
       #   The `gemfile_lock` file could not be found within the `root`
       #   directory.

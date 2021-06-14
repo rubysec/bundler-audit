@@ -36,7 +36,7 @@ describe Scanner do
       end
 
       context "when the :ignore option is given" do
-        subject { super().scan(:ignore => ['OSVDB-89026']) }
+        subject { super().scan(ignore: ['OSVDB-89026']) }
 
         it "should ignore the specified advisories" do
           ids = subject.map { |result| result.advisory.id }

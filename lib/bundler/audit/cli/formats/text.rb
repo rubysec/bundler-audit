@@ -93,7 +93,7 @@ module Bundler
               say "Description:", :red
               say
 
-              print_wrapped advisory.description, :indent => 2
+              print_wrapped advisory.description, indent: 2
               say
             else
               say "Title: ", :red
