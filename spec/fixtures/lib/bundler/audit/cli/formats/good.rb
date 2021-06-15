@@ -5,11 +5,9 @@ module Bundler
     class CLI < ::Thor
       module Formats
         module Good
-
           def print_report(report,output=$stdout)
             say "I am a good format.", :green
           end
-
         end
 
         Formats.register :good, Good

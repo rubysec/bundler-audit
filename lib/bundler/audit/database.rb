@@ -82,7 +82,7 @@ module Bundler
       #   The given path of the database to check.
       #
       # @return [Boolean]
-      # 
+      #
       # @since 0.8.0
       #
       def self.exists?(path=DEFAULT_PATH)

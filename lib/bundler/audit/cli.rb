@@ -69,7 +69,8 @@ module Bundler
                      say exception.message, :red
                      exit 1
                    end
-        report   = scanner.report(ignore: options.ignore)
+
+        report = scanner.report(ignore: options.ignore)
 
         output = if options[:output] then File.new(options[:output],'w')
                  else                     $stdout

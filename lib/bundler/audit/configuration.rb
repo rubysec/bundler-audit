@@ -26,8 +26,11 @@ module Bundler
     # @since 0.8.0
     #
     class Configuration
-      class InvalidConfigurationError < StandardError; end
-      class FileNotFound < StandardError; end
+      class InvalidConfigurationError < StandardError
+      end
+
+      class FileNotFound < StandardError
+      end
 
       #
       # A constructor method for loading configuration from a YAML file.

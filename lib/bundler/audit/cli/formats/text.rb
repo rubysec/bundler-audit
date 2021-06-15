@@ -78,12 +78,12 @@ module Bundler
 
             say "Criticality: ", :red
             case advisory.criticality
-            when :none       then say "None"
-            when :low        then say "Low"
-            when :medium     then say "Medium", :yellow
-            when :high       then say "High", [:red, :bold]
-            when :critical   then say "Critical", [:red, :bold]
-            else                  say "Unknown"
+            when :none     then say "None"
+            when :low      then say "Low"
+            when :medium   then say "Medium", :yellow
+            when :high     then say "High", [:red, :bold]
+            when :critical then say "Critical", [:red, :bold]
+            else                say "Unknown"
             end
 
             say "URL: ", :red
@@ -110,7 +110,6 @@ module Bundler
 
             say
           end
-
         end
 
         Formats.register :text, Text
