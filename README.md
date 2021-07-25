@@ -193,7 +193,7 @@ You can provide a path to a config file using the `--config` flag:
 1. https://github.com/rubysec/bundler-audit/fork
 2. `git clone YOUR_FORK_URI`
 3. `cd bundler-audit/`
-4. `budle install`
+4. `bundle install`
 5. `bundle exec rake spec`
 6. `git checkout -b YOUR_FEATURE`
 7. Make your changes
