@@ -16,6 +16,7 @@
 #
 
 require 'thor'
+require 'cgi'
 
 module Bundler
   module Audit
