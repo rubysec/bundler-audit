@@ -42,26 +42,41 @@ describe Bundler::Audit::CLI do
   end
 
   describe "#update" do
+    let(:database) { double(Bundler::Audit::Database) }
+
+    before do
+      allow(Bundler::Audit::Database).to receive(:new).and_return(database)
+    end
+
     context "not --quiet (the default)" do
       context "when update succeeds" do
+        let(:size) { 1234 }
+        let(:last_updated_at) { Time.now }
+        let(:commit_id) { 'f0f97c4c493b853319e029d226e96f2c2f0dc539' }
+
         before do
-          expect_any_instance_of(Bundler::Audit::Database).to receive(:update!).and_return(true)
+          expect(database).to receive(:update!).and_return(true)
+          expect(database).to receive(:size).and_return(size)
+          expect(database).to receive(:last_updated_at).and_return(last_updated_at)
+          expect(database).to receive(:commit_id).and_return(commit_id)
         end
 
-        it "prints updated message" do
-          expect { subject.update }.to output(/Updated ruby-advisory-db/).to_stdout
-        end
-
-        it "invoke stats afterwards" do
-          expect(subject).to receive(:stats)
-
-          subject.update
+        it "prints updated message and then the stats" do
+          expect { subject.update }.to output(
+            include(
+              "Updated ruby-advisory-db",
+              "ruby-advisory-db:",
+              "  advisories:\t#{size} advisories",
+              "  last updated:\t#{last_updated_at}",
+              "  commit:\t#{commit_id}"
+            )
+          ).to_stdout
         end
       end
 
       context "when update fails" do
         before do
-          expect_any_instance_of(Bundler::Audit::Database).to receive(:update!).and_return(false)
+          expect(database).to receive(:update!).and_return(false)
         end
 
         it "prints failure message" do
@@ -88,7 +103,8 @@ describe Bundler::Audit::CLI do
 
       context "when git is not installed" do
         before do
-          expect_any_instance_of(Bundler::Audit::Database).to receive(:update!).and_return(nil)
+          expect(database).to receive(:update!).and_return(nil)
+
           expect(Bundler).to receive(:git_present?).and_return(false)
         end
 
@@ -121,7 +137,7 @@ describe Bundler::Audit::CLI do
 
       context "when update succeeds" do
         before do
-          expect_any_instance_of(Bundler::Audit::Database).to(
+          expect(database).to(
             receive(:update!).with(quiet: true).and_return(true)
           )
         end
@@ -133,7 +149,7 @@ describe Bundler::Audit::CLI do
 
       context "when update fails" do
         before do
-          expect_any_instance_of(Bundler::Audit::Database).to(
+          expect(database).to(
             receive(:update!).with(quiet: true).and_return(false)
           )
         end
