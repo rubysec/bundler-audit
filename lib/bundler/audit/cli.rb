@@ -92,6 +92,10 @@ module Bundler
         puts "ruby-advisory-db:"
         puts "  advisories:\t#{database.size} advisories"
         puts "  last updated:\t#{database.last_updated_at}"
+
+        if (commit_id = database.commit_id)
+          puts "  commit:\t#{commit_id}"
+        end
       end
 
       desc 'download', 'Downloads ruby-advisory-db'

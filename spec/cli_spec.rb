@@ -15,6 +15,32 @@ describe Bundler::Audit::CLI do
     end
   end
 
+  describe "#stats" do
+    let(:size) { 1234 }
+    let(:last_updated_at) { Time.now }
+    let(:commit_id) { 'f0f97c4c493b853319e029d226e96f2c2f0dc539' }
+
+    let(:database) { double(Bundler::Audit::Database) }
+
+    before do
+      expect(Bundler::Audit::Database).to receive(:new).and_return(database)
+
+      expect(database).to receive(:size).and_return(size)
+      expect(database).to receive(:last_updated_at).and_return(last_updated_at)
+      expect(database).to receive(:commit_id).and_return(commit_id)
+    end
+
+    it "prints total advisory count" do
+      expect { subject.stats }.to output(
+        include(
+          "advisories:\t#{size} advisories",
+          "last updated:\t#{last_updated_at}",
+          "commit:\t#{commit_id}"
+        )
+      ).to_stdout
+    end
+  end
+
   describe "#update" do
     context "not --quiet (the default)" do
       context "when update succeeds" do
@@ -26,11 +52,10 @@ describe Bundler::Audit::CLI do
           expect { subject.update }.to output(/Updated ruby-advisory-db/).to_stdout
         end
 
-        it "prints total advisory count" do
-          size = 1234
-          expect_any_instance_of(Bundler::Audit::Database).to receive(:size).and_return(size)
+        it "invoke stats afterwards" do
+          expect(subject).to receive(:stats)
 
-          expect { subject.update }.to output(/advisories:\t#{size} advisories/).to_stdout
+          subject.update
         end
       end
 
