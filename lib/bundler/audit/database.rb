@@ -213,6 +213,22 @@ module Bundler
       end
 
       #
+      # The last commit ID of the repository.
+      #
+      # @return [String, nil]
+      #   The commit hash or `nil` if the database is not a git repository.
+      #
+      # @since 0.9.0
+      #
+      def commit_id
+        if git?
+          Dir.chdir(@path) do
+            `git rev-parse HEAD`.chomp
+          end
+        end
+      end
+
+      #
       # Determines the time when the database was last updated.
       #
       # @return [Time]

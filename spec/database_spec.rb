@@ -263,6 +263,30 @@ describe Bundler::Audit::Database do
     end
   end
 
+  describe "#commit_id" do
+    context "when the database is a git repository" do
+      let(:last_commit) { Fixtures::Database::COMMIT }
+
+      it "should return the last commit ID" do
+        expect(subject.commit_id).to be == last_commit
+      end
+    end
+
+    context "when the database is a bare directory" do
+      let(:path) { Fixtures.join('mock-database-dir') }
+
+      before { FileUtils.mkdir(path) }
+
+      subject { described_class.new(path) }
+
+      it "should return the mtime of the directory" do
+        expect(subject.commit_id).to be(nil)
+      end
+
+      after { FileUtils.rmdir(path) }
+    end
+  end
+
   describe "#last_updated_at" do
     context "when the database is a git repository" do
       let(:last_commit) { Fixtures::Database::COMMIT }
