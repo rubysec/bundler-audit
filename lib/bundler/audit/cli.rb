@@ -154,6 +154,13 @@ module Bundler
       protected
 
       #
+      # @note Silence deprecation warnings from Thor.
+      #
+      def self.exit_on_failure?
+        true
+      end
+
+      #
       # @abstract
       #
       def print_report(report)
