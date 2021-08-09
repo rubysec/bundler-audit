@@ -93,12 +93,12 @@ describe Bundler::Audit::CLI do
         end
 
         it "prints failure message" do
-          expect do
+          expect {
             begin
               subject.update
             rescue SystemExit
             end
-          end.to output(/Git is not installed!/).to_stderr
+          }.to output(/Git is not installed!/).to_stderr
         end
 
         it "exits with error status code" do
