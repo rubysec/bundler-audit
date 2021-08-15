@@ -22,6 +22,10 @@ require 'uri'
 module Bundler
   module Audit
     module Results
+      #
+      # Represents a gem version that has known vulnerabilities and needs to be
+      # upgraded.
+      #
       class UnpatchedGem < Result
 
         # The specification of the vulnerable gem.

@@ -31,6 +31,9 @@ require 'yaml'
 
 module Bundler
   module Audit
+    #
+    # Scans a `Gemfile.lock` for security issues.
+    #
     class Scanner
 
       # The advisory database

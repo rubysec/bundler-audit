@@ -116,7 +116,7 @@ describe Bundler::Audit::CLI::Formats::Text do
               expect(output_lines).to include("Criticality: None")
             end
           end
-          
+
           context "when Advisory#criticality is :low" do
             let(:advisory) do
               super().tap do |advisory|
@@ -132,7 +132,6 @@ describe Bundler::Audit::CLI::Formats::Text do
           context "when Advisory#criticality is :medium" do
             let(:advisory) do
               super().tap do |advisory|
-
                 advisory.cvss_v3 = 4.0
               end
             end

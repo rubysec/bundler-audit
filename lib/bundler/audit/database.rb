@@ -119,7 +119,7 @@ module Bundler
 
         path = options.fetch(:path,DEFAULT_PATH)
 
-        command = %w(git clone)
+        command = %w[git clone]
         command << '--quiet' if options[:quiet]
         command << URL << path
 
@@ -199,7 +199,7 @@ module Bundler
       def update!(options={})
         if git?
           Dir.chdir(@path) do
-            command = %w(git pull)
+            command = %w[git pull]
             command << '--quiet' if options[:quiet]
             command << 'origin' << 'master'
 

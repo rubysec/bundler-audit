@@ -25,6 +25,9 @@ require 'bundler'
 
 module Bundler
   module Audit
+    #
+    # The `bundle-audit` command.
+    #
     class CLI < ::Thor
 
       default_task :check

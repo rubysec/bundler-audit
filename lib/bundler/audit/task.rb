@@ -2,6 +2,9 @@ require 'rake/tasklib'
 
 module Bundler
   module Audit
+    #
+    # Defines the `bundle:audit` rake tasks.
+    #
     class Task < Rake::TaskLib
       #
       # Initializes the task.

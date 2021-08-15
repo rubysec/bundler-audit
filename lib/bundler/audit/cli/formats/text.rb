@@ -21,6 +21,9 @@ module Bundler
   module Audit
     class CLI < ::Thor
       module Formats
+        #
+        # The plain-text output format.
+        #
         module Text
           #
           # Prints any findings as plain-text.

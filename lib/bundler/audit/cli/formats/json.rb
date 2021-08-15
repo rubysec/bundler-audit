@@ -22,6 +22,9 @@ module Bundler
   module Audit
     class CLI < ::Thor
       module Formats
+        #
+        # The JSON output format.
+        #
         module JSON
           #
           # Outputs the report as JSON. Will pretty-print JSON if `output`
@@ -37,20 +40,20 @@ module Bundler
             hash = report.to_h
 
             if output.tty?
-              output.puts ::JSON.pretty_generate(hash)
+              output.puts(::JSON.pretty_generate(hash))
             else
               output.write(::JSON.generate(hash))
             end
           end
 
-          def criticality_label advisory
+          def criticality_label(advisory)
             case advisory.criticality
-              when :none     then "none"
-              when :low      then "low"
-              when :medium   then "medium"
-              when :high     then "high"
-              when :critical then "critical"
-              else "unknown"
+            when :none     then "none"
+            when :low      then "low"
+            when :medium   then "medium"
+            when :high     then "high"
+            when :critical then "critical"
+            else "unknown"
             end
           end
         end

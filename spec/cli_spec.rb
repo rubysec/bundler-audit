@@ -98,7 +98,6 @@ describe Bundler::Audit::CLI do
             expect(error.status).to eq(1)
           end
         end
-
       end
 
       context "when git is not installed" do

@@ -126,15 +126,19 @@ module Bundler
         #
         def self.load(name)
           name = name.to_s
+          path = File.join(DIR,File.basename(name))
 
           begin
-            require File.join(DIR,File.basename(name))
+            require path
           rescue LoadError
             raise(FormatNotFound,"could not load format #{name.inspect}")
           end
 
-          return self[name] || \
+          unless (format = self[name])
             raise(FormatNotFound,"unknown format #{name.inspect}")
+          end
+
+          return  format
         end
       end
     end

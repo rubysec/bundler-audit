@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require 'rubygems'
 
 begin
@@ -36,8 +34,20 @@ task :test    => :spec
 task :default => :spec
 
 require 'yard'
-YARD::Rake::YardocTask.new  
+YARD::Rake::YardocTask.new
 task :doc => :yard
 
 require 'bundler/audit/task'
 Bundler::Audit::Task.new
+
+desc "Runs rubocop"
+task :rubocop do
+  sh 'bundle exec rubocop .'
+end
+
+namespace :rubocop do
+  desc "Runs rubocop and auto-corrects"
+  task :fix do
+    sh 'bundle exec rubocop -A .'
+  end
+end

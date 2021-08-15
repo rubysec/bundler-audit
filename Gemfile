@@ -4,10 +4,13 @@ gemspec
 
 group :development do
   gem 'rake'
-  gem 'kramdown',       '~> 2.0'
-
   gem 'rubygems-tasks', '~> 0.2'
+
+  gem 'rubocop',        '~> 1.18'
+
   gem 'rspec',          '~> 3.0'
+  gem 'simplecov',      '~> 0.7', require: false
+
+  gem 'kramdown',       '~> 2.0'
   gem 'yard',           '~> 0.9'
-  gem 'simplecov',      '~> 0.7', :require => false
 end

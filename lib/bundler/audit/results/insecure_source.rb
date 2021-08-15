@@ -20,6 +20,9 @@ require 'bundler/audit/results/result'
 module Bundler
   module Audit
     module Results
+      #
+      # Represents an insecure gem source (ex: `git://...` or `http://...`).
+      #
       class InsecureSource < Result
 
         # The insecure `git://` or `http://` URI.

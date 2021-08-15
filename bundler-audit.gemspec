@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require 'yaml'
 
 Gem::Specification.new do |gem|
@@ -23,8 +21,9 @@ Gem::Specification.new do |gem|
 
   glob = lambda { |patterns| gem.files & Dir[*patterns] }
 
-  gem.files = `git ls-files`.split($/)
-  gem.files = glob[gemspec['files']] if gemspec['files']
+  gem.files = if gemspec['files'] then glob[gemspec['files']]
+              else                     `git ls-files`.split($/)
+              end
 
   gem.executables = gemspec.fetch('executables') do
     glob['bin/*'].map { |path| File.basename(path) }

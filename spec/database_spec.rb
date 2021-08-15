@@ -174,7 +174,7 @@ describe Bundler::Audit::Database do
     end
 
     context "when given a directory" do
-      let(:path ) { Dir.tmpdir }
+      let(:path) { Dir.tmpdir }
 
       subject { described_class.new(path) }
 

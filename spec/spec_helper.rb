@@ -33,7 +33,11 @@ end
 module Helpers
   def sh(command, options={})
     result = `#{command} 2>&1`
-    raise "FAILED #{command}\n#{result}" if $?.success? == !!options[:fail]
+
+    if $?.success? == !!options[:fail]
+      raise "FAILED #{command}\n#{result}"
+    end
+
     result
   end
 
