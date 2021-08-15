@@ -139,7 +139,6 @@ describe Bundler::Audit::CLI::Formats::Junit do
           context "when Advisory#criticality is :medium" do
             let(:advisory) do
               super().tap do |advisory|
-
                 advisory.cvss_v3 = 4.0
               end
             end
