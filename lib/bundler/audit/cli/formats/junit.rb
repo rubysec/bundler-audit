@@ -47,19 +47,23 @@ module Bundler
 
           private
 
+          def say_xml(*lines)
+            say(lines.join($/))
+          end
+
           def print_xml_testsuite(report)
-            say <<~XML
-              <?xml version="1.0" encoding="UTF-8" ?>
-              <testsuites id="#{Time.now.to_i}" name="Bundle Audit">
-                <testsuite id="Gemfile" name="Ruby Gemfile" failures="#{report.count}">
-            XML
+            say_xml(
+              %{<?xml version="1.0" encoding="UTF-8" ?>},
+              %{<testsuites id="#{Time.now.to_i}" name="Bundle Audit">},
+              %{  <testsuite id="Gemfile" name="Ruby Gemfile" failures="#{report.count}">}
+            )
 
             yield
 
-            say <<~XML
-                </testsuite>
-              </testsuites>
-            XML
+            say_xml(
+              %{  </testsuite>},
+              %{</testsuites>}
+            )
           end
 
           def xml(string)
@@ -69,25 +73,25 @@ module Bundler
           def print_xml_testcase(result)
             case result
             when Results::InsecureSource
-              say <<~XML
-                  <testcase id="#{xml(result.source)}" name="Insecure Source URI found: #{xml(result.source)}">
-                    <failure message="Insecure Source URI found: #{xml(result.source)}" type="Unknown"></failure>
-                  </testcase>
-              XML
+              say_xml(
+                %{    <testcase id="#{xml(result.source)}" name="Insecure Source URI found: #{xml(result.source)}">},
+                %{      <failure message="Insecure Source URI found: #{xml(result.source)}" type="Unknown"></failure>},
+                %{    </testcase>}
+              )
             when Results::UnpatchedGem
-              say <<~XML
-                  <testcase id="#{xml(result.gem.name)}" name="#{xml(bundle_title(result))}">
-                    <failure message="#{xml(result.advisory.title)}" type="#{xml(result.advisory.criticality)}">
-                      Name: #{xml(result.gem.name)}
-                      Version: #{xml(result.gem.version)}
-                      Advisory: #{xml(advisory_ref(result.advisory))}
-                      Criticality: #{xml(advisory_criticality(result.advisory))}
-                      URL: #{xml(result.advisory.url)}
-                      Title: #{xml(result.advisory.title)}
-                      Solution: #{xml(advisory_solution(result.advisory))}
-                    </failure>
-                  </testcase>
-              XML
+              say_xml(
+                %{    <testcase id="#{xml(result.gem.name)}" name="#{xml(bundle_title(result))}">},
+                %{      <failure message="#{xml(result.advisory.title)}" type="#{xml(result.advisory.criticality)}">},
+                %{        Name: #{xml(result.gem.name)}},
+                %{        Version: #{xml(result.gem.version)}},
+                %{        Advisory: #{xml(advisory_ref(result.advisory))}},
+                %{        Criticality: #{xml(advisory_criticality(result.advisory))}},
+                %{        URL: #{xml(result.advisory.url)}},
+                %{        Title: #{xml(result.advisory.title)}},
+                %{        Solution: #{xml(advisory_solution(result.advisory))}},
+                %{      </failure>},
+                %{    </testcase>}
+              )
             end
           end
 
