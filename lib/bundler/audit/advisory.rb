@@ -49,7 +49,7 @@ module Bundler
       def self.load(path)
         id   = File.basename(path).chomp('.yml')
         data = File.open(path) do |yaml|
-                 YAML.safe_load(yaml, [Date])
+                 YAML.safe_load(yaml, permitted_classes: [Date])
                end
 
         unless data.kind_of?(Hash)
