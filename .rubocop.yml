@@ -17,10 +17,11 @@ Style/SymbolArray: { EnforcedStyle: brackets }
 Style/PercentLiteralDelimiters:
   Enabled: true
   PreferredDelimiters:
-    default: '[]'
-    '%': '{}'
-    '%r': '{}'
-    '%q': '{}'
+    default: '{}'
+    '%i': '[]'
+    '%I': '[]'
+    '%w': '[]'
+    '%W': '[]'
 
 # 
 # Rules that conflict with my style.
