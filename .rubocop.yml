@@ -80,4 +80,3 @@ Style/ExpandPathArguments: { Enabled: false } # Offense count: 5
 Style/FrozenStringLiteralComment: { Enabled: false } # Offense count: 42
 Style/MixinUsage: { Exclude: ['spec/spec_helper.rb'] } # Offense count: 1
 Layout/LineLength: { Enabled: false }
-
