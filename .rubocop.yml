@@ -14,6 +14,13 @@ Layout/FirstArrayElementIndentation: { EnforcedStyle: consistent }
 Layout/FirstHashElementIndentation: { EnforcedStyle: consistent }
 Layout/SpaceAroundEqualsInParameterDefault: { EnforcedStyle: no_space }
 Style/SymbolArray: { EnforcedStyle: brackets }
+Style/PercentLiteralDelimiters:
+  Enabled: true
+  PreferredDelimiters:
+    default: '[]'
+    '%': '{}'
+    '%r': '{}'
+    '%q': '{}'
 
 # 
 # Rules that conflict with my style.
@@ -57,7 +64,6 @@ Style/WordArray: { Enabled: false } # Offense count: 1
 Style/Lambda: { Enabled: false } # Offense count: 2
 Style/SafeNavigation: { Enabled: false } # Offense count: 2
 Lint/IneffectiveAccessModifier: { Enabled: false } # Offense count: 1
-Style/PercentLiteralDelimiters: { Enabled: false }
 
 #
 # Rules that may be disabled in the future.
