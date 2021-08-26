@@ -20,7 +20,7 @@ require 'yaml'
 module Bundler
   module Audit
     #
-    # Represents an advsory loaded from the {Database}.
+    # Represents an advisory loaded from the {Database}.
     #
     class Advisory < Struct.new(:path,
                                 :id,

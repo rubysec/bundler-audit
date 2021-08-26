@@ -77,7 +77,7 @@ module Bundler
         end
 
         #
-        # Converts the unpached gem to a Hash.
+        # Converts the unpatched gem to a Hash.
         #
         # @return [Hash{Symbol => Object}]
         #

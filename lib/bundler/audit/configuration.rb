@@ -36,7 +36,7 @@ module Bundler
       # A constructor method for loading configuration from a YAML file.
       #
       # @param [String] file_path
-      #   Path to the yaml file holding the configuration.
+      #   Path to the YAML file holding the configuration.
       #
       # @raise [FileNotFound]
       #   Will raise a file not found error when the path to the
