@@ -1,3 +1,28 @@
+### 0.9.0 / 2021-08-31
+
+* Load advisory metadata using `YAML.safe_load`. (issue #302)
+  * Explicitly permit the `Date` class for Psych >= 4.0.0.
+* Added {Bundler::Audit::Advisory#to_h}. (pull #310)
+* Added {Bundler::Audit::Database#commit_id}.
+
+#### CLI
+
+* Added the `--config` option. (pull #306)
+* Added the `junit` output format (ex: `--format junit`). (pull #314)
+* Add missing output for CVSSv3 criticality information. (pull #302)
+  * Include criticality information in the JSON output as well. (pull #310)
+* `bundle-audit stats` now prints the commit ID of the ruby-advisory-db.
+* Fixed a deprecation warning from Thor. (issue #317)
+
+#### Rake Task
+
+* Add the `bundle:audit:update` task for updating the [ruby-advisory-db].
+  (pull #296)
+* Aliased `bundle:audit` to `bundle:audit:check`.
+* Aliased `bundler:audit:*` to `bundle:audit:*`.
+* Rake tasks now execute `bundle-audit` command as a subprocess to ensure
+  isolation.
+
 ### 0.8.0 / 2021-03-10
 
 * No longer vendor [ruby-advisory-db].
