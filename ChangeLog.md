@@ -1,7 +1,7 @@
 ### 0.9.0 / 2021-08-31
 
 * Load advisory metadata using `YAML.safe_load`. (issue #302)
-  * Explicitly permit the `Date` class for Psych >= 4.0.0.
+  * Explicitly permit the `Date` class for Psych >= 4.0.0 and Ruby >= 3.1.0.
 * Added {Bundler::Audit::Advisory#to_h}. (pull #310)
 * Added {Bundler::Audit::Database#commit_id}.
 
