@@ -2,6 +2,11 @@
 
 * Add a workaround for Psych < 3.1.0 to support running on Ruby < 2.6.
   (issue #319)
+  * Although, Ruby 2.5 and prior have all reached [End-of-Life] and
+  are no longer receiving security updates. It is strongly advised that you
+  should upgrade to a currently supported version of Ruby.
+
+[End-of-Life]: https://www.ruby-lang.org/en/downloads/branches/
 
 ### 0.9.0 / 2021-08-31
 
