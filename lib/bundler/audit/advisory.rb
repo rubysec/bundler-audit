@@ -49,7 +49,12 @@ module Bundler
       def self.load(path)
         id   = File.basename(path).chomp('.yml')
         data = File.open(path) do |yaml|
-                 YAML.safe_load(yaml, permitted_classes: [Date])
+                 if Psych::VERSION >= '3.1.0'
+                   YAML.safe_load(yaml, permitted_classes: [Date])
+                 else
+                   # XXX: psych < 3.1.0 YAML.safe_load calling convention
+                   YAML.safe_load(yaml, [Date])
+                 end
                end
 
         unless data.kind_of?(Hash)
