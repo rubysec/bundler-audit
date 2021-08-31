@@ -1,3 +1,8 @@
+### 0.9.0.1 / 2021-08-31
+
+* Add a workaround for Psych < 3.1.0 to support running on Ruby < 2.6.
+  (issue #319)
+
 ### 0.9.0 / 2021-08-31
 
 * Load advisory metadata using `YAML.safe_load`. (issue #302)
