@@ -1,6 +1,8 @@
 # bundler-audit
+
 [![CI](https://github.com/rubysec/bundler-audit/actions/workflows/ruby.yml/badge.svg)](https://github.com/rubysec/bundler-audit/actions/workflows/ruby.yml)
 [![Code Climate](https://codeclimate.com/github/rubysec/bundler-audit.svg)](https://codeclimate.com/github/rubysec/bundler-audit)
+[![Gem Version](https://badge.fury.io/rb/bundler-audit.svg)](https://badge.fury.io/rb/bundler-audit)
 
 * [Homepage](https://github.com/rubysec/bundler-audit#readme)
 * [Issues](https://github.com/rubysec/bundler-audit/issues)
