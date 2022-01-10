@@ -75,7 +75,8 @@ module Bundler
 
         report = scanner.report(ignore: options.ignore)
 
-        output = if options[:output] then File.new(options[:output],'w')
+        output = if options[:output]
+                   File.new(options[:output],'w')
                  else
                    $stdout
                  end

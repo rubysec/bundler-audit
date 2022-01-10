@@ -217,7 +217,8 @@ module Bundler
       def scan_specs(options={})
         return enum_for(__method__,options) unless block_given?
 
-        ignore = if options[:ignore] then Set.new(options[:ignore])
+        ignore = if options[:ignore]
+                   Set.new(options[:ignore])
                  else
                    config.ignore
                  end
