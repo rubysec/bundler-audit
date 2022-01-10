@@ -46,7 +46,7 @@ describe Bundler::Audit::Advisory do
 
   describe "load" do
     let(:data) do
-      File.open( path ) do |yaml|
+      File.open(path) do |yaml|
         if Psych::VERSION >= '3.1.0'
           YAML.safe_load(yaml, permitted_classes: [Date])
         else

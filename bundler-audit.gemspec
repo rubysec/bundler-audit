@@ -22,7 +22,8 @@ Gem::Specification.new do |gem|
   glob = lambda { |patterns| gem.files & Dir[*patterns] }
 
   gem.files = if gemspec['files'] then glob[gemspec['files']]
-              else                     `git ls-files`.split($/)
+              else
+                `git ls-files`.split($/)
               end
 
   gem.executables = gemspec.fetch('executables') do
@@ -56,4 +57,5 @@ Gem::Specification.new do |gem|
       gem.add_development_dependency(name,split[versions])
     end
   end
+  gem.metadata['rubygems_mfa_required'] = 'true'
 end

@@ -218,7 +218,8 @@ module Bundler
         return enum_for(__method__,options) unless block_given?
 
         ignore = if options[:ignore] then Set.new(options[:ignore])
-                 else                     config.ignore
+                 else
+                   config.ignore
                  end
 
         @lockfile.specs.each do |gem|
