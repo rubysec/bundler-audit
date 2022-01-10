@@ -292,7 +292,7 @@ describe Bundler::Audit::Database do
       let(:last_commit) { Fixtures::Database::COMMIT }
       let(:last_commit_timestamp) do
         Dir.chdir(Fixtures::Database::PATH) do
-          Time.parse(`git log --date=iso8601 --pretty="%cd" #{last_commit}`)
+          Time.parse(`git log -n 2 --date=iso8601 --pretty="%cd" #{last_commit}`)
         end
       end
 

@@ -45,7 +45,16 @@ describe Bundler::Audit::Advisory do
   end
 
   describe "load" do
-    let(:data) { YAML.load_file(path) }
+    let(:data) do
+      File.open( path ) do |yaml|
+        if Psych::VERSION >= '3.1.0'
+          YAML.safe_load(yaml, permitted_classes: [Date])
+        else
+          # XXX: psych < 3.1.0 YAML.safe_load calling convention
+          YAML.safe_load(yaml, [Date])
+        end
+      end
+    end
 
     describe '#id' do
       subject { super().id }
