@@ -21,7 +21,8 @@ Gem::Specification.new do |gem|
 
   glob = lambda { |patterns| gem.files & Dir[*patterns] }
 
-  gem.files = if gemspec['files'] then glob[gemspec['files']]
+  gem.files = if gemspec['files']
+                glob[gemspec['files']]
               else
                 `git ls-files`.split($/)
               end
