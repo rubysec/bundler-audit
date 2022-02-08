@@ -250,7 +250,7 @@ module Bundler
       #
       # @return [String, nil]
       #   The path to `Gemfile.lock` or `gems.locked`. `nil` is returned
-      #   if niether `Gemfile.lock` or `gems.locked` were found.
+      #   if neither `Gemfile.lock` or `gems.locked` were found.
       #
       def detect_lock_file
         LOCK_FILES.each do |name|
