@@ -60,7 +60,7 @@ module Bundler
       # @param [String] root
       #   The path to the project root.
       #
-      # @param [String] gemfile_lock
+      # @param [String] lock_file
       #   Alternative name for the `Gemfile.lock` file.
       #
       # @param [Database] database
@@ -70,20 +70,27 @@ module Bundler
       #   The file name of the bundler-audit config file.
       #
       # @raise [Bundler::GemfileLockNotFound]
-      #   The `gemfile_lock` file could not be found within the `root`
-      #   directory.
+      #   The `lock_file` file could not be found within the `root`
+      #   directory, or `Gemfiles.lock` and `gems.locked` both do not exist
+      #   within `root`.
       #
-      def initialize(root=Dir.pwd,gemfile_lock='Gemfile.lock',database=Database.new,config_dot_file='.bundler-audit.yml')
+      def initialize(root=Dir.pwd,lock_file=nil,database=Database.new,config_dot_file='.bundler-audit.yml')
         @root     = File.expand_path(root)
         @database = database
 
-        gemfile_lock_path = File.join(@root,gemfile_lock)
+        if lock_file
+          lock_file_path = File.join(@root,lock_file)
 
-        unless File.file?(gemfile_lock_path)
-          raise(Bundler::GemfileLockNotFound,"Could not find #{gemfile_lock.inspect} in #{@root.inspect}")
+          unless File.file?(lock_file_path)
+            raise(Bundler::GemfileLockNotFound,"Could not find #{lock_file.inspect} in #{@root.inspect}")
+          end
+        else
+          unless (lock_file_path = detect_lock_file)
+            raise(Bundler::GemfileLockNotFound,"neither Gemfile.lock nor gems.locked found in #{@root.inspect}")
+          end
         end
 
-        @lockfile = LockfileParser.new(File.read(gemfile_lock_path))
+        @lockfile = LockfileParser.new(File.read(lock_file_path))
 
         config_dot_file_full_path = File.absolute_path(config_dot_file, @root)
 
@@ -234,6 +241,28 @@ module Bundler
       end
 
       private
+
+      # Supported lock files.
+      LOCK_FILES = %w[Gemfile.lock gems.locked]
+
+      #
+      # Detects `Gemfile.lock` or `gems.locked` files within {#root}.
+      #
+      # @return [String, nil]
+      #   The path to `Gemfile.lock` or `gems.locked`. `nil` is returned
+      #   if niether `Gemfile.lock` or `gems.locked` were found.
+      #
+      def detect_lock_file
+        LOCK_FILES.each do |name|
+          path = File.join(@root,name)
+
+          if File.file?(path)
+            return path
+          end
+        end
+
+        return nil
+      end
 
       #
       # Determines whether a source is internal.
