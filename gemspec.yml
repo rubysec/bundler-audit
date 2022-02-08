@@ -11,6 +11,7 @@ metadata:
   source_code_uri:   https://github.com/rubysec/bundler-audit.rb
   bug_tracker_uri:   https://github.com/rubysec/bundler-audit.rb/issues
   changelog_uri:     https://github.com/rubysec/bundler-audit.rb/blob/master/ChangeLog.md
+  rubygems_mfa_required: 'true'
 
 required_ruby_version: ">= 2.0.0"
 required_rubygems_version: ">= 1.8.0"
