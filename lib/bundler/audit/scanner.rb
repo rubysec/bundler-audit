@@ -36,7 +36,7 @@ module Bundler
     #
     class Scanner
 
-      # The advisory database
+      # The advisory database.
       #
       # @return [Database]
       attr_reader :database
@@ -44,13 +44,13 @@ module Bundler
       # Project root directory
       attr_reader :root
 
-      # The parsed `Gemfile.lock` from the project
+      # The parsed `Gemfile.lock` from the project.
       #
       # @return [Bundler::LockfileParser]
       attr_reader :lockfile
 
       # The configuration loaded from the `.bundler-audit.yml` file from the
-      # project
+      # project.
       #
       # @return [Hash]
       attr_reader :config

@@ -34,18 +34,18 @@ module Bundler
       class UpdateFailed < RuntimeError
       end
 
-      # Git URL of the ruby-advisory-db
+      # Git URL of the ruby-advisory-db.
       URL = 'https://github.com/rubysec/ruby-advisory-db.git'
 
-      # Path to the user's copy of the ruby-advisory-db
+      # Path to the user's copy of the ruby-advisory-db.
       USER_PATH = File.expand_path(File.join(Gem.user_home,'.local','share','ruby-advisory-db'))
 
-      # Default path to the ruby-advisory-db
+      # Default path to the ruby-advisory-db.
       #
       # @since 0.8.0
       DEFAULT_PATH = ENV['BUNDLER_AUDIT_DB'] || USER_PATH
 
-      # The path to the advisory database
+      # The path to the advisory database.
       attr_reader :path
 
       #
