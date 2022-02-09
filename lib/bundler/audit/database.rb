@@ -46,6 +46,8 @@ module Bundler
       DEFAULT_PATH = ENV['BUNDLER_AUDIT_DB'] || USER_PATH
 
       # The path to the advisory database.
+      #
+      # @return [String]
       attr_reader :path
 
       #
