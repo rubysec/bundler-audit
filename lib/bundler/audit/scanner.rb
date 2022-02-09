@@ -49,7 +49,8 @@ module Bundler
       # @return [Bundler::LockfileParser]
       attr_reader :lockfile
 
-      # The configuration loaded from the `.bundler-audit.yml` file from the project
+      # The configuration loaded from the `.bundler-audit.yml` file from the
+      # project
       #
       # @return [Hash]
       attr_reader :config
