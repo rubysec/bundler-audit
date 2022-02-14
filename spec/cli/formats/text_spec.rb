@@ -230,7 +230,7 @@ describe Bundler::Audit::CLI::Formats::Text do
 
         context "when Advisory#patched_versions is not empty" do
           it 'must print "Solution: upgrade to ..."' do
-            expect(output_lines).to include("Solution: upgrade to #{advisory.patched_versions.join(', ')}")
+            expect(output_lines).to include("Solution: upgrade to #{advisory.patched_versions.join(' or ')}")
           end
         end
 

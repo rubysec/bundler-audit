@@ -241,7 +241,7 @@ describe Bundler::Audit::CLI::Formats::Junit do
 
         context "when Advisory#patched_versions is not empty" do
           it 'must print "Solution: upgrade to ..."' do
-            expect(output).to include("Solution: upgrade to #{CGI.escapeHTML(advisory.patched_versions.join(', '))}")
+            expect(output).to include("Solution: upgrade to #{CGI.escapeHTML(advisory.patched_versions.join(' or '))}")
           end
         end
 
