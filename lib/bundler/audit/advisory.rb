@@ -15,6 +15,7 @@
 # along with bundler-audit.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+require 'date'
 require 'yaml'
 
 module Bundler
