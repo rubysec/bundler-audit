@@ -105,7 +105,7 @@ module Bundler
 
             unless advisory.patched_versions.empty?
               say "Solution: upgrade to ", :red
-              say advisory.patched_versions.join(" or ")
+              say advisory.patched_versions.map { |v| "'#{v}'" }.join(', ')
             else
               say "Solution: ", :red
               say "remove or disable this gem until a patch is available!", [:red, :bold]
