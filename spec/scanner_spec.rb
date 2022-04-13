@@ -116,6 +116,22 @@ describe Scanner do
       expect(report.results).to all(be_kind_of(Bundler::Audit::Results::Result))
     end
 
+    it "should return a Report containing all identifiers seen during scanning" do
+      report = subject.report
+      expected_identifiers = %w[CVE-2013-0155 CVE-2013-0276 CVE-2013-1854 CVE-2013-1856 CVE-2014-3482 CVE-2015-3227 CVE-2015-7577 OSVDB-108664 OSVDB-89025 OSVDB-90072 OSVDB-91451 OSVDB-91453]
+
+      expect(report.seen_identifiers).to contain_exactly(*expected_identifiers)
+    end
+
+    context "when some identifiers are ignored" do
+      it "should return a Report containing the seen but ignored identifiers" do
+        ignored_identifiers = %w[CVE-2013-0155 OSVDB-108664]
+        report = subject.report(ignore: ignored_identifiers)
+
+        expect(report.seen_identifiers).to include(*ignored_identifiers)
+      end
+    end
+
     context "when given a block" do
       it "should yield results" do
         results = []

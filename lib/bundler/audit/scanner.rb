@@ -121,6 +121,8 @@ module Bundler
           yield result if block_given?
         end
 
+        report.seen_identifiers = @seen
+
         return report
       end
 
@@ -222,9 +224,11 @@ module Bundler
                  else
                    config.ignore
                  end
+        @seen = Set.new
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
+            @seen.merge(advisory.identifiers)
             is_ignored = ignore.intersect?(advisory.identifiers.to_set)
             next if is_ignored
 
