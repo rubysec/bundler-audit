@@ -184,7 +184,6 @@ describe Bundler::Audit::CLI do
         described_class.new([], strict_ignore: true, ignore: ["CVE-2006-1982"], format: "text", database: File.expand_path("fixtures/database/", File.dirname(__FILE__)), gemfile_lock: "Gemfile.lock", config: ".bundler-audit.yml")
       end
 
-
       context "when the ignored CVE is not found" do
         it "exits with an error status code" do
           expect {

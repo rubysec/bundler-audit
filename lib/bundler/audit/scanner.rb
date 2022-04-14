@@ -122,12 +122,11 @@ module Bundler
         end
 
         report.seen_identifiers = @seen
-        report.ignored_identifiers = ignore = if options[:ignore]
-                                                Set.new(options[:ignore])
-                                              else
-                                                config.ignore
-                                              end
-
+        report.ignored_identifiers = if options[:ignore]
+                                       Set.new(options[:ignore])
+                                     else
+                                       config.ignore
+                                     end
 
         return report
       end

@@ -275,7 +275,7 @@ describe Bundler::Audit::CLI::Formats::Text do
       let(:unseen) { %w[CVE-2020-8833 OSVDB-108664] }
 
       it "must print the unseen identifiers" do
-        expect(output_lines).to include("These identifiers were ignored but not found: #{unseen.join(", ")}")
+        expect(output_lines).to include("These identifiers were ignored but not found: #{unseen.join(', ')}")
       end
     end
 
