@@ -47,6 +47,10 @@ module Bundler
               end
             end
 
+            if report.unseen_ignored_identifiers?
+              print_warning "These identifiers were ignored but not found: #{report.unseen_ignored_identifiers.to_a.join(", ")}"
+            end
+
             if report.vulnerable?
               say "Vulnerabilities found!", :red
             else
