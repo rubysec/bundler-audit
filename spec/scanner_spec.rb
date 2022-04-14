@@ -130,6 +130,13 @@ describe Scanner do
 
         expect(report.seen_identifiers).to include(*ignored_identifiers)
       end
+
+      it "should return a Report listing the ignored identifiers" do
+        ignored_identifiers = %w[CVE-2013-0155 OSVDB-108664]
+        report = subject.report(ignore: ignored_identifiers)
+
+        expect(report.ignored_identifiers).to contain_exactly(*ignored_identifiers)
+      end
     end
 
     context "when given a block" do

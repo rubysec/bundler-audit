@@ -42,6 +42,11 @@ module Bundler
       # @return [Set<String>]
       attr_accessor :seen_identifiers
 
+      # Identifiers that were omitted from results
+      #
+      # @return [Set<String>]
+      attr_accessor :ignored_identifiers
+
       #
       # Initializes the report.
       #
@@ -55,6 +60,7 @@ module Bundler
         @insecure_sources = []
         @unpatched_gems = []
         @seen_identifiers = Set.new
+        @ignored_identifiers = Set.new
 
         results.each { |result| self << result }
       end
