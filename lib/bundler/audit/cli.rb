@@ -45,6 +45,7 @@ module Bundler
       method_option :gemfile_lock, type: :string, aliases: '-G',
                                    default: 'Gemfile.lock'
       method_option :output, type: :string, aliases: '-o'
+      method_option :strict_ignore, type: :boolean, default: false
 
       def check(dir=Dir.pwd)
         unless File.directory?(dir)
@@ -86,6 +87,7 @@ module Bundler
         output.close if options[:output]
 
         exit(1) if report.vulnerable?
+        exit(1) if options[:strict_ignore] && !report.seen_identifiers.superset?(Set.new(options.ignore))
       end
 
       desc 'stats', 'Prints ruby-advisory-db stats'
