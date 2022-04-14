@@ -87,7 +87,7 @@ module Bundler
         output.close if options[:output]
 
         exit(1) if report.vulnerable?
-        exit(1) if options[:strict_ignore] && !report.seen_identifiers.superset?(Set.new(options.ignore))
+        exit(1) if options[:strict_ignore] && report.unseen_ignored_identifiers?
       end
 
       desc 'stats', 'Prints ruby-advisory-db stats'

@@ -145,6 +145,14 @@ module Bundler
         @unpatched_gems.map(&:gem)
       end
 
+      def unseen_ignored_identifiers?
+        unseen_ignored_identifiers.any?
+      end
+
+      def unseen_ignored_identifiers
+        @ignored_identifiers - @seen_identifiers
+      end
+
       #
       # @return [Hash{Symbol => Object}]
       #
