@@ -43,7 +43,7 @@ module Bundler
       # Default path to the ruby-advisory-db.
       #
       # @since 0.8.0
-      DEFAULT_PATH = ENV['BUNDLER_AUDIT_DB'] || USER_PATH
+      DEFAULT_PATH = ENV.fetch('BUNDLER_AUDIT_DB',USER_PATH)
 
       # The path to the advisory database.
       #
