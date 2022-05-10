@@ -123,7 +123,7 @@ Ignore specific advisories:
 
 Checking a custom `Gemfile.lock` file:
 
-    $ bundle-audit check --gemfile Gemfile.custom.lock
+    $ bundle-audit check --gemfile-lock Gemfile.custom.lock
 
 Output the audit's results in JSON:
 
