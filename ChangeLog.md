@@ -2,7 +2,8 @@
 
 #### CLI
 
-* Improve the readability of the suggested gem versions to upgrade to.
+* Improve the readability of the suggested gem versions to upgrade to
+  (pull #331).
 
 #### Rake Task
 
