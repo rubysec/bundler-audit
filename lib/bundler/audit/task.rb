@@ -6,6 +6,9 @@ module Bundler
     # Defines the `bundle:audit` rake tasks.
     #
     class Task < Rake::TaskLib
+      class CommandNotFound < RuntimeError
+      end
+
       #
       # Initializes the task.
       #
@@ -51,7 +54,7 @@ module Bundler
       # @return [true]
       #   The `bundler-audit` command successfully exited.
       #
-      # @raise [RuntimeError]
+      # @raise [CommandNotFound]
       #   The `bundler-audit` command could not be executed or was not found.
       #
       # @note
@@ -63,7 +66,7 @@ module Bundler
         when false
           exit $?.exitstatus || 1
         when nil
-          raise("bundler-audit could not be executed")
+          raise(CommandNotFound,"bundler-audit could not be executed")
         else
           return true
         end
