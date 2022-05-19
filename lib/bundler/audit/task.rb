@@ -63,7 +63,7 @@ module Bundler
         when false
           exit $?.exitstatus || 1
         when nil
-          fail("bundler-audit could not be executed")
+          raise("bundler-audit could not be executed")
         else
           return true
         end
