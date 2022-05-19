@@ -43,8 +43,6 @@ module Bundler
         task 'bundler:audit:update' => 'bundle:audit:update'
       end
 
-      private
-
       #
       # Runs the `bundler-audit` command with the additional arguments.
       #
