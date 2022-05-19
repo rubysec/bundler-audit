@@ -1,3 +1,18 @@
+### 0.9.1 / 2022-05-19
+
+#### CLI
+
+* Improve the readability of the suggested gem versions to upgrade to.
+
+#### Rake Task
+
+* Fixed a regression introduced in 0.9.0 where the `bundler:audit` rake task
+  was not exiting with an error status code if vulnerabilities were found.
+  Now when the `bundler-audit` command fails, the rake task will also exit with
+  the `bundler-audit` command's error code.
+* If the `bundler-audit` command could not be found for some reason raise the
+  {Bundler::Audit::Task::CommandNotFound} exception.
+
 ### 0.9.0.1 / 2021-08-31
 
 * Add a workaround for Psych < 3.1.0 to support running on Ruby < 2.6.
