@@ -1,5 +1,7 @@
 ### 0.9.1 / 2022-05-19
 
+* Opt into rubygems.org MFA requirement.
+
 #### CLI
 
 * Improve the readability of the suggested gem versions to upgrade to
