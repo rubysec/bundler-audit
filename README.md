@@ -205,7 +205,7 @@ You can provide a path to a config file using the `--config` flag:
 
 ## License
 
-Copyright (c) 2013-2021 Hal Brodigan (postmodern.mod3 at gmail.com)
+Copyright (c) 2013-2022 Hal Brodigan (postmodern.mod3 at gmail.com)
 
 bundler-audit is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
