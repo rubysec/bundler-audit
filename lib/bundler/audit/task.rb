@@ -32,6 +32,8 @@ module Bundler
       #   If the `bundler-audit` command exits with an error, the rake task
       #   will also exit with the same error code.
       #
+      # @api private
+      #
       def bundler_audit(*arguments)
         case system('bundler-audit',*arguments)
         when false
