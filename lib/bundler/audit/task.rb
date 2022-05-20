@@ -98,6 +98,7 @@ module Bundler
 
             desc 'Updates the bundler-audit vulnerability database'
             task :update do
+              update
             end
           end
 
