@@ -18,7 +18,7 @@ jobs:
           - truffleruby-head
     name: Ruby ${{ matrix.ruby }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -32,7 +32,7 @@ jobs:
   rubocop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
