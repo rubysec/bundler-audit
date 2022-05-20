@@ -111,27 +111,39 @@ Update the [ruby-advisory-db] that `bundle audit` uses:
 
 Update the [ruby-advisory-db] and check `Gemfile.lock` (useful for CI runs):
 
-    $ bundle-audit check --update
+```shell
+$ bundle-audit check --update
+```
 
 Checking the `Gemfile.lock` without updating the [ruby-advisory-db]:
 
-    $ bundle-audit check --no-update
+```shell
+$ bundle-audit check --no-update
+```
 
 Ignore specific advisories:
 
-    $ bundle-audit check --ignore OSVDB-108664
+```shell
+$ bundle-audit check --ignore OSVDB-108664
+```
 
 Checking a custom `Gemfile.lock` file:
 
-    $ bundle-audit check --gemfile-lock Gemfile.custom.lock
+```shell
+$ bundle-audit check --gemfile-lock Gemfile.custom.lock
+```
 
 Output the audit's results in JSON:
 
-    $ bundle-audit check --format json
+```shell
+$ bundle-audit check --format json
+```
 
 Output the audit's results in JSON, to a file:
 
-    $ bundle-audit check --format json --output bundle-audit.json
+```shell
+$ bundle-audit check --format json --output bundle-audit.json
+```
 
 ## Rake Tasks
 
@@ -149,16 +161,20 @@ bundler-audit also supports a per-project configuration file:
 
 `.bundler-audit.yml`:
 
-    ---
-    ignore:
-      - CVE-YYYY-XXXX
-      - ...
+```yaml
+---
+ignore:
+  - CVE-YYYY-XXXX
+  - ...
+```
 
 * `ignore:` \[Array\<String\>\] - A list of advisory IDs to ignore.
 
 You can provide a path to a config file using the `--config` flag:
 
-    $ bundle-audit check --config bundler-audit.custom.yaml
+```shell
+$ bundle-audit check --config bundler-audit.custom.yaml
+```
 
 ## Requirements
 
@@ -170,25 +186,35 @@ You can provide a path to a config file using the `--config` flag:
 
 ## Install
 
-    $ [sudo] gem install bundler-audit
+```shell
+$ [sudo] gem install bundler-audit
+```
 
 ### Git
 
 * Debian / Ubuntu:
 
-      $ sudo apt install git
+```shell
+$ sudo apt install git
+```
 
 * RedHat / Fedora:
 
-      $ sudo dnf install git
+```shell
+$ sudo dnf install git
+```
 
 * Alpine Linux:
 
-      $ apk add git
+```shell
+$ apk add git
+```
 
 * macOS:
 
-      $ brew install git
+```shell
+$ brew install git
+```
 
 ## Contributing
 
