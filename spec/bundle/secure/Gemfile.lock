@@ -87,8 +87,8 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.0.4)
-      loofah (~> 2.2, >= 2.2.2)
+    rails-html-sanitizer (1.4.3)
+      loofah (~> 2.3)
     railties (5.2.8)
       actionpack (= 5.2.8)
       activesupport (= 5.2.8)
@@ -117,7 +117,7 @@ PLATFORMS
 
 DEPENDENCIES
   rails (~> 5.2)
-  rails-html-sanitizer (~> 1.0.3)
+  rails-html-sanitizer (~> 1.4.3)
 
 BUNDLED WITH
    2.3.6
