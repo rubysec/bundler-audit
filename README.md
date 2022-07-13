@@ -147,10 +147,20 @@ $ bundle-audit check --format json --output bundle-audit.json
 
 ## Rake Tasks
 
-Bundler-audit provides Rake tasks for checking the code and for updating
-its vulnerability database:
+Bundler-audit provides `rake` tasks for checking the code and for updating
+its vulnerability database.
+
+Simply add the following code to the `Rakefile`:
+
+```ruby
+require 'bundler/audit/task'
+Bundler::Audit::Task.new
+```
+
+The following `rake` tasks will then become available:
 
 ```bash
+$ rake -T
 rake bundle:audit
 rake bundle:audit:update
 ```
