@@ -12,7 +12,7 @@ module Fixtures
   module Database
     PATH = File.join(ROOT,'database')
 
-    COMMIT = '89cdde9a725bb6f8a483bca97c5da344e060ac61'
+    COMMIT = '137a425b9f4f30f895df8765b0e773400170803d'
 
     def self.clone
       system 'git', 'clone', '--quiet', Bundler::Audit::Database::URL, PATH

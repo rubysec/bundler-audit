@@ -17,7 +17,14 @@ GEM
     concurrent-ruby (1.1.7)
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
+    mini_portile2 (2.8.0)
     multi_json (1.15.0)
+    nokogiri (1.13.6)
+      mini_portile2 (~> 2.8.0)
+      racc (~> 1.4)
+    nokogiri (1.13.6-x86_64-linux)
+      racc (~> 1.4)
+    racc (1.6.0)
     tzinfo (0.3.58)
 
 PLATFORMS
@@ -26,6 +33,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord (= 3.2.10)
+  nokogiri (= 1.13.6)
 
 BUNDLED WITH
-   2.2.0
+   2.3.4
