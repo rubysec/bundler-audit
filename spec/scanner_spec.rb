@@ -67,7 +67,6 @@ describe Scanner do
       subject { super().scan.to_a }
 
       it "should print nothing when everything is fine" do
-        puts subject.inspect
         expect(subject).to be_empty
       end
     end
