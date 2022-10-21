@@ -36,12 +36,12 @@ describe Scanner do
       end
 
       context "when the :ignore option is given" do
-        subject { super().scan(ignore: ['OSVDB-89026']) }
+        subject { super().scan(ignore: ['CVE-2013-0156']) }
 
         it "should ignore the specified advisories" do
           ids = subject.map { |result| result.advisory.id }
 
-          expect(ids).not_to include('OSVDB-89026')
+          expect(ids).not_to include('CVE-2013-0156')
         end
       end
     end
