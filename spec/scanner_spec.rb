@@ -33,6 +33,10 @@ describe Scanner do
             result.advisory.vulnerable?(result.gem.version)
           }).to be_truthy
         end
+
+        it "should have duplicates due to platform" do
+          expect(subject.select { |advisory| advisory.gem.name == 'nokogiri' }.map { |advisory| "#{advisory.gem.name}##{advisory.gem.version}##{advisory.gem.platform}" }).to eq(["nokogiri#1.13.6#ruby"])
+        end
       end
 
       context "when the :ignore option is given" do

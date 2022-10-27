@@ -224,7 +224,7 @@ module Bundler
                    config.ignore
                  end
 
-        @lockfile.specs.each do |gem|
+        @lockfile.specs.select { |gem| gem.platform == "ruby" }.each do |gem|
           @database.check_gem(gem) do |advisory|
             is_ignored = ignore.intersect?(advisory.identifiers.to_set)
             next if is_ignored
