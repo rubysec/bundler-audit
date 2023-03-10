@@ -18,7 +18,7 @@ GEM
     i18n (0.9.5)
       concurrent-ruby (~> 1.0)
     multi_json (1.15.0)
-    tzinfo (0.3.58)
+    tzinfo (0.3.61)
 
 PLATFORMS
   ruby
