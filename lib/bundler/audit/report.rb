@@ -37,6 +37,16 @@ module Bundler
       # @return [Array<Results::UnpatchedGems>]
       attr_reader :unpatched_gems
 
+      # Identifiers of all seen vulnerabilities (including ignored vulns).
+      #
+      # @return [Set<String>]
+      attr_accessor :seen_identifiers
+
+      # Identifiers that were omitted from results
+      #
+      # @return [Set<String>]
+      attr_accessor :ignored_identifiers
+
       #
       # Initializes the report.
       #
@@ -49,6 +59,8 @@ module Bundler
         @results = []
         @insecure_sources = []
         @unpatched_gems = []
+        @seen_identifiers = Set.new
+        @ignored_identifiers = Set.new
 
         results.each { |result| self << result }
       end
@@ -131,6 +143,14 @@ module Bundler
       #
       def vulnerable_gems
         @unpatched_gems.map(&:gem)
+      end
+
+      def unseen_ignored_identifiers?
+        unseen_ignored_identifiers.any?
+      end
+
+      def unseen_ignored_identifiers
+        @ignored_identifiers - @seen_identifiers
       end
 
       #
