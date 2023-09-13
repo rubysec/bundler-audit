@@ -156,12 +156,6 @@ describe Bundler::Audit::Database do
         end
       end
     end
-
-    context "when given an invalid option" do
-      it do
-        expect { subject.update!(foo: 1) }.to raise_error(RuntimeError)
-      end
-    end
   end
 
   describe "#initialize" do

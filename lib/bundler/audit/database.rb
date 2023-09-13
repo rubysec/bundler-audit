@@ -94,13 +94,10 @@ module Bundler
       #
       # Downloads the ruby-advisory-db.
       #
-      # @param [Hash] options
-      #   Additional options.
-      #
-      # @option options [String] :path (DEFAULT_PATH)
+      # @param [String] path
       #   The destination path for the new ruby-advisory-db.
       #
-      # @option options [Boolean] :quiet
+      # @param [Boolean] quiet
       #   Specify whether `git` should be `--quiet`.
       #
       # @return [Dataase]
@@ -114,15 +111,9 @@ module Bundler
       #
       # @since 0.8.0
       #
-      def self.download(options={})
-        unless (options.keys - [:path, :quiet]).empty?
-          raise(ArgumentError,"Invalid option(s)")
-        end
-
-        path = options.fetch(:path,DEFAULT_PATH)
-
+      def self.download(path: DEFAULT_PATH, quiet: false)
         command = %w[git clone]
-        command << '--quiet' if options[:quiet]
+        command << '--quiet' if quiet
         command << URL << path
 
         unless system(*command)
@@ -135,17 +126,14 @@ module Bundler
       #
       # Updates the ruby-advisory-db.
       #
-      # @param [Hash] options
-      #   Additional options.
+      # @param [Hash{Symbol => Object}] kwargs
+      #   Additional optional keyword arguments for {download} or {#update!}.
       #
-      # @option options [Boolean] :quiet
+      # @option kwargs [Boolean] :quiet
       #   Specify whether `git` should be `--quiet`.
       #
       # @return [Boolean]
       #   Specifies whether the update was successful.
-      #
-      # @raise [ArgumentError]
-      #   Invalid options were given.
       #
       # @note
       #   Requires network access.
@@ -154,17 +142,15 @@ module Bundler
       #
       # @deprecated Use {#update!} instead.
       #
-      def self.update!(options={})
-        raise "Invalid option(s)" unless (options.keys - [:quiet]).empty?
-
+      def self.update!(**kwargs)
         if File.directory?(DEFAULT_PATH)
           begin
-            new(DEFAULT_PATH).update!(options)
+            new(DEFAULT_PATH).update!(**kwargs)
           rescue UpdateFailed then false
           end
         else
           begin
-            download(options.merge(path: DEFAULT_PATH))
+            download(**kwargs, path: DEFAULT_PATH)
           rescue DownloadFailed then false
           end
         end
@@ -184,10 +170,7 @@ module Bundler
       #
       # Updates the ruby-advisory-db.
       #
-      # @param [Hash] options
-      #   Additional options.
-      #
-      # @option options [Boolean] :quiet
+      # @param [Boolean] quiet
       #   Specify whether `git` should be `--quiet`.
       #
       # @return [true, nil]
@@ -201,11 +184,11 @@ module Bundler
       #
       # @since 0.8.0
       #
-      def update!(options={})
+      def update!(quiet: false)
         if git?
           Dir.chdir(@path) do
             command = %w[git pull]
-            command << '--quiet' if options[:quiet]
+            command << '--quiet' if quiet
             command << 'origin' << 'master'
 
             unless system(*command)
