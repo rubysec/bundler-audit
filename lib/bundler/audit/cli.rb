@@ -116,7 +116,7 @@ module Bundler
 
         begin
           Database.download(path: path, quiet: options.quiet?)
-        rescue Database::DownloadFailed => error
+        rescue Database::GitNotInstalled, Database::DownloadFailed => error
           say error.message, :red
           exit 1
         end
@@ -142,16 +142,11 @@ module Bundler
           when true
             say("Updated ruby-advisory-db", :green) unless options.quiet?
           when nil
-            if Bundler.git_present?
-              unless options.quiet?
-                say "Skipping update, ruby-advisory-db is not a git repository", :yellow
-              end
-            else
-              say_error "Git is not installed!", :red
-              exit 1
+            unless options.quiet?
+              say "Skipping update, ruby-advisory-db is not a git repository", :yellow
             end
           end
-        rescue Database::UpdateFailed => error
+        rescue Database::GitNotInstalled, Database::UpdateFailed => error
           say error.message, :red
           exit 1
         end

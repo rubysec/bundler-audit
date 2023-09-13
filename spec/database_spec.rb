@@ -94,6 +94,16 @@ describe Bundler::Audit::Database do
       end
     end
 
+    context "when git is not installed" do
+      it do
+        expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(nil)
+
+        expect {
+          subject.download
+        }.to raise_error(described_class::GitNotInstalled,"the git command is not installed")
+      end
+    end
+
     context "with an unknown option" do
       it do
         expect {
@@ -131,6 +141,18 @@ describe Bundler::Audit::Database do
         end
       end
 
+      context "when git is not installed" do
+        before { stub_const("#{described_class}::URL",'https://example.com/') }
+
+        it do
+          expect(subject).to receive(:system).with('git', 'clone', url, path).and_return(nil)
+
+          expect {
+            subject.update!(quiet: false)
+          }.to raise_error(described_class::GitNotInstalled,"the git command is not installed")
+        end
+      end
+
       after { FileUtils.rm_rf(dest_dir) }
     end
 
@@ -153,6 +175,16 @@ describe Bundler::Audit::Database do
           expect_any_instance_of(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(false)
 
           expect(subject.update!(quiet: false)).to eq(false)
+        end
+      end
+
+      context "when git is not installed" do
+        it do
+          expect_any_instance_of(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(nil)
+
+          expect {
+            subject.update!(quiet: false)
+          }.to raise_error(described_class::GitNotInstalled,"the git command is not installed")
         end
       end
     end
@@ -264,6 +296,16 @@ describe Bundler::Audit::Database do
       it "should return the last commit ID" do
         expect(subject.commit_id).to be == last_commit
       end
+
+      context "when git is not installed" do
+        it do
+          expect(subject).to receive(:`).with('git rev-parse HEAD').and_raise(Errno::ENOENT)
+
+          expect {
+            subject.commit_id
+          }.to raise_error(described_class::GitNotInstalled,"the git command is not installed")
+        end
+      end
     end
 
     context "when the database is a bare directory" do
@@ -292,6 +334,16 @@ describe Bundler::Audit::Database do
 
       it "should return the timestamp of the last commit" do
         expect(subject.last_updated_at).to be == last_commit_timestamp
+      end
+
+      context "when git is not installed" do
+        it do
+          expect(subject).to receive(:`).with('git log --date=iso8601 --pretty="%cd" -1').and_raise(Errno::ENOENT)
+
+          expect {
+            subject.last_updated_at
+          }.to raise_error(described_class::GitNotInstalled,"the git command is not installed")
+        end
       end
     end
 
