@@ -137,19 +137,23 @@ module Bundler
 
         database = Database.new(path)
 
-        case database.update!(quiet: options.quiet?)
-        when true
-          say("Updated ruby-advisory-db", :green) unless options.quiet?
-        when false
-          say_error "Failed updating ruby-advisory-db!", :red
-          exit 1
-        when nil
-          unless Bundler.git_present?
-            say_error "Git is not installed!", :red
-            exit 1
+        begin
+          case database.update!(quiet: options.quiet?)
+          when true
+            say("Updated ruby-advisory-db", :green) unless options.quiet?
+          when nil
+            if Bundler.git_present?
+              unless options.quiet?
+                say "Skipping update, ruby-advisory-db is not a git repository", :yellow
+              end
+            else
+              say_error "Git is not installed!", :red
+              exit 1
+            end
           end
-
-          say "Skipping update", :yellow
+        rescue Database::UpdateFailed => error
+          say error.message, :red
+          exit 1
         end
 
         stats(path) unless options.quiet?

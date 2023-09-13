@@ -2,6 +2,8 @@ require 'spec_helper'
 require 'bundler/audit/cli'
 
 describe Bundler::Audit::CLI do
+  let(:database_path) { "/path/to/ruby-advisory-db" }
+
   describe ".start" do
     context "with wrong arguments" do
       it "exits with error status code" do
@@ -76,23 +78,17 @@ describe Bundler::Audit::CLI do
 
       context "when update fails" do
         before do
-          expect(database).to receive(:update!).and_return(false)
+          expect(database).to receive(:update!).with(quiet: false).and_raise(
+            Bundler::Audit::Database::UpdateFailed,
+            "failed to update #{database_path.inspect}"
+          )
         end
 
-        it "prints failure message" do
+        it "must print an error message and exit with 1" do
           expect {
-            begin
+            expect {
               subject.update
-            rescue SystemExit
-            end
-          }.to output(/Failed updating ruby-advisory-db!/).to_stderr
-        end
-
-        it "exits with error status code" do
-          expect {
-            # Capture output of `update` only to keep spec output clean.
-            # The test regarding specific output is above.
-            expect { subject.update }.to output.to_stdout
+            }.to output("failed to update #{database_path.inspect}").to_stderr
           }.to raise_error(SystemExit) do |error|
             expect(error.success?).to eq(false)
             expect(error.status).to eq(1)
@@ -136,9 +132,7 @@ describe Bundler::Audit::CLI do
 
       context "when update succeeds" do
         before do
-          expect(database).to(
-            receive(:update!).with(quiet: true).and_return(true)
-          )
+          expect(database).to receive(:update!).with(quiet: true).and_return(true)
         end
 
         it "does not print any output" do
@@ -148,25 +142,17 @@ describe Bundler::Audit::CLI do
 
       context "when update fails" do
         before do
-          expect(database).to(
-            receive(:update!).with(quiet: true).and_return(false)
+          expect(database).to receive(:update!).with(quiet: true).and_raise(
+            Bundler::Audit::Database::UpdateFailed,
+            "failed to update #{database_path.inspect}"
           )
         end
 
-        it "prints failure message" do
+        it "must print the error message and exit with an error code" do
           expect {
-            begin
+            expect {
               subject.update
-            rescue SystemExit
-            end
-          }.to_not output.to_stderr
-        end
-
-        it "exits with error status code" do
-          expect {
-            # Capture output of `update` only to keep spec output clean.
-            # The test regarding specific output is above.
-            expect { subject.update }.to output.to_stdout
+            }.to output("failed to update: #{database_path.inspect}").to_stderr
           }.to raise_error(SystemExit) do |error|
             expect(error.success?).to eq(false)
             expect(error.status).to eq(1)
