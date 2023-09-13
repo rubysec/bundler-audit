@@ -28,6 +28,12 @@ module Bundler
     #
     class Database
 
+      #
+      # @since 0.10.0
+      #
+      class GitNotInstalled < RuntimeError
+      end
+
       class DownloadFailed < RuntimeError
       end
 
@@ -103,8 +109,9 @@ module Bundler
       # @return [Dataase]
       #   The newly downloaded database.
       #
-      # @raise [DownloadFailed]
-      #   Indicates that the download failed.
+      # @raise [DownloadFailed, GitNotInstalled]
+      #   * {DownloadFailed} - the `git clone` command failed.
+      #   * {GitNotInstalled} - the `git` command is not installed.
       #
       # @note
       #   Requires network access.
@@ -116,8 +123,11 @@ module Bundler
         command << '--quiet' if quiet
         command << URL << path
 
-        unless system(*command)
+        case system(*command)
+        when false
           raise(DownloadFailed,"failed to download #{URL} to #{path.inspect}")
+        when nil
+          raise(GitNotInstalled,"the git command is not installed")
         end
 
         return new(path)
@@ -182,6 +192,10 @@ module Bundler
       # @raise [UpdateFailed]
       #   Could not update the ruby-advisory-db git repository.
       #
+      # @raise [UpdateFailed, GitNotInstalled]
+      #   * {UpdateFailed} - the `git pull` command failed.
+      #   * {GitNotInstalled} - the `git` command is not installed.
+      #
       # @since 0.8.0
       #
       def update!(quiet: false)
@@ -191,8 +205,11 @@ module Bundler
             command << '--quiet' if quiet
             command << 'origin' << 'master'
 
-            unless system(*command)
+            case system(*command)
+            when false
               raise(UpdateFailed,"failed to update #{@path.inspect}")
+            when nil
+              raise(GitNotInstalled,"the git command is not installed")
             end
 
             return true
@@ -206,12 +223,17 @@ module Bundler
       # @return [String, nil]
       #   The commit hash or `nil` if the database is not a git repository.
       #
+      # @raise [GitNotInstalled]
+      #   The `git` command is not installed.
+      #
       # @since 0.9.0
       #
       def commit_id
         if git?
           Dir.chdir(@path) do
             `git rev-parse HEAD`.chomp
+          rescue Errno::ENOENT
+            raise(GitNotInstalled,"the git command is not installed")
           end
         end
       end
@@ -221,12 +243,17 @@ module Bundler
       #
       # @return [Time]
       #
+      # @raise [GitNotInstalled]
+      #   The `git` command is not installed.
+      #
       # @since 0.8.0
       #
       def last_updated_at
         if git?
           Dir.chdir(@path) do
             Time.parse(`git log --date=iso8601 --pretty="%cd" -1`)
+          rescue Errno::ENOENT
+            raise(GitNotInstalled,"the git command is not installed")
           end
         else
           File.mtime(@path)

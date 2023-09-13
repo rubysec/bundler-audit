@@ -96,27 +96,33 @@ describe Bundler::Audit::CLI do
         end
       end
 
-      context "when git is not installed" do
+      context "when the ruby-advisory-db is not a git repository" do
         before do
           expect(database).to receive(:update!).and_return(nil)
-
-          expect(Bundler).to receive(:git_present?).and_return(false)
         end
 
-        it "prints failure message" do
+        it "must print a warning message and then the stats" do
+          allow(subject).to receive(:stats)
+
           expect {
-            begin
-              subject.update
-            rescue SystemExit
-            end
-          }.to output(/Git is not installed!/).to_stderr
+            subject.update
+          }.to output(/Skipping update, ruby-advisory-db is not a git repository/).to_stdout
+        end
+      end
+
+      context "when git is not installed" do
+        before do
+          expect(database).to receive(:update!).and_raise(
+            Bundler::Audit::Database::GitNotInstalled,
+            "the git command is not installed"
+          )
         end
 
         it "exits with error status code" do
           expect {
-            # Capture output of `update` only to keep spec output clean.
-            # The test regarding specific output is above.
-            expect { subject.update }.to output.to_stdout
+            expect {
+              subject.update
+            }.to output("the git command is not installed").to_stderr
           }.to raise_error(SystemExit) do |error|
             expect(error.success?).to eq(false)
             expect(error.status).to eq(1)
