@@ -141,9 +141,8 @@ module Bundler
       # @option options [Boolean] :quiet
       #   Specify whether `git` should be `--quiet`.
       #
-      # @return [Boolean, nil]
+      # @return [Boolean]
       #   Specifies whether the update was successful.
-      #   A `nil` indicates no update was performed.
       #
       # @raise [ArgumentError]
       #   Invalid options were given.
@@ -191,10 +190,11 @@ module Bundler
       # @option options [Boolean] :quiet
       #   Specify whether `git` should be `--quiet`.
       #
-      # @return [true, nil]
-      #   `true` indicates that the update was successful.
-      #   `nil` indicates the database is not a git repository, thus not
-      #   capable of being updated.
+      # @return [true]
+      #   The ruby-advisory-db git repository was successfully updated.
+      #
+      # @raise [UpdateFailed]
+      #   Could not update the ruby-advisory-db git repository.
       #
       # @since 0.8.0
       #
