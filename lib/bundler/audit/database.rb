@@ -190,8 +190,11 @@ module Bundler
       # @option options [Boolean] :quiet
       #   Specify whether `git` should be `--quiet`.
       #
-      # @return [true]
-      #   The ruby-advisory-db git repository was successfully updated.
+      # @return [true, nil]
+      #   * `true` - the ruby-advisory-db git repository was successfully
+      #     updated.
+      #   * `nil` - the ruby-advisory-db is not a git repository or the `git`
+      #     command is not installed.
       #
       # @raise [UpdateFailed]
       #   Could not update the ruby-advisory-db git repository.
