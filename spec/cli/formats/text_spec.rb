@@ -229,8 +229,8 @@ describe Bundler::Audit::CLI::Formats::Text do
         end
 
         context "when Advisory#patched_versions is not empty" do
-          it 'must print "Solution: upgrade to ..."' do
-            expect(output_lines).to include("Solution: upgrade to #{advisory.patched_versions.map { |v| "'#{v}'" }.join(', ')}")
+          it 'must print "Solution: update to ..."' do
+            expect(output_lines).to include("Solution: update to #{advisory.patched_versions.map { |v| "'#{v}'" }.join(', ')}")
           end
         end
 

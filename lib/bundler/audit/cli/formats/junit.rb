@@ -101,7 +101,7 @@ module Bundler
 
           def advisory_solution(advisory)
             unless advisory.patched_versions.empty?
-              "upgrade to #{advisory.patched_versions.map { |v| "'#{v}'" }.join(', ')}"
+              "update to #{advisory.patched_versions.map { |v| "'#{v}'" }.join(', ')}"
             else
               "remove or disable this gem until a patch is available!"
             end
