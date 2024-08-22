@@ -1,3 +1,19 @@
+### 0.9.2 / 2024-08-22
+
+* Officially support Ruby 3.2 and 3.3.
+* Corrected the gemspec license to indicate GPL-3.0 *or* later.
+
+#### CLI
+
+* Correctly handle {Bundler::Audit::Database::UpdateFailed} exceptions in
+  `bundle-audit update`.
+* Changed wording from "upgrade to" to "update to" in `bundle-audit check`
+  output.
+
+#### Rake Task
+
+* Fixed empty `bundle:audit:update` rake task.
+
 ### 0.9.1 / 2022-05-19
 
 * Opt into rubygems.org MFA requirement.
