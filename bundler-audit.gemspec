@@ -18,6 +18,7 @@ Gem::Specification.new do |gem|
   gem.authors     = Array(gemspec['authors'])
   gem.email       = gemspec['email']
   gem.homepage    = gemspec['homepage']
+  gem.metadata    = gemspec['metadata'] if gemspec['metadata']
 
   glob = lambda { |patterns| gem.files & Dir[*patterns] }
 
