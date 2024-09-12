@@ -8,9 +8,9 @@ homepage: https://github.com/rubysec/bundler-audit#readme
 
 metadata:
   documentation_uri: https://rubydoc.info/gems/bundler-audit
-  source_code_uri:   https://github.com/rubysec/bundler-audit.rb
-  bug_tracker_uri:   https://github.com/rubysec/bundler-audit.rb/issues
-  changelog_uri:     https://github.com/rubysec/bundler-audit.rb/blob/master/ChangeLog.md
+  source_code_uri:   https://github.com/rubysec/bundler-audit
+  bug_tracker_uri:   https://github.com/rubysec/bundler-audit/issues
+  changelog_uri:     https://github.com/rubysec/bundler-audit/blob/master/ChangeLog.md
   rubygems_mfa_required: 'true'
 
 required_ruby_version: ">= 2.0.0"
