@@ -65,6 +65,9 @@ Style/WordArray: { Enabled: false } # Offense count: 1
 Style/Lambda: { Enabled: false } # Offense count: 2
 Style/SafeNavigation: { Enabled: false } # Offense count: 2
 Lint/IneffectiveAccessModifier: { Enabled: false } # Offense count: 1
+Gemspec/RequireMFA:
+  Exclude:
+    - 'bundler-audit.gemspec'
 Gemspec/DuplicatedAssignment:
   Exclude:
     - 'bundler-audit.gemspec'
