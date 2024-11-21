@@ -72,11 +72,11 @@ module Bundler
               raise(InvalidConfigurationError,"'ignore' key found in config file, but is not an Array")
             end
 
-            unless value.children.all? { |node| node.is_a?(YAML::Nodes::Scalar) }
-              raise(InvalidConfigurationError,"'ignore' array in config file contains a non-String")
+            unless value.children.all? { |node| node.is_a?(YAML::Nodes::Scalar) || (node.is_a?(YAML::Nodes::Mapping) && node.children.all? { |subchild| subchild.is_a?(YAML::Nodes::Scalar) }) }
+              raise(InvalidConfigurationError,"'ignore' array in config file contains value that is non-String and non-Hash")
             end
 
-            config[:ignore] = value.children.map(&:value)
+            config[:ignore] = parse_ignore_entires(value.children)
           end
         end
 
@@ -103,6 +103,34 @@ module Bundler
         @ignore = Set.new(config[:ignore])
       end
 
+      def self.parse_ignore_entires(nodes)
+        nodes.map do |node|
+          next node.value if node.is_a?(YAML::Nodes::Scalar)
+
+          entry = parse_hash_ignore_node(node)
+          entry["cve"] if entry_still_ignored?(entry)
+        end.compact
+      end
+
+      def self.parse_hash_ignore_node(node)
+        entry = node.children.map(&:value).each_slice(2).to_h
+        if entry["cve"].nil?
+          raise(InvalidConfigurationError, "'ignore' array entry in config file contains Hash missing 'cve' key")
+        end
+
+        entry
+      end
+
+      def self.entry_still_ignored?(entry)
+        ignore_until = entry["ignore_until"]
+        return true if ignore_until.nil?
+
+        if ignore_until.to_i.to_s != ignore_until
+          raise(InvalidConfigurationError, "'ignore' array entry in config file contains 'ignore_until' value that is not proper integer")
+        end
+
+        ignore_until.to_i > Time.now.to_i
+      end
     end
   end
 end

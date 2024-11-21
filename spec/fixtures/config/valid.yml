@@ -2,3 +2,8 @@
 ignore:
   - CVE-123
   - CVE-456
+  - cve: CVE-789
+    ignore_until: 0
+  - cve: CVE-987
+    # Maximum 64 bit timestamp
+    ignore_until: 9223372036854775807

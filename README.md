@@ -175,10 +175,12 @@ bundler-audit also supports a per-project configuration file:
 ---
 ignore:
   - CVE-YYYY-XXXX
+  - cve: CVE-YYYY-XXXX
+    ignore_until: 1732189125
   - ...
 ```
 
-* `ignore:` \[Array\<String\>\] - A list of advisory IDs to ignore.
+* `ignore:` \[Array\<String | Hash\>\] - A list of advisory IDs to ignore, either as string or hash including the cve and unix timestamp to specify until when it should be ignored.
 
 You can provide a path to a config file using the `--config` flag:
 

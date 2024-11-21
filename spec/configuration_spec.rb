@@ -19,6 +19,10 @@ describe Bundler::Audit::Configuration do
       let(:path) { File.join(fixtures_dir,'valid.yml')   }
 
       it { should be_a(described_class) }
+
+      it "has expected ignored cves" do
+        expect(subject.ignore).to eq(Set.new(["CVE-123", "CVE-456", "CVE-987"]))
+      end
     end
 
     context "validations" do
@@ -45,8 +49,8 @@ describe Bundler::Audit::Configuration do
           it { should be_a(described_class) }
         end
 
-        describe "when ignore contains non-strings" do
-          let(:path) { File.join(fixtures_dir,'bad','ignore_contains_a_non_string.yml') }
+        describe "when ignore contains invalid entries" do
+          let(:path) { File.join(fixtures_dir,'bad','ignore_contains_invalid_entries.yml') }
 
           it "raises a validation error" do
             expect { subject }.to raise_error(described_class::InvalidConfigurationError)
