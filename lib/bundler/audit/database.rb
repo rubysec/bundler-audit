@@ -35,7 +35,7 @@ module Bundler
       end
 
       # Git URL of the ruby-advisory-db.
-      URL = 'https://github.com/rubysec/ruby-advisory-db.git'
+      URL = ENV.fetch('RUBY_ADVISORY_DB_REPOSITORY','https://github.com/rubysec/ruby-advisory-db.git')
 
       # Path to the user's copy of the ruby-advisory-db.
       USER_PATH = File.expand_path(File.join(Gem.user_home,'.local','share','ruby-advisory-db'))
