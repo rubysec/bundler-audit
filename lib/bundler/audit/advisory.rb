@@ -31,6 +31,7 @@ module Bundler
                                 :description,
                                 :cvss_v2,
                                 :cvss_v3,
+                                :cvss_v4,
                                 :cve,
                                 :osvdb,
                                 :ghsa,
@@ -77,6 +78,7 @@ module Bundler
           data['description'],
           data['cvss_v2'],
           data['cvss_v3'],
+          data['cvss_v4'],
           data['cve'],
           data['osvdb'],
           data['ghsa'],
@@ -136,8 +138,8 @@ module Bundler
       #   The criticality of the vulnerability based on the CVSS score.
       #
       def criticality
-        if cvss_v3
-          case cvss_v3
+        if cvss_v4 || cvss_v3
+          case cvss_v4 || cvss_v3
           when 0.0       then :none
           when 0.1..3.9  then :low
           when 4.0..6.9  then :medium
