@@ -39,7 +39,7 @@ module Bundler
       method_option :ignore, type: :array, aliases: '-i'
       method_option :update, type: :boolean, aliases: '-u'
       method_option :database, type: :string, aliases: '-D',
-                               default: Database::USER_PATH
+                               default: Database::DEFAULT_PATH
       method_option :format, type: :string, default: 'text', aliases: '-F'
       method_option :config, type: :string, aliases: '-c', default: '.bundler-audit.yml'
       method_option :gemfile_lock, type: :string, aliases: '-G',
