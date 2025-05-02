@@ -91,7 +91,7 @@ module Bundler
       desc 'stats', 'Prints ruby-advisory-db stats'
       method_option :quiet, type: :boolean, aliases: '-q'
 
-      def stats(path=Database.path)
+      def stats(path=Database::DEFAULT_PATH)
         database = Database.new(path)
 
         puts "ruby-advisory-db:"
@@ -106,7 +106,7 @@ module Bundler
       desc 'download', 'Downloads ruby-advisory-db'
       method_option :quiet, type: :boolean, aliases: '-q'
 
-      def download(path=Database.path)
+      def download(path=Database::DEFAULT_PATH)
         if Database.exists?(path)
           say "Database already exists", :yellow
           return
@@ -127,7 +127,7 @@ module Bundler
       desc 'update', 'Updates the ruby-advisory-db'
       method_option :quiet, type: :boolean, aliases: '-q'
 
-      def update(path=Database.path)
+      def update(path=Database::DEFAULT_PATH)
         unless Database.exists?(path)
           download(path)
           return
