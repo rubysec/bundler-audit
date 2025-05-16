@@ -16,7 +16,11 @@
 #
 
 require 'thor'
-require 'cgi'
+begin
+  require 'cgi/escape'
+rescue LoadError # Ruby < 2.3
+  require 'cgi/util'
+end
 
 module Bundler
   module Audit
