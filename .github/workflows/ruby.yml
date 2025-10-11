@@ -16,6 +16,11 @@ jobs:
           - '3.4'
           - jruby
           - truffleruby
+        include:
+          - ruby: '3.0'
+            rubygems_version: '3.5.23'
+          - ruby: '3.1'
+            rubygems_version: '3.6.9'
     name: Ruby ${{ matrix.ruby }}
     steps:
       - uses: actions/checkout@v2
@@ -23,6 +28,12 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
+      - name: Update RubyGems
+        env:
+          RUBYGEMS_VERSION: ${{ matrix.rubygems_version }}
+        run: |
+            gem update --system ${RUBYGEMS_VERSION:-}
+            gem -v
       - name: Install dependencies
         run: bundle install --jobs 4 --retry 3
       - name: Run tests
