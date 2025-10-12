@@ -11,7 +11,14 @@ describe "bin/bundler-audit" do
   subject { sh(command) }
 
   it "must invoke the CLI class" do
-    expect(subject).to eq("bundler-audit #{Bundler::Audit::VERSION}#{$/}")
+    expected = "bundler-audit #{Bundler::Audit::VERSION}#{$/}"
+
+    if RUBY_VERSION.start_with?("3.0") || RUBY_ENGINE == "truffleruby"
+      # Allow `WARN: Unresolved or ambiguous specs during Gem::Specification.reset:` for Ruby 3.0.x and TruffleRuby
+      expect(subject).to include(expected)
+    else
+      expect(subject).to eq(expected)
+    end
   end
 end
 
@@ -26,6 +33,13 @@ describe "bin/bundle-audit" do
   subject { sh(command) }
 
   it "must invoke the CLI class" do
-    expect(subject).to eq("bundler-audit #{Bundler::Audit::VERSION}#{$/}")
+    expected = "bundler-audit #{Bundler::Audit::VERSION}#{$/}"
+
+    if RUBY_VERSION.start_with?("3.0") || RUBY_ENGINE == "truffleruby"
+      # Allow `WARN: Unresolved or ambiguous specs during Gem::Specification.reset:` for Ruby 3.0.x and TruffleRuby
+      expect(subject).to include(expected)
+    else
+      expect(subject).to eq(expected)
+    end
   end
 end
