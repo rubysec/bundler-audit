@@ -31,6 +31,7 @@ module Bundler
                                 :description,
                                 :cvss_v2,
                                 :cvss_v3,
+                                :cvss_v4,
                                 :cve,
                                 :osvdb,
                                 :ghsa,
@@ -77,6 +78,7 @@ module Bundler
           data['description'],
           data['cvss_v2'],
           data['cvss_v3'],
+          data['cvss_v4'],
           data['cve'],
           data['osvdb'],
           data['ghsa'],
@@ -136,20 +138,43 @@ module Bundler
       #   The criticality of the vulnerability based on the CVSS score.
       #
       def criticality
-        if cvss_v3
-          case cvss_v3
-          when 0.0       then :none
-          when 0.1..3.9  then :low
-          when 4.0..6.9  then :medium
-          when 7.0..8.9  then :high
-          when 9.0..10.0 then :critical
-          end
-        elsif cvss_v2
-          case cvss_v2
-          when 0.0..3.9  then :low
-          when 4.0..6.9  then :medium
-          when 7.0..10.0 then :high
-          end
+        return estimate_criticality(cvss_v4) if cvss_v4
+        return estimate_criticality(cvss_v3) if cvss_v3
+
+        estimate_criticality_cvss_v2(cvss_v2) if cvss_v2
+      end
+
+      #
+      # Estimates criticality score based on CVSS v3 or CVSS v4 standard and criticality value.
+      #
+      # @param [Float] criticality_value
+      #   The criticality score calculated using given standard.
+      # @return [:none, :low, :medium, :high, :critical, nil]
+      #   The criticality of the vulnerability based on the CVSS score.
+      #
+      def estimate_criticality(criticality_value)
+        case criticality_value
+        when 0.0       then :none
+        when 0.1..3.9  then :low
+        when 4.0..6.9  then :medium
+        when 7.0..8.9  then :high
+        when 9.0..10.0 then :critical
+        end
+      end
+
+      #
+      # Estimates criticality score based on CVSS v2 standard and criticality value.
+      #
+      # @param [Float] criticality_value
+      #   The criticality score calculated using given standard.
+      # @return [:low, :medium, :high]
+      #   The criticality of the vulnerability based on the CVSS score.
+      #
+      def estimate_criticality_cvss_v2(criticality_value)
+        case criticality_value
+        when 0.0..3.9  then :low
+        when 4.0..6.9  then :medium
+        when 7.0..10.0 then :high
         end
       end
 
