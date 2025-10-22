@@ -81,7 +81,7 @@ module Bundler
           @unpatched_gems << result
         end
 
-        return self
+        self
       end
 
       #
