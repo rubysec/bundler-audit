@@ -163,7 +163,7 @@ Bundler::Audit::Task.new
 
 The following `rake` tasks will then become available:
 
-```bash
+```
 $ rake -T
 rake bundle:audit
 rake bundle:audit:update
