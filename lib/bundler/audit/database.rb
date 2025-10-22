@@ -103,7 +103,7 @@ module Bundler
       # @option options [Boolean] :quiet
       #   Specify whether `git` should be `--quiet`.
       #
-      # @return [Dataase]
+      # @return [Database]
       #   The newly downloaded database.
       #
       # @raise [DownloadFailed]
