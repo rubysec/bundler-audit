@@ -1,3 +1,7 @@
+### 0.10.0 / [TBD]
+
+* Added {Bundler::Audit::Advisory#cvss_v4} (@onshi).
+
 ### 0.9.2 / 2024-08-22
 
 * Officially support Ruby 3.2 and 3.3.
