@@ -1,3 +1,14 @@
+### 0.9.3 / 2025-11-28
+
+* Officially support Ruby 3.4, 3.5, and 4.0.
+* Added support for Bundler 4.x.
+* Fixed typos in API documentation.
+
+#### CLI
+
+* Ensure that the `bundler-audit check` command honors the
+  `BUNDLER_AUDIT_DB` environment variable.
+
 ### 0.9.2 / 2024-08-22
 
 * Officially support Ruby 3.2 and 3.3.
