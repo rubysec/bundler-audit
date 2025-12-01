@@ -17,6 +17,7 @@
 
 require 'bundler/audit/advisory'
 
+require 'open3'
 require 'time'
 require 'yaml'
 
@@ -203,17 +204,15 @@ module Bundler
       #
       def update!(options={})
         if git?
-          Dir.chdir(@path) do
-            command = %w[git pull]
-            command << '--quiet' if options[:quiet]
-            command << 'origin' << 'master'
+          command = %w[git pull]
+          command << '--quiet' if options[:quiet]
+          command << 'origin' << 'master'
 
-            unless system(*command)
-              raise(UpdateFailed,"failed to update #{@path.inspect}")
-            end
+          _, status = Open3.capture2(*command, chdir: @path)
 
-            return true
-          end
+          raise(UpdateFailed,"failed to update #{@path.inspect}") unless status.success?
+
+          true
         end
       end
 
@@ -227,9 +226,7 @@ module Bundler
       #
       def commit_id
         if git?
-          Dir.chdir(@path) do
-            `git rev-parse HEAD`.chomp
-          end
+          Open3.capture2('git rev-parse HEAD', chdir: @path).first.chomp
         end
       end
 
@@ -242,9 +239,7 @@ module Bundler
       #
       def last_updated_at
         if git?
-          Dir.chdir(@path) do
-            Time.parse(`git log --date=iso8601 --pretty="%cd" -1`)
-          end
+          Time.parse(Open3.capture2('git log --date=iso8601 --pretty="%cd" -1', chdir: @path).first)
         else
           File.mtime(@path)
         end
