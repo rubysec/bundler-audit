@@ -12,8 +12,8 @@ module Bundler
       #
       # Initializes the task.
       #
-      def initialize
-        define
+      def initialize(clean: false)
+        define(clean:)
       end
 
       #
@@ -88,7 +88,9 @@ module Bundler
       #
       # Defines the `bundle:audit` and `bundle:audit:update` task.
       #
-      def define
+      def define(clean:)
+        register_clean if clean
+
         namespace :bundle do
           namespace :audit do
             desc 'Checks the Gemfile.lock for insecure dependencies'
@@ -108,6 +110,13 @@ module Bundler
         task 'bundler:audit'        => 'bundle:audit'
         task 'bundler:audit:check'  => 'bundle:audit:check'
         task 'bundler:audit:update' => 'bundle:audit:update'
+      end
+
+      def register_clean
+        require 'rake/clean'
+        require 'bundler/audit/database'
+
+        CLOBBER.include Bundler::Audit::Database.path
       end
     end
   end
