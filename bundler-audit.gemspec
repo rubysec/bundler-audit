@@ -22,8 +22,9 @@ Gem::Specification.new do |gem|
 
   glob = lambda { |patterns| gem.files & Dir[*patterns] }
 
-  gem.files = `git ls-files`.split($/)
-  gem.files = glob[gemspec['files']] if gemspec['files']
+  gem.files = `git ls-files -z`.split("\x0").reject do |f|
+    f.match(%r{^(test|spec|\.github)/})
+  end
 
   gem.executables = gemspec.fetch('executables') do
     glob['bin/*'].map { |path| File.basename(path) }
