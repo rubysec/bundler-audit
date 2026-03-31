@@ -33,7 +33,7 @@ module Bundler
       default_task :check
       map '--version' => :version
 
-      desc 'check [DIR]', 'Checks the Gemfile.lock for insecure dependencies'
+      desc 'check [DIR]', 'Checks the Gemfile.lock/gems.locked for insecure dependencies'
       method_option :quiet, type: :boolean, aliases: '-q'
       method_option :verbose, type: :boolean, aliases: '-v'
       method_option :ignore, type: :array, aliases: '-i'
@@ -42,8 +42,8 @@ module Bundler
                                default: Database::USER_PATH
       method_option :format, type: :string, default: 'text', aliases: '-F'
       method_option :config, type: :string, aliases: '-c', default: '.bundler-audit.yml'
-      method_option :gemfile_lock, type: :string, aliases: '-G',
-                                   default: 'Gemfile.lock'
+      method_option :gemfile_lock, type: :string, aliases: '-G', 
+                               desc: 'Path to the lock file (Gemfile.lock or gems.locked)'
       method_option :output, type: :string, aliases: '-o'
 
       def check(dir=Dir.pwd)

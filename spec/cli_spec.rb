@@ -175,4 +175,70 @@ describe Bundler::Audit::CLI do
       end
     end
   end
+
+  describe "#check with gems.locked support" do
+    let(:fixtures_dir) { File.join(__dir__, 'fixtures') }
+    let(:bundle_dir) { File.join(fixtures_dir, 'gems_locked_cli_test') }
+    
+    before do
+      FileUtils.mkdir_p(bundle_dir)
+      File.write(File.join(bundle_dir, 'gems.locked'), <<~LOCKFILE)
+        GEM
+          remote: https://rubygems.org/
+          specs:
+            thor (1.1.0)
+        
+        PLATFORMS
+          ruby
+        
+        DEPENDENCIES
+          thor
+        
+        BUNDLED WITH
+           2.2.33
+      LOCKFILE
+    end
+    
+    after do
+      FileUtils.rm_rf(bundle_dir)
+    end
+    
+    it "should auto-detect gems.locked file" do
+      cli = described_class.new
+      expect {
+        cli.check(bundle_dir)
+      }.to output(/thor/).to_stdout
+    end
+    
+    it "should work with explicit --gemfile-lock gems.locked" do
+      cli = described_class.new([], { gemfile_lock: 'gems.locked' })
+      expect {
+        cli.check(bundle_dir)
+      }.to output(/thor/).to_stdout
+    end
+  end
+
+  describe "#check with gems.rb support" do
+    let(:fixtures_dir) { File.join(__dir__, 'fixtures') }
+    let(:gems_rb_dir) { File.join(fixtures_dir, 'gems_rb_test') }
+    
+    before do
+      FileUtils.mkdir_p(gems_rb_dir)
+      File.write(File.join(gems_rb_dir, 'gems.rb'), <<~GEMFILE)
+        source 'https://rubygems.org'
+        gem 'thor'
+      GEMFILE
+    end
+    
+    after do
+      FileUtils.rm_rf(gems_rb_dir)
+    end
+    
+    it "should provide helpful error when gems.locked is missing" do
+      cli = described_class.new
+      expect {
+        cli.check(gems_rb_dir)
+      }.to output(/gems.rb found but gems.locked is missing/).to_stderr
+    end
+  end
 end

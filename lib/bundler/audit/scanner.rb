@@ -32,7 +32,7 @@ require 'yaml'
 module Bundler
   module Audit
     #
-    # Scans a `Gemfile.lock` for security issues.
+    # Scans a `Gemfile.lock` or `gems.locked` for security issues.
     #
     class Scanner
 
@@ -44,7 +44,7 @@ module Bundler
       # Project root directory
       attr_reader :root
 
-      # The parsed `Gemfile.lock` from the project
+      # The parsed `Gemfile.lock` or `gems.locked` from the project
       #
       # @return [Bundler::LockfileParser]
       attr_reader :lockfile
@@ -61,7 +61,7 @@ module Bundler
       #   The path to the project root.
       #
       # @param [String] lock_file
-      #   Alternative name for the `Gemfile.lock` file.
+      #   Alternative name for the lock file (Gemfile.lock or gems.locked).
       #
       # @param [Database] database
       #   The database to scan against.
@@ -71,7 +71,7 @@ module Bundler
       #
       # @raise [Bundler::GemfileLockNotFound]
       #   The `lock_file` file could not be found within the `root`
-      #   directory, or `Gemfiles.lock` and `gems.locked` both do not exist
+      #   directory, or neither `Gemfile.lock` nor `gems.locked` exist
       #   within `root`.
       #
       def initialize(root=Dir.pwd,lock_file=nil,database=Database.new,config_dot_file='.bundler-audit.yml')
@@ -86,7 +86,15 @@ module Bundler
           end
         else
           unless (lock_file_path = detect_lock_file)
-            raise(Bundler::GemfileLockNotFound,"neither Gemfile.lock nor gems.locked found in #{@root.inspect}")
+            # Provide more helpful error message
+            gemfile_path = detect_gemfile
+            if gemfile_path
+              gemfile_name = File.basename(gemfile_path)
+              expected_lock_file = gemfile_name == 'gems.rb' ? 'gems.locked' : 'Gemfile.lock'
+              raise(Bundler::GemfileLockNotFound,"#{gemfile_name} found but #{expected_lock_file} is missing. Run 'bundle install' to generate it.")
+            else
+              raise(Bundler::GemfileLockNotFound,"neither Gemfile.lock nor gems.locked found in #{@root.inspect}")
+            end
           end
         end
 
@@ -245,6 +253,9 @@ module Bundler
       # Supported lock files.
       LOCK_FILES = %w[Gemfile.lock gems.locked]
 
+      # Supported gemfiles.
+      GEMFILES = %w[Gemfile gems.rb]
+
       #
       # Detects `Gemfile.lock` or `gems.locked` files within {#root}.
       #
@@ -254,6 +265,25 @@ module Bundler
       #
       def detect_lock_file
         LOCK_FILES.each do |name|
+          path = File.join(@root,name)
+
+          if File.file?(path)
+            return path
+          end
+        end
+
+        return nil
+      end
+
+      #
+      # Detects `Gemfile` or `gems.rb` files within {#root}.
+      #
+      # @return [String, nil]
+      #   The path to `Gemfile` or `gems.rb`. `nil` is returned
+      #   if neither `Gemfile` or `gems.rb` were found.
+      #
+      def detect_gemfile
+        GEMFILES.each do |name|
           path = File.join(@root,name)
 
           if File.file?(path)
