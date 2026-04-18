@@ -80,6 +80,17 @@ describe Scanner do
         expect(ids).not_to include('OSVDB-89025')
       end
 
+      context "when the :ignore option is given" do
+        subject { scanner.scan(ignore: ['CVE-2013-0156']) }
+
+        it "should ignore the specified advisories" do
+          ids = subject.map { |result| result.advisory.id }
+
+          expect(ids).not_to include('CVE-2013-0156')
+          expect(ids).not_to include('OSVDB-89025')
+        end
+      end
+
       context "when config path is absolute" do
         let(:bundle) { 'unpatched_gems' }
         let(:absolute_config_path) { File.absolute_path(File.join('spec','bundle','unpatched_gems_with_dot_configuration', '.bundler-audit.yml')) }
