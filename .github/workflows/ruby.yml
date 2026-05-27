@@ -40,6 +40,7 @@ jobs:
         env:
           RUBYGEMS_VERSION: ${{ matrix.rubygems_version }}
         run: |
+            # shellcheck disable=SC2086 # empty version is intentional: no arg means update to latest
             gem update --system ${RUBYGEMS_VERSION:-}
             gem -v
       - name: Install dependencies
