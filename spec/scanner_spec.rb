@@ -15,6 +15,129 @@ describe Scanner do
         }.to raise_error(Scanner::InvalidGemfileLock,/is not a valid Gemfile\.lock/)
       end
     end
+
+    context "when given no arguments" do
+      subject { described_class }
+
+      context "when a Gemfile.lock exists in Dir.pwd" do
+        it "must default root to Dir.pwd" do
+          Dir.chdir(directory) do
+            scanner = subject.new
+            expect(scanner.root).to eq(File.expand_path(Dir.pwd))
+          end
+        end
+      end
+    end
+
+    context "when given a root directory" do
+      let(:root) { directory }
+
+      subject { described_class.new(root) }
+
+      it "must set #root to the expanded directory path" do
+        expect(subject.root).to eq(File.expand_path(root))
+      end
+
+      it "must set #database" do
+        expect(subject.database).to be_kind_of(Database)
+      end
+
+      it "must set #lockfile by parsing the Gemfile.lock" do
+        expect(subject.lockfile).to be_kind_of(Bundler::LockfileParser)
+      end
+
+      it "must set #config to a default Configuration when no config file exists" do
+        expect(subject.config).to be_kind_of(Configuration)
+        expect(subject.config.ignore).to be_empty
+      end
+    end
+
+    context "when the Gemfile.lock does not exist in the root directory" do
+      let(:bad_dir) { File.join('spec','bundle','nonexistent') }
+
+      it "must raise Bundler::GemfileLockNotFound" do
+        expect {
+          described_class.new(bad_dir)
+        }.to raise_error(Bundler::GemfileLockNotFound)
+      end
+
+      it "must include the lock file name and root in the error message" do
+        expect {
+          described_class.new(bad_dir)
+        }.to raise_error(Bundler::GemfileLockNotFound, /Gemfile\.lock/)
+      end
+    end
+
+    context "when given a custom gemfile_lock name" do
+      it "must raise Bundler::GemfileLockNotFound if the custom lock file does not exist" do
+        expect {
+          described_class.new(directory, 'NoSuchLockFile.lock')
+        }.to raise_error(Bundler::GemfileLockNotFound)
+      end
+
+      it "must use the custom gemfile_lock name" do
+        scanner = described_class.new(directory, 'Gemfile.lock')
+        expect(scanner.lockfile).to be_kind_of(Bundler::LockfileParser)
+      end
+    end
+
+    context "when given a custom database" do
+      let(:custom_db) { Database.new }
+
+      subject { described_class.new(directory, 'Gemfile.lock', custom_db) }
+
+      it "must set #database to the custom database" do
+        expect(subject.database).to be(custom_db)
+      end
+    end
+
+    context "when a .bundler-audit.yml config file exists" do
+      let(:bundle) { 'unpatched_gems_with_dot_configuration' }
+
+      subject { described_class.new(directory) }
+
+      it "must load the configuration from the config file" do
+        expect(subject.config).to be_kind_of(Configuration)
+        expect(subject.config.ignore).to include('OSVDB-89025')
+      end
+    end
+
+    context "when given a custom config_dot_file" do
+      let(:config_path) { File.join('spec','bundle','unpatched_gems_with_dot_configuration','.bundler-audit.yml') }
+
+      context "when the config_dot_file is an absolute path" do
+        let(:absolute_config_path) { File.absolute_path(config_path) }
+
+        subject { described_class.new(directory, 'Gemfile.lock', Database.new, absolute_config_path) }
+
+        it "must load the configuration from the absolute path" do
+          expect(subject.config).to be_kind_of(Configuration)
+          expect(subject.config.ignore).to include('OSVDB-89025')
+        end
+      end
+
+      context "when the config_dot_file is a relative path" do
+        let(:relative_config_path) { File.join('..','unpatched_gems_with_dot_configuration','.bundler-audit.yml') }
+
+        subject { described_class.new(directory, 'Gemfile.lock', Database.new, relative_config_path) }
+
+        it "must load the configuration from the relative path" do
+          expect(subject.config).to be_kind_of(Configuration)
+          expect(subject.config.ignore).to include('OSVDB-89025')
+        end
+      end
+    end
+
+    context "when no .bundler-audit.yml config file exists" do
+      let(:bundle) { 'secure' }
+
+      subject { described_class.new(directory) }
+
+      it "must set #config to a default empty Configuration" do
+        expect(subject.config).to be_kind_of(Configuration)
+        expect(subject.config.ignore).to be_empty
+      end
+    end
   end
 
   describe "#scan" do

@@ -1,10 +1,18 @@
 name: CI
 
-on: [ push, pull_request ]
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    types: [ opened, synchronize ]
+
+permissions: {}
 
 jobs:
   tests:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -14,7 +22,6 @@ jobs:
           - '3.2'
           - '3.3'
           - '3.4'
-          - '3.5'
           - '4.0'
           - jruby
           - truffleruby
@@ -25,15 +32,18 @@ jobs:
             rubygems_version: '3.6.9'
     name: Ruby ${{ matrix.ruby }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
           ruby-version: ${{ matrix.ruby }}
       - name: Update RubyGems
         env:
           RUBYGEMS_VERSION: ${{ matrix.rubygems_version }}
         run: |
+            # shellcheck disable=SC2086 # empty version is intentional: no arg means update to latest
             gem update --system ${RUBYGEMS_VERSION:-}
             gem -v
       - name: Install dependencies
@@ -44,13 +54,36 @@ jobs:
   # rubocop linting
   rubocop:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
       - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
           ruby-version: 2.7
       - name: Install dependencies
         run: bundle install --jobs 4 --retry 3
       - name: Run rubocop
         run: bundle exec rubocop --parallel
+
+  lint-actions:
+    name: GitHub Actions audit
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Run actionlint
+        uses: rhysd/actionlint@914e7df21a07ef503a81201c76d2b11c789d3fca # v1.7.12
+
+      - name: Run zizmor
+        uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d # v0.5.6
+        with:
+          advanced-security: false
