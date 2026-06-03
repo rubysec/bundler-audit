@@ -17,6 +17,6 @@ describe 'SECURITY.md' do
   end
 
   it 'contains a security contact channel' do
-    expect(content).to include('postmodern.mod3@gmail.com')
+    expect(content).to include('security@rubysec.com')
   end
 end
