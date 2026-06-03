@@ -242,6 +242,11 @@ $ brew install git
 9. `git commit -a`
 10. `git push origin YOUR_FEATURE`
 
+## Policy on Generative AI Contributions
+
+To safeguard project security and respect our maintainers' volunteer time, a human-in-the-loop is strictly required for all submissions. While AI tools are permitted as assistants, contributors must personally review, understand, and take full responsibility for their work. Any contributions that appear to be unreviewed machine output will be closed immediately, and repeat offenders will be banned from the project and reported.
+
+
 ## License
 
 Copyright (c) 2013-2026 Hal Brodigan (postmodern.mod3 at gmail.com)
