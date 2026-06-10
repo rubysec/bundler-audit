@@ -5,7 +5,7 @@ privately.
 
 ## Reporting A Vulnerability
 
-- Email: security@rubysec.com
+- Email: postmodern.mod3@gmail.com
 - Subject: "[bundler-audit] Security vulnerability report"
 
 Please include:
