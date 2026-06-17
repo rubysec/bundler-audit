@@ -111,8 +111,76 @@ describe Bundler::Audit::CLI::Formats::Junit do
           end
         end
 
+        context "when CVSS v4 is present" do
+          context "when Advisory#criticality is :none" do
+            let(:advisory) do
+              super().tap do |advisory|
+                advisory.cvss_v4 = 0.0
+              end
+            end
+
+            it "must print 'Criticality: None'" do
+              expect(output).to include("Criticality: None")
+            end
+          end
+
+          context "when Advisory#criticality is :low" do
+            let(:advisory) do
+              super().tap do |advisory|
+                advisory.cvss_v4 = 0.1
+              end
+            end
+
+            it "must print 'Criticality: Low'" do
+              expect(output).to include("Criticality: Low")
+            end
+          end
+
+          context "when Advisory#criticality is :medium" do
+            let(:advisory) do
+              super().tap do |advisory|
+                advisory.cvss_v4 = 4.0
+              end
+            end
+
+            it "must print 'Criticality: Medium'" do
+              expect(output).to include("Criticality: Medium")
+            end
+          end
+
+          context "when Advisory#criticality is :high" do
+            let(:advisory) do
+              super().tap do |advisory|
+                advisory.cvss_v4 = 7.0
+              end
+            end
+
+            it "must print 'Criticality: High'" do
+              expect(output).to include("Criticality: High")
+            end
+          end
+
+          context "when Advisory#criticality is :critical" do
+            let(:advisory) do
+              super().tap do |advisory|
+                advisory.cvss_v4 = 9.0
+              end
+            end
+
+            it "must print 'Criticality: High'" do
+              expect(output).to include("Criticality: Critical")
+            end
+          end
+        end
+
         context "when CVSS v3 is present" do
-          context "when Advisory#criticality is :none (cvss_v3 only)" do
+          let(:advisory) do
+            super().tap do |advisory|
+              advisory.cvss_v4 = nil
+            end
+          end
+
+          context "when Advisory#criticality is :none" do
             let(:advisory) do
               super().tap do |advisory|
                 advisory.cvss_v3 = 0.0
@@ -160,7 +228,7 @@ describe Bundler::Audit::CLI::Formats::Junit do
             end
           end
 
-          context "when Advisory#criticality is :critical (cvss_v3 only)" do
+          context "when Advisory#criticality is :critical" do
             let(:advisory) do
               super().tap do |advisory|
                 advisory.cvss_v3 = 9.0
@@ -177,6 +245,7 @@ describe Bundler::Audit::CLI::Formats::Junit do
           let(:advisory) do
             super().tap do |advisory|
               advisory.cvss_v3 = nil
+              advisory.cvss_v4 = nil
             end
           end
 
