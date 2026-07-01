@@ -224,10 +224,13 @@ module Bundler
                    config.ignore
                  end
 
+        seen = Set.new
+
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
             is_ignored = ignore.intersect?(advisory.identifiers.to_set)
             next if is_ignored
+            next unless seen.add?([gem.name, gem.version, advisory.id])
 
             yield Results::UnpatchedGem.new(gem,advisory)
           end
