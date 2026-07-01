@@ -160,6 +160,15 @@ describe Scanner do
         end
       end
 
+      context "when there is more than one platform per gem" do
+        subject { super().scan.to_a }
+
+        it "should deduplicate the report" do
+          unpatched_gems = subject.map { |r| [r.gem.name, r.gem.version, r.advisory.id] }
+          expect(unpatched_gems.size).to eq(unpatched_gems.uniq.size)
+        end
+      end
+
       context "when the :ignore option is given" do
         subject { super().scan(ignore: ['CVE-2013-0156']) }
 
