@@ -319,6 +319,41 @@ describe Bundler::Audit::CLI::Formats::Text do
           expect(output_lines).to include("Vulnerabilities found!")
         end
       end
+
+      context "when the report contains UnpatchedEngine results" do
+        let(:ruby_version) do
+          Bundler::RubyVersion.new('2.3.0', '0', nil, nil)
+        end
+
+        let(:advisory) do
+          Bundler::Audit::Advisory.load(Fixtures.join('advisory','CVE-2018-8779.yml'))
+        end
+        let(:unpatched_engine) do
+          Bundler::Audit::Results::UnpatchedEngine.new(ruby_version,advisory)
+        end
+
+        let(:report) do
+          super().tap do |report|
+            report << unpatched_engine
+          end
+        end
+
+        context "when Advisory#patched_versions is empty" do
+          let(:advisory) do
+            super().tap do |advisory|
+              advisory.patched_versions = []
+            end
+          end
+
+          it 'must print "Solution: remove or disable this engine until a patch is available!"' do
+            expect(output_lines).to include("Solution: remove or disable this engine until a patch is available!")
+          end
+
+          it 'must print "Vulnerabilities found!"' do
+            expect(output_lines).to include("Vulnerabilities found!")
+          end
+        end
+      end
     end
 
     context "when no vulnerabilities were found" do

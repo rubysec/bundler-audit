@@ -21,6 +21,7 @@ require 'bundler/audit/database'
 require 'bundler/audit/report'
 require 'bundler/audit/results/insecure_source'
 require 'bundler/audit/results/unpatched_gem'
+require 'bundler/audit/results/unpatched_engine'
 require 'bundler/lockfile_parser'
 
 require 'ipaddr'
@@ -55,6 +56,12 @@ module Bundler
       # @return [Hash]
       attr_reader :config
 
+      # The ruby version from the lockfile if the 'RUBY VERSION' metadata is present in the file, and the installed
+      # bundler version >= 1.12.0.pre.1. Otherwise returns nil.
+      #
+      # @return [Bundler::RubyVersion, nil]
+      attr_reader :ruby_version
+
       #
       # Initializes a scanner.
       #
@@ -85,6 +92,7 @@ module Bundler
         end
 
         @lockfile = LockfileParser.new(File.read(gemfile_lock_path))
+        @ruby_version = build_ruby_version
 
         config_dot_file_full_path = File.absolute_path(config_dot_file, @root)
 
@@ -148,6 +156,7 @@ module Bundler
 
         scan_sources(options,&block)
         scan_specs(options,&block)
+        scan_ruby(options,&block)
 
         return self
       end
@@ -218,11 +227,7 @@ module Bundler
       def scan_specs(options={})
         return enum_for(__method__,options) unless block_given?
 
-        ignore = if options[:ignore]
-                   Set.new(options[:ignore])
-                 else
-                   config.ignore
-                 end
+        ignore = advisories_to_ignore(options)
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
@@ -234,7 +239,101 @@ module Bundler
         end
       end
 
+      #
+      # Scans the ruby version in the lockfile.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
+      # @yield [result]
+      #   The given block will be passed the results of the scan.
+      #
+      # @yieldparam [Results::UnpatchedEngine] result
+      #   A result from the scan.
+      #
+      # @return [Enumerator]
+      #   If no block is given, an Enumerator will be returned.
+      #
+      # @api semipublic
+      #
+      # @since 0.9.4
+      #
+      def scan_ruby(options={})
+        return enum_for(__method__,options) unless block_given?
+
+        return unless @ruby_version
+
+        ignore = advisories_to_ignore(options)
+
+        @database.check_ruby(@ruby_version) do |advisory|
+          is_ignored = ignore.intersect?(advisory.identifiers.to_set)
+          next if is_ignored
+
+          yield Results::UnpatchedEngine.new(@ruby_version,advisory)
+        end
+      end
+
       private
+
+      #
+      # The collection of advisories to ignore.
+      #
+      # @param [Hash] options
+      #   Additional options.
+      #
+      # @option options [Array<String>] :ignore
+      #   The advisories to ignore.
+      #
+      # @return [Set<String>]
+      #
+      def advisories_to_ignore(options)
+        if options[:ignore]
+          Set.new(options[:ignore])
+        else
+          config.ignore
+        end
+      end
+
+      #
+      # Builds a Bundler::RubyVersion representing the ruby version stored in the lockfile. If the ruby version
+      # is not in the lockfile, then nil is returned.
+      #
+      # @return [Bundler::RubyVersion, nil]
+      #
+      def build_ruby_version
+        return unless supports_ruby_version_in_lockfile?
+
+        string = @lockfile.ruby_version
+        return unless string
+
+        if Bundler::RubyVersion.respond_to?(:from_string)
+          # Bundler::RubyVersion.from_string added in bundler 1.13.0.pre.1
+          Bundler::RubyVersion.from_string(string)
+        else
+          # pattern copied from Bundler::RubyVersion::PATTERN
+          pattern = /
+            ruby\s
+            (\d+\.\d+\.\d+(?:\.\S+)?) # ruby version
+            (?:p(-?\d+))? # optional patchlevel
+            (?:\s\((\S+)\s(.+)\))? # optional engine info
+          /xo
+          match_data = string.match(pattern)
+          Bundler::RubyVersion.new(match_data[1], match_data[2], match_data[3], match_data[4]) if match_data
+        end
+      end
+
+      #
+      # Determines if installed bundler has support for storing the ruby version in the lock file. Support was added in
+      # bundler 1.12.0.pre.1.
+      #
+      # @return [Boolean]
+      #
+      def supports_ruby_version_in_lockfile?
+        @lockfile.respond_to?(:ruby_version)
+      end
 
       #
       # Determines whether a source is internal.

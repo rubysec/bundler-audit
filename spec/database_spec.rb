@@ -1,10 +1,11 @@
 require 'spec_helper'
 require 'bundler/audit/database'
+require 'securerandom'
 require 'tmpdir'
 
 describe Bundler::Audit::Database do
   let(:vendored_advisories) do
-    Dir[File.join(Fixtures::Database::PATH, 'gems/*/*.yml')].sort
+    Dir[File.join(Fixtures::Database::PATH, '{gems,rubies}/*/*.yml')].sort
   end
 
   describe ".path" do
@@ -363,6 +364,64 @@ describe Bundler::Audit::Database do
     context "when given no block" do
       it "should return an Enumerator" do
         expect(subject.check_gem(gem)).to be_kind_of(Enumerable)
+      end
+    end
+  end
+
+  describe "#check_ruby" do
+    let(:ruby_version_string) { 'ruby 2.3.0p0' }
+    let(:ruby_version) { Bundler::RubyVersion.from_string(ruby_version_string) }
+
+    context "when given a block" do
+      it "should yield every advisory for ruby version" do
+        advisories = []
+
+        subject.check_ruby(ruby_version) do |advisory|
+          advisories << advisory
+        end
+
+        expect(advisories).not_to be_empty
+        expect(advisories.all? { |advisory|
+          advisory.kind_of?(Bundler::Audit::Advisory) && advisory.engine == 'ruby'
+        }).to be_truthy
+      end
+    end
+
+    context "when given no block" do
+      it "should return an Enumerator" do
+        expect(subject.check_ruby(ruby_version)).to be_kind_of(Enumerable)
+      end
+    end
+
+    context "when engine is not ruby" do
+      let(:ruby_version_string) { 'ruby 1.9.3 (jruby 1.7.0)' }
+
+      it "locates relevant advisories" do
+        advisories = []
+
+        subject.check_ruby(ruby_version) do |advisory|
+          advisories << advisory
+        end
+
+        expect(advisories).not_to be_empty
+        expect(advisories.all? { |advisory|
+          advisory.kind_of?(Bundler::Audit::Advisory) && advisory.engine == 'jruby'
+        }).to be_truthy
+      end
+    end
+
+    context "when engine has no advisory db directory" do
+      let(:engine) { "testengine#{SecureRandom.alphanumeric(5)}" }
+      let(:ruby_version_string) { "ruby 4.0.0 (#{engine} 1.0.0)" }
+
+      it "handles gracefully" do
+        advisories = []
+
+        subject.check_ruby(ruby_version) do |advisory|
+          advisories << advisory
+        end
+
+        expect(advisories).to be_empty
       end
     end
   end

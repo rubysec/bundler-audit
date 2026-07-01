@@ -271,24 +271,27 @@ module Bundler
       end
 
       #
-      # Enumerates over advisories for the given gem.
+      # Enumerates over advisories for the given gem or engine.
       #
       # @param [String] name
-      #   The gem name to lookup.
+      #   The gem or engine name to lookup.
+      #
+      # @param [String] dir
+      #   The 'gems' or 'rubies' subdirectory. Use 'gems' for gem advisories or 'rubies' for engine advisories.
       #
       # @yield [advisory]
-      #   If a block is given, each advisory for the given gem will be yielded.
+      #   If a block is given, each advisory for the given gem or engine will be yielded.
       #
       # @yieldparam [Advisory] advisory
-      #   An advisory for the given gem.
+      #   An advisory for the given gem or engine.
       #
       # @return [Enumerator]
       #   If no block is given, an Enumerator will be returned.
       #
-      def advisories_for(name)
+      def advisories_for(name, dir='gems')
         return enum_for(__method__,name) unless block_given?
 
-        each_advisory_path_for(name) do |path|
+        each_advisory_path_for(name, dir) do |path|
           yield Advisory.load(path)
         end
       end
@@ -314,6 +317,32 @@ module Bundler
 
         advisories_for(gem.name) do |advisory|
           if advisory.vulnerable?(gem.version)
+            yield advisory
+          end
+        end
+      end
+
+      #
+      # Verifies whether the ruby version is impacted by any advisories.
+      #
+      # @param [Bundler::RubyVersion] ruby_version
+      #   The ruby version to verify.
+      #
+      # @yield [advisory]
+      #   If a block is given, it will be passed advisories that impact
+      #   the ruby version.
+      #
+      # @yieldparam [Advisory] advisory
+      #   An advisory that impacts the ruby version.
+      #
+      # @return [Enumerator]
+      #   If no block is given, an Enumerator will be returned.
+      #
+      def check_ruby(ruby_version)
+        return enum_for(__method__,ruby_version) unless block_given?
+
+        advisories_for(ruby_version.engine, 'rubies') do |advisory|
+          if advisory.vulnerable?(ruby_version.engine_gem_version)
             yield advisory
           end
         end
@@ -361,14 +390,17 @@ module Bundler
       #   A path to an advisory `.yml` file.
       #
       def each_advisory_path(&block)
-        Dir.glob(File.join(@path,'gems','*','*.yml'),&block)
+        Dir.glob(File.join(@path,'{gems,rubies}','*','*.yml'),&block)
       end
 
       #
-      # Enumerates over the advisories for the given gem.
+      # Enumerates over the advisories for the given gem or engine.
       #
       # @param [String] name
-      #   The gem of the gem.
+      #   The name of the gem or engine.
+      #
+      # @param [String] dir
+      #   The 'gems' or 'rubies' subdirectory. Use 'gems' for gem advisories or 'rubies' for engine advisories.
       #
       # @yield [path]
       #   The given block will be passed each advisory path.
@@ -376,8 +408,8 @@ module Bundler
       # @yieldparam [String] path
       #   A path to an advisory `.yml` file.
       #
-      def each_advisory_path_for(name,&block)
-        Dir.glob(File.join(@path,'gems',name,'*.yml'),&block)
+      def each_advisory_path_for(name, dir='gems', &block)
+        Dir.glob(File.join(@path,dir,name,'*.yml'),&block)
       end
 
     end
