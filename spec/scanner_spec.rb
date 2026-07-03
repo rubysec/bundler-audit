@@ -161,11 +161,22 @@ describe Scanner do
       end
 
       context "when there is more than one platform per gem" do
-        subject { super().scan.to_a }
+        context "when '--verbose' is passed as an option to the cli" do
+          subject { super().scan(verbose: true).to_a }
 
-        it "should deduplicate the report" do
-          unpatched_gems = subject.map { |r| [r.gem.name, r.gem.version, r.advisory.id] }
-          expect(unpatched_gems.size).to eq(unpatched_gems.uniq.size)
+          it "should report one vulnerability per gem regardless of duplications" do
+            unpatched_gems = subject.map { |r| [r.gem.name, r.gem.version, r.advisory.id] }
+            expect(unpatched_gems.size).to be > unpatched_gems.uniq.size
+          end
+        end
+
+        context "when '--verbose' is not passed as an option to the cli" do
+          subject { super().scan.to_a }
+
+          it "should deduplicate the report" do
+            unpatched_gems = subject.map { |r| [r.gem.name, r.gem.version, r.advisory.id] }
+            expect(unpatched_gems.size).to eq(unpatched_gems.uniq.size)
+          end
         end
       end
 
