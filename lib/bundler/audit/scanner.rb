@@ -230,7 +230,9 @@ module Bundler
           @database.check_gem(gem) do |advisory|
             is_ignored = ignore.intersect?(advisory.identifiers.to_set)
             next if is_ignored
-            next unless seen.add?([gem.name, gem.version, advisory.id])
+
+            reportable = options[:verbose] || seen.add?([gem.name, gem.version, advisory.id])
+            next unless reportable
 
             yield Results::UnpatchedGem.new(gem,advisory)
           end
