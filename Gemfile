@@ -6,6 +6,10 @@ group :development do
   gem 'rake'
   gem 'rubygems-tasks', '~> 0.3'
 
+  # rdoc 8 depends on rbs, which has no java platform gem before 4.1.0.pre.2.
+  # See https://github.com/ruby/rdoc/issues/1746
+  gem 'rbs', '>= 4.1.0.pre.2' if RUBY_PLATFORM == 'java'
+
   gem 'rubocop',        '~> 1.18'
 
   gem 'rspec',          '~> 3.0'
