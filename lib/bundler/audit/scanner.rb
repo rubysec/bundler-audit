@@ -218,11 +218,8 @@ module Bundler
       def scan_specs(options={})
         return enum_for(__method__,options) unless block_given?
 
-        ignore = if options[:ignore]
-                   Set.new(options[:ignore])
-                 else
-                   config.ignore
-                 end
+        ignore = config.ignore
+        ignore.merge(Set.new(options[:ignore])) if options[:ignore]
 
         @lockfile.specs.each do |gem|
           @database.check_gem(gem) do |advisory|
