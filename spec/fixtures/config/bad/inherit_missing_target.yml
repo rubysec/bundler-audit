@@ -1,0 +1,2 @@
+inherit:
+  - ./does_not_exist.yml

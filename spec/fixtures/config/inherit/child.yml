@@ -1,0 +1,4 @@
+inherit:
+  - ./base.yml
+ignore:
+  - CVE-CHILD-1

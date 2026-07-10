@@ -53,6 +53,70 @@ describe Bundler::Audit::Configuration do
           end
         end
       end
+
+      context "when inherit is not an Array" do
+        let(:path) { File.join(fixtures_dir,'bad','inherit_is_not_an_array.yml') }
+
+        it "raises a validation error" do
+          expect { subject }.to raise_error(described_class::InvalidConfigurationError,
+                                            /'inherit' key found in config file, but is not an Array/)
+        end
+      end
+
+      context "when inherit array contains a non-String" do
+        let(:path) { File.join(fixtures_dir,'bad','inherit_contains_a_non_string.yml') }
+
+        it "raises a validation error" do
+          expect { subject }.to raise_error(described_class::InvalidConfigurationError,
+                                            /'inherit' array in config file contains a non-String/)
+        end
+      end
+
+      context "when an inherited file does not exist" do
+        let(:path) { File.join(fixtures_dir,'bad','inherit_missing_target.yml') }
+
+        it "raises a FileNotFound error" do
+          expect { subject }.to raise_error(described_class::FileNotFound,
+                                            /Configuration file '.*does_not_exist\.yml' does not exist/)
+        end
+      end
+
+      context "when the inherit chain forms a cycle" do
+        let(:path) { File.join(fixtures_dir,'bad','inherit_cycle_a.yml') }
+
+        it "raises a validation error identifying the cycle" do
+          expect { subject }.to raise_error(described_class::InvalidConfigurationError,
+                                            /Cycle detected in 'inherit'/)
+        end
+      end
+    end
+
+    context "when a file inherits another" do
+      let(:path) { File.join(fixtures_dir,'inherit','child.yml') }
+
+      it { should be_a(described_class) }
+
+      it "must merge the parent's ignore list with the child's" do
+        expect(subject.ignore).to eq(Set.new(%w[CVE-BASE-1 CVE-BASE-2 CVE-CHILD-1]))
+      end
+    end
+
+    context "when the inherit chain is 3 deep" do
+      let(:path) { File.join(fixtures_dir,'inherit','grandchild.yml') }
+
+      it "must transitively merge the ignore lists" do
+        expect(subject.ignore).to eq(Set.new(%w[CVE-BASE-1 CVE-BASE-2 CVE-MIDDLE-1 CVE-GRANDCHILD-1]))
+      end
+    end
+
+    context "when the inherit path is relative" do
+      let(:path) { File.join(fixtures_dir,'inherit','child.yml') }
+
+      it "must resolve inherited paths relative to the including file" do
+        Dir.chdir('/tmp') do
+          expect(subject.ignore).to eq(Set.new(%w[CVE-BASE-1 CVE-BASE-2 CVE-CHILD-1]))
+        end
+      end
     end
   end
 

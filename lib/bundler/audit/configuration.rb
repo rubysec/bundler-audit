@@ -51,9 +51,39 @@ module Bundler
       #   file passed.
       #
       def self.load(file_path)
-        raise(FileNotFound,"Configuration file '#{file_path}' does not exist") unless File.exist?(file_path)
+        load_with_chain(file_path,[])
+      end
 
-        doc = YAML.parse(File.new(file_path))
+      #
+      # Internal loader that tracks the ancestor chain of absolute paths in
+      # order to detect cycles across `inherit:` links.
+      #
+      # @param [String] file_path
+      #   Path to the YAML file holding the configuration.
+      #
+      # @param [Array<String>] ancestors
+      #   Absolute paths of configuration files already being loaded further up
+      #   the recursion. Used only to detect cycles.
+      #
+      # @raise [FileNotFound]
+      # @raise [InvalidConfigurationError]
+      #
+      # @return [Configuration]
+      #
+      # @api private
+      #
+      def self.load_with_chain(file_path,ancestors)
+        absolute_path = File.expand_path(file_path)
+
+        if ancestors.include?(absolute_path)
+          raise(InvalidConfigurationError,"Cycle detected in 'inherit': #{(ancestors + [absolute_path]).join(' -> ')}")
+        end
+
+        unless File.exist?(absolute_path)
+          raise(FileNotFound,"Configuration file '#{file_path}' does not exist")
+        end
+
+        doc = YAML.parse(File.new(absolute_path))
 
         unless doc.kind_of?(YAML::Nodes::Document)
           raise(InvalidConfigurationError,"Configuration found in '#{file_path}' is not YAML")
@@ -63,7 +93,7 @@ module Bundler
           raise(InvalidConfigurationError,"Configuration found in '#{file_path}' is not a Hash")
         end
 
-        config = {}
+        config = { ignore: [] }
 
         doc.root.children.each_slice(2) do |key,value|
           case key.value
@@ -76,12 +106,28 @@ module Bundler
               raise(InvalidConfigurationError,"'ignore' array in config file contains a non-String")
             end
 
-            config[:ignore] = value.children.map(&:value)
+            config[:ignore].concat(value.children.map(&:value))
+          when 'inherit'
+            unless value.is_a?(YAML::Nodes::Sequence)
+              raise(InvalidConfigurationError,"'inherit' key found in config file, but is not an Array")
+            end
+
+            unless value.children.all? { |node| node.is_a?(YAML::Nodes::Scalar) }
+              raise(InvalidConfigurationError,"'inherit' array in config file contains a non-String")
+            end
+
+            base_dir = File.dirname(absolute_path)
+            value.children.each do |child_node|
+              inherited_path = File.expand_path(child_node.value,base_dir)
+              parent_config  = load_with_chain(inherited_path,ancestors + [absolute_path])
+              config[:ignore].concat(parent_config.ignore.to_a)
+            end
           end
         end
 
         new(config)
       end
+      private_class_method :load_with_chain
 
       #
       # The list of advisory IDs to ignore.

@@ -176,12 +176,17 @@ bundler-audit also supports a per-project configuration file:
 
 ```yaml
 ---
+inherit:
+  - ../base.yml
 ignore:
   - CVE-YYYY-XXXX
   - ...
 ```
 
 * `ignore:` \[Array\<String\>\] - A list of advisory IDs to ignore.
+* `inherit:` \[Array\<String\>\] - An optional list of other config
+  files to merge into this one. Relative paths are resolved from the
+  directory of the declaring config file.
 
 You can provide a path to a config file using the `--config` flag:
 
