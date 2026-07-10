@@ -169,6 +169,44 @@ describe Scanner do
           expect(ids).not_to include('CVE-2013-0156')
         end
       end
+
+      context "with a timed ignore in the configuration" do
+        let(:scanner) { described_class.new(directory) }
+
+        subject { scanner.scan.to_a }
+
+        before do
+          allow(scanner).to receive(:config).and_return(config)
+        end
+
+        context "when the ignore is still active" do
+          let(:config) do
+            Configuration.new(
+              ignore: [{id: 'CVE-2013-0155', until: Date.today}]
+            )
+          end
+
+          it "ignores the advisory" do
+            ids = subject.flat_map { |result| result.advisory.identifiers }
+
+            expect(ids).not_to include('CVE-2013-0155')
+          end
+        end
+
+        context "when the ignore has expired" do
+          let(:config) do
+            Configuration.new(
+              ignore: [{id: 'CVE-2013-0155', until: Date.today - 1}]
+            )
+          end
+
+          it "reports the advisory again" do
+            ids = subject.flat_map { |result| result.advisory.identifiers }
+
+            expect(ids).to include('CVE-2013-0155')
+          end
+        end
+      end
     end
 
     context "when auditing a bundle with insecure sources" do
