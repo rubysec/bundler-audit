@@ -1,5 +1,9 @@
+# spec/spec_helper.rb
 require 'simplecov'
-SimpleCov.start
+
+SimpleCov.start do
+  enable_coverage :branch
+end
 
 require 'rspec'
 require 'bundler/audit/database'
