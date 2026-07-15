@@ -195,7 +195,7 @@ $ bundle-audit check --config bundler-audit.custom.yaml
 * [ruby] >= 2.0.0
 * [rubygems] >= 1.8
 * [thor] ~> 1.0
-* [bundler] >= 1.2.0, < 3
+* [bundler] >= 1.2.0
 
 ## Install
 
