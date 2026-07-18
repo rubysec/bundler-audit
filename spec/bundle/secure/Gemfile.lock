@@ -43,6 +43,7 @@ GEM
       minitest (~> 5.1)
       tzinfo (~> 1.1)
     arel (9.0.0)
+    base64 (0.3.0)
     builder (3.2.4)
     concurrent-ruby (1.1.10)
     crass (1.0.6)
@@ -107,7 +108,8 @@ GEM
     thread_safe (0.3.6)
     tzinfo (1.2.10)
       thread_safe (~> 0.1)
-    websocket-driver (0.7.5)
+    websocket-driver (0.8.1)
+      base64
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.5)
 
