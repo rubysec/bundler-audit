@@ -1,0 +1,2 @@
+inherit_from:
+  - ./inherit_from_cycle_a.yml
