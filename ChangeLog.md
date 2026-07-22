@@ -1,6 +1,6 @@
 ### 0.9.4 / TBD
 
-* Added `inherit:` config option, which merges additional config files
+* Added `inherit_from:` config option, which merges additional config files
   into the current config.
 
 ### 0.9.3 / 2025-11-28

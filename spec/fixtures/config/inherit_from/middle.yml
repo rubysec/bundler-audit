@@ -1,4 +1,4 @@
-inherit:
+inherit_from:
   - ./base.yml
 ignore:
   - CVE-MIDDLE-1

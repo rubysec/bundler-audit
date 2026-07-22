@@ -56,7 +56,7 @@ module Bundler
 
       #
       # Internal loader that tracks the ancestor chain of absolute paths in
-      # order to detect cycles across `inherit:` links.
+      # order to detect cycles across `inherit_from:` links.
       #
       # @param [String] file_path
       #   Path to the YAML file holding the configuration.
@@ -76,7 +76,7 @@ module Bundler
         absolute_path = File.expand_path(file_path)
 
         if ancestors.include?(absolute_path)
-          raise(InvalidConfigurationError,"Cycle detected in 'inherit': #{(ancestors + [absolute_path]).join(' -> ')}")
+          raise(InvalidConfigurationError,"Cycle detected in 'inherit_from': #{(ancestors + [absolute_path]).join(' -> ')}")
         end
 
         unless File.exist?(absolute_path)
@@ -107,13 +107,13 @@ module Bundler
             end
 
             config[:ignore].concat(value.children.map(&:value))
-          when 'inherit'
+          when 'inherit_from'
             unless value.is_a?(YAML::Nodes::Sequence)
-              raise(InvalidConfigurationError,"'inherit' key found in config file, but is not an Array")
+              raise(InvalidConfigurationError,"'inherit_from' key found in config file, but is not an Array")
             end
 
             unless value.children.all? { |node| node.is_a?(YAML::Nodes::Scalar) }
-              raise(InvalidConfigurationError,"'inherit' array in config file contains a non-String")
+              raise(InvalidConfigurationError,"'inherit_from' array in config file contains a non-String")
             end
 
             base_dir = File.dirname(absolute_path)
