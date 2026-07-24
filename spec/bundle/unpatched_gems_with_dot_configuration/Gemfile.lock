@@ -1,31 +1,50 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (3.2.10)
-      activesupport (= 3.2.10)
-      builder (~> 3.0.0)
-    activerecord (3.2.10)
-      activemodel (= 3.2.10)
-      activesupport (= 3.2.10)
-      arel (~> 3.0.2)
-      tzinfo (~> 0.3.29)
-    activesupport (3.2.10)
-      i18n (~> 0.6)
-      multi_json (~> 1.0)
-    arel (3.0.3)
-    builder (3.0.4)
-    concurrent-ruby (1.3.7)
-    i18n (0.9.5)
+    activemodel (7.1.5.2)
+      activesupport (= 7.1.5.2)
+    activerecord (7.1.5.2)
+      activemodel (= 7.1.5.2)
+      activesupport (= 7.1.5.2)
+      timeout (>= 0.4.0)
+    activesupport (7.1.5.2)
+      base64
+      benchmark (>= 0.3)
+      bigdecimal
+      concurrent-ruby (~> 1.0, >= 1.0.2)
+      connection_pool (>= 2.2.5)
+      drb
+      i18n (>= 1.6, < 2)
+      logger (>= 1.4.2)
+      minitest (>= 5.1)
+      mutex_m
+      securerandom (>= 0.3)
+      tzinfo (~> 2.0)
+    base64 (0.3.0)
+    benchmark (0.5.0)
+    bigdecimal (4.1.2)
+    concurrent-ruby (1.3.8)
+    connection_pool (3.0.2)
+    drb (2.2.3)
+    i18n (1.15.2)
       concurrent-ruby (~> 1.0)
-    multi_json (1.15.0)
-    tzinfo (0.3.61)
+    logger (1.7.0)
+    minitest (6.0.6)
+      drb (~> 2.0)
+      prism (~> 1.5)
+    mutex_m (0.3.0)
+    prism (1.9.0)
+    securerandom (0.4.1)
+    timeout (0.6.1)
+    tzinfo (2.0.6)
+      concurrent-ruby (~> 1.0)
 
 PLATFORMS
   ruby
   x86_64-linux
 
 DEPENDENCIES
-  activerecord (= 3.2.10)
+  activerecord (= 7.1.5.2)
 
 BUNDLED WITH
    2.2.0
