@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 
 gem 'rails', '~> 5.2'
-gem 'rails-html-sanitizer', '~> 1.4.4'
+gem 'rails-html-sanitizer', '~> 1.7.1'
