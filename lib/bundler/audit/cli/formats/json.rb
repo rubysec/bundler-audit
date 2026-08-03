@@ -82,7 +82,7 @@ module Bundler
           #   A result
           #
           def prepare_result(result)
-            if advisory = result[:advisory]
+            if (advisory = result[:advisory])
               advisory.delete(:gem)
               advisory.delete(:engine)
             end
