@@ -59,6 +59,14 @@ module Bundler
 
           private
 
+          #
+          # Prepares the data from the report into a hash before it is formatted as JSON.
+          #
+          # @param [Report] report
+          #   The results from the {Scanner}.
+          #
+          # @return [Hash]
+          #
           def prepare_data(report)
             hash = report.to_h
             hash[:results].each do |result|
@@ -67,6 +75,12 @@ module Bundler
             hash
           end
 
+          #
+          # Prepares a result hash before it is formatted as JSON.
+          #
+          # @param [Hash] result
+          #   A result
+          #
           def prepare_result(result)
             if advisory = result[:advisory]
               advisory.delete(:gem)
