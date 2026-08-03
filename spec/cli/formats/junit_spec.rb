@@ -331,7 +331,7 @@ describe Bundler::Audit::CLI::Formats::Junit do
         end
       end
 
-      context "when the report contains UnpatchedEngine results" do
+      context "when the report contains UnpatchedEngines" do
         let(:ruby_version) do
           Bundler::RubyVersion.new('2.3.0', '0', nil, nil)
         end
