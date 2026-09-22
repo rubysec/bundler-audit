@@ -10,6 +10,18 @@ updates:
       semver-patch-days: 2
       default-days: 7
 
+  # These fixtures are insecure on purpose: the specs assert that the
+  # advisories are reported. See #462.
+  - package-ecosystem: bundler
+    directories:
+      - "/spec/bundle/insecure_sources"
+      - "/spec/bundle/unpatched_gems"
+      - "/spec/bundle/unpatched_gems_with_dot_configuration"
+    schedule:
+      interval: weekly
+    ignore:
+      - dependency-name: "*"
+
   - package-ecosystem: github-actions
     directory: "/"
     groups:
