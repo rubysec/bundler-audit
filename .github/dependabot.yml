@@ -10,6 +10,23 @@ updates:
       semver-patch-days: 2
       default-days: 7
 
+  # These fixture bundles are deliberately vulnerable -- the specs scan them and
+  # assert the advisories are reported -- so updating them defeats the fixture.
+  # Ignoring every dependency suppresses both the version-update pull requests
+  # (rubysec/bundler-audit#456) and the security updates, which fail outright
+  # when no fixed version is reachable (rubysec/bundler-audit#462).
+  # spec/bundle/secure is deliberately absent: it asserts a clean scan, so it
+  # does want the updates.
+  - package-ecosystem: bundler
+    directories:
+      - "/spec/bundle/insecure_sources"
+      - "/spec/bundle/unpatched_gems"
+      - "/spec/bundle/unpatched_gems_with_dot_configuration"
+    schedule:
+      interval: weekly
+    ignore:
+      - dependency-name: "*"
+
   - package-ecosystem: github-actions
     directory: "/"
     groups:
