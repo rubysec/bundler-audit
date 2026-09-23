@@ -141,7 +141,9 @@ describe Bundler::Audit::Database do
       before { stub_const("#{described_class}::DEFAULT_PATH",dest_dir) }
 
       it "should execute `git pull`" do
-        expect_any_instance_of(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(true)
+        status = instance_double('Process::Status', success?: true)
+        expect(Open3).to receive(:capture2).with('git', 'pull', 'origin', 'master', chdir: dest_dir)
+                                           .and_return([anything, status])
 
         subject.update!(quiet: false)
       end
@@ -150,7 +152,9 @@ describe Bundler::Audit::Database do
 
       context "when the `git pull` fails" do
         it do
-          expect_any_instance_of(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(false)
+          status = instance_double('Process::Status', success?: false)
+          expect(Open3).to receive(:capture2).with('git', 'pull', 'origin', 'master', chdir: dest_dir)
+                                             .and_return([anything, status])
 
           expect(subject.update!(quiet: false)).to eq(false)
         end
@@ -224,14 +228,18 @@ describe Bundler::Audit::Database do
   describe "#update!" do
     context "when the database is a git repository" do
       it do
-        expect(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(true)
+        status = instance_double('Process::Status', success?: true)
+        expect(Open3).to receive(:capture2).with('git', 'pull', 'origin', 'master', chdir: Fixtures::Database::PATH)
+                                           .and_return([anything, status])
 
         subject.update!
       end
 
       context "when the :quiet option is given" do
         it do
-          expect(subject).to receive(:system).with('git', 'pull', '--quiet', 'origin', 'master').and_return(true)
+          status = instance_double('Process::Status', success?: true)
+          expect(Open3).to receive(:capture2).with('git', 'pull', '--quiet', 'origin', 'master', chdir: Fixtures::Database::PATH)
+                                             .and_return([anything, status])
 
           subject.update!(quiet: true)
         end
@@ -239,7 +247,9 @@ describe Bundler::Audit::Database do
 
       context "when the `git pull` command fails" do
         it do
-          expect(subject).to receive(:system).with('git', 'pull', 'origin', 'master').and_return(false)
+          status = instance_double('Process::Status', success?: false)
+          expect(Open3).to receive(:capture2).with('git', 'pull', 'origin', 'master', chdir: Fixtures::Database::PATH)
+                                             .and_return([anything, status])
 
           expect {
             subject.update!
