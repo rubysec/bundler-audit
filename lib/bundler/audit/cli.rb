@@ -73,7 +73,7 @@ module Bundler
                      exit 1
                    end
 
-        report = scanner.report(ignore: options.ignore)
+        report = scanner.report(ignore: options[:ignore], verbose: options[:verbose])
 
         output = if options[:output]
                    File.new(options[:output],'w')
