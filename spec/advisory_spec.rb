@@ -96,6 +96,24 @@ describe Bundler::Audit::Advisory do
       it { is_expected.to eq(data['description']) }
     end
 
+    describe '#gem' do
+      subject { super().gem }
+      it { is_expected.to eq(data['gem']) }
+    end
+
+    describe '#engine' do
+      subject { super().engine }
+
+      context 'when advisory for gem' do
+        it { is_expected.to be_nil }
+      end
+
+      context 'when advisory for engine' do
+        let(:id)   { 'CVE-2020-99999' }
+        it { is_expected.to eq(data['engine']) }
+      end
+    end
+
     context "YAML data not representing a hash" do
       let(:path) do
         File.expand_path('../fixtures/advisory/not_a_hash.yml', __FILE__)

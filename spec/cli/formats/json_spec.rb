@@ -100,6 +100,52 @@ describe Bundler::Audit::CLI::Formats::JSON do
           expect(output_json[:results][0][:advisory][:criticality]).to be == advisory.criticality.to_s.downcase
           expect(output_json[:results][0][:advisory][:unaffected_versions]).to be == advisory.unaffected_versions.map(&:to_s)
           expect(output_json[:results][0][:advisory][:patched_versions]).to be == advisory.patched_versions.map(&:to_s)
+          expect(output_json[:results][0][:advisory]).not_to have_key(:gem)
+          expect(output_json[:results][0][:advisory]).not_to have_key(:engine)
+        end
+      end
+
+      context "when the report contains UnpatchedEngines" do
+        let(:ruby_version) do
+          Bundler::RubyVersion.new('2.3.0', '0', nil, nil)
+        end
+
+        let(:advisory) do
+          Bundler::Audit::Advisory.load(Fixtures.join('advisory','CVE-2018-8779.yml'))
+        end
+        let(:unpatched_engine) do
+          Bundler::Audit::Results::UnpatchedEngine.new(ruby_version,advisory)
+        end
+
+        let(:report) do
+          super().tap do |report|
+            report << unpatched_engine
+          end
+        end
+
+        it 'must output the UnpatchedEngine as JSON in the "results" Array' do
+          expect(output_json[:results]).to be_kind_of(Array)
+          expect(output_json[:results][0]).to be_kind_of(Hash)
+          expect(output_json[:results][0][:type]).to be == 'unpatched_engine'
+          expect(output_json[:results][0][:engine]).to be_kind_of(Hash)
+          expect(output_json[:results][0][:engine][:name]).to be == ruby_version.engine
+          expect(output_json[:results][0][:engine][:version]).to be == ruby_version.engine_gem_version.version
+          expect(output_json[:results][0][:advisory]).to be_kind_of(Hash)
+          expect(output_json[:results][0][:advisory][:path]).to be == advisory.path
+          expect(output_json[:results][0][:advisory][:id]).to be == advisory.id
+          expect(output_json[:results][0][:advisory][:url]).to be == advisory.url
+          expect(output_json[:results][0][:advisory][:title]).to be == advisory.title
+          expect(output_json[:results][0][:advisory][:date]).to be == advisory.date.to_s
+          expect(output_json[:results][0][:advisory][:description]).to be == advisory.description
+          expect(output_json[:results][0][:advisory][:cvss_v2]).to be == advisory.cvss_v2
+          expect(output_json[:results][0][:advisory][:cve]).to be == advisory.cve
+          expect(output_json[:results][0][:advisory][:osvdb]).to be == advisory.osvdb
+          expect(output_json[:results][0][:advisory][:ghsa]).to be == advisory.ghsa
+          expect(output_json[:results][0][:advisory][:criticality]).to be == advisory.criticality.to_s.downcase
+          expect(output_json[:results][0][:advisory][:unaffected_versions]).to be == advisory.unaffected_versions.map(&:to_s)
+          expect(output_json[:results][0][:advisory][:patched_versions]).to be == advisory.patched_versions.map(&:to_s)
+          expect(output_json[:results][0][:advisory]).not_to have_key(:gem)
+          expect(output_json[:results][0][:advisory]).not_to have_key(:engine)
         end
       end
     end

@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2013-2026 Hal Brodigan (postmodern.mod3 at gmail.com)
+# Copyright (c) 2013-2024 Hal Brodigan (postmodern.mod3 at gmail.com)
 #
 # bundler-audit is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -23,17 +23,17 @@ module Bundler
   module Audit
     module Results
       #
-      # Represents a gem version that has known vulnerabilities and needs to be
+      # Represents a ruby engine that has known vulnerabilities and needs to be
       # upgraded.
       #
-      class UnpatchedGem < Result
+      class UnpatchedEngine < Result
 
-        SHORT_TYPE = 'gem'.freeze
+        SHORT_TYPE = 'engine'.freeze
 
-        # The specification of the vulnerable gem.
+        # The vulnerable ruby engine.
         #
-        # @return [Gem::Specification]
-        attr_reader :gem
+        # @return [Bundler::RubyVersion]
+        attr_reader :ruby_version
 
         # The advisory documenting the vulnerability.
         #
@@ -41,39 +41,39 @@ module Bundler
         attr_reader :advisory
 
         #
-        # Initializes the unpatched gem result.
+        # Initializes the unpatched engine result.
         #
-        # @param [Gem::Specification] gem
-        #   The specification of the vulnerable gem.
+        # @param [Bundler::RubyVersion] ruby_version
+        #   The vulnerable ruby engine.
         #
         # @param [Advisory] advisory
         #   The advisory documenting the vulnerability.
         #
-        def initialize(gem,advisory)
-          @gem      = gem
+        def initialize(ruby_version,advisory)
+          @ruby_version = ruby_version
           @advisory = advisory
         end
 
         #
-        # The name of the vulnerable gem.
+        # The name of the vulnerable engine.
         #
         # @return [String]
         #
         def vulnerable_name
-          @gem.name
+          @ruby_version.engine
         end
 
         #
-        # The version of the vulnerable gem.
+        # The version of the vulnerable engine.
         #
         # @return [String]
         #
         def vulnerable_version
-          @gem.version
+          @ruby_version.engine_gem_version.version
         end
 
         #
-        # A short human-friendly type to output in warnings, returns 'gem'.
+        # A short human-friendly type to output in warnings, returns 'engine'.
         #
         # @return [String]
         #
@@ -82,7 +82,7 @@ module Bundler
         end
 
         #
-        # Compares the unpatched gem to another result.
+        # Compares the unpatched engine to another result.
         #
         # @param [Result] other
         #
@@ -90,14 +90,13 @@ module Bundler
         #
         def ==(other)
           self.class == other.class && (
-            @gem.name == other.gem.name &&
-            @gem.version == other.gem.version &&
+            @ruby_version == other.ruby_version &&
             @advisory == other.advisory
           )
         end
 
         #
-        # Converts the unpatched gem result into a String.
+        # Converts the unpatched engine result into a String.
         #
         # @return [String]
         #
@@ -106,14 +105,14 @@ module Bundler
         end
 
         #
-        # Converts the unpatched gem to a Hash.
+        # Converts the unpatched engine to a Hash.
         #
         # @return [Hash{Symbol => Object}]
         #
         def to_h
           {
-            type: :unpatched_gem,
-            gem:  {
+            type: :unpatched_engine,
+            engine:  {
               name: vulnerable_name,
               version: vulnerable_version
             },
