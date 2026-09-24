@@ -77,6 +77,16 @@ module Bundler
             end
 
             config[:ignore] = value.children.map(&:value)
+          when 'exclude'
+            unless value.is_a?(YAML::Nodes::Sequence)
+              raise(InvalidConfigurationError,"'exclude' key found in config file, but is not an Array")
+            end
+
+            unless value.children.all? { |node| node.is_a?(YAML::Nodes::Scalar) }
+              raise(InvalidConfigurationError,"'exclude' array in config file contains a non-String")
+            end
+
+            config[:exclude] = value.children.map(&:value)
           end
         end
 
@@ -91,6 +101,13 @@ module Bundler
       attr_reader :ignore
 
       #
+      # The list of gem names to exclude from scanning.
+      #
+      # @return [Set<String>]
+      #
+      attr_reader :exclude
+
+      #
       # Initializes the configuration.
       #
       # @param [Hash] config
@@ -99,8 +116,12 @@ module Bundler
       # @option config [Array<String>] :ignore
       #   The list of advisory IDs to ignore.
       #
+      # @option config [Array<String>] :exclude
+      #   The list of gem names to exclude from scanning.
+      #
       def initialize(config={})
-        @ignore = Set.new(config[:ignore])
+        @ignore  = Set.new(config[:ignore])
+        @exclude = Set.new(config[:exclude])
       end
 
     end

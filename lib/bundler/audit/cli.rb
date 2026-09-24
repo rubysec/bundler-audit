@@ -37,6 +37,7 @@ module Bundler
       method_option :quiet, type: :boolean, aliases: '-q'
       method_option :verbose, type: :boolean, aliases: '-v'
       method_option :ignore, type: :array, aliases: '-i'
+      method_option :exclude, type: :array, aliases: '-e'
       method_option :update, type: :boolean, aliases: '-u'
       method_option :database, type: :string, aliases: '-D',
                                default: Database::DEFAULT_PATH
@@ -73,7 +74,7 @@ module Bundler
                      exit 1
                    end
 
-        report = scanner.report(ignore: options.ignore)
+        report = scanner.report(ignore: options.ignore, exclude: options.exclude)
 
         output = if options[:output]
                    File.new(options[:output],'w')
