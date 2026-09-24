@@ -45,6 +45,12 @@ describe Bundler::Audit::Configuration do
           it { should be_a(described_class) }
         end
 
+        context 'when ignore contains and commented values' do
+          let(:path) { File.join(fixtures_dir,'ignore_contains_commented.yml')   }
+
+          it { should be_a(described_class) }
+        end
+
         describe "when ignore contains non-strings" do
           let(:path) { File.join(fixtures_dir,'bad','ignore_contains_a_non_string.yml') }
 
