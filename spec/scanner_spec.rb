@@ -8,6 +8,14 @@ describe Scanner do
   subject { described_class.new(directory) }
 
   describe "#initialize" do
+    context "when given a non-lock file as gemfile_lock" do
+      it "should raise InvalidGemfileLock" do
+        expect {
+          described_class.new(directory, 'Gemfile')
+        }.to raise_error(Scanner::InvalidGemfileLock,/is not a valid Gemfile\.lock/)
+      end
+    end
+
     context "when given no arguments" do
       subject { described_class }
 
