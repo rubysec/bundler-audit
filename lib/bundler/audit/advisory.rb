@@ -36,7 +36,9 @@ module Bundler
                                 :osvdb,
                                 :ghsa,
                                 :unaffected_versions,
-                                :patched_versions)
+                                :patched_versions,
+                                :gem,
+                                :engine)
 
       #
       # Loads the advisory from a YAML file.
@@ -83,7 +85,9 @@ module Bundler
           data['osvdb'],
           data['ghsa'],
           parse_versions[data['unaffected_versions']],
-          parse_versions[data['patched_versions']]
+          parse_versions[data['patched_versions']],
+          data['gem'],
+          data['engine']
         )
       end
 
