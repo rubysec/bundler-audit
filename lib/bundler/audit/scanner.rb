@@ -36,6 +36,12 @@ module Bundler
     #
     class Scanner
 
+      # Raised when the given file is not a valid Bundler lockfile.
+      class InvalidGemfileLock < StandardError; end
+
+      # Regexp matching the first line of every valid Bundler lockfile.
+      LOCKFILE_HEADER_RE = /\A(GEM|GIT|PATH|PLUGIN SOURCE|PLATFORMS|DEPENDENCIES|BUNDLED WITH)\b/
+
       # The advisory database.
       #
       # @return [Database]
@@ -84,7 +90,13 @@ module Bundler
           raise(Bundler::GemfileLockNotFound,"Could not find #{gemfile_lock.inspect} in #{@root.inspect}")
         end
 
-        @lockfile = LockfileParser.new(File.read(gemfile_lock_path))
+        lock_file_content = File.read(gemfile_lock_path)
+
+        unless lock_file_content =~ LOCKFILE_HEADER_RE
+          raise(InvalidGemfileLock,"#{gemfile_lock.inspect} is not a valid Gemfile.lock")
+        end
+
+        @lockfile = LockfileParser.new(lock_file_content)
 
         config_dot_file_full_path = File.absolute_path(config_dot_file, @root)
 
