@@ -104,6 +104,9 @@ module Bundler
       # @option options [Array<String>] :ignore
       #   The advisories to ignore.
       #
+      # @option options [Array<String>] :exclude
+      #   The gem names to exclude from scanning.
+      #
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
@@ -133,6 +136,9 @@ module Bundler
       #
       # @option options [Array<String>] :ignore
       #   The advisories to ignore.
+      #
+      # @option options [Array<String>] :exclude
+      #   The gem names to exclude from scanning.
       #
       # @yield [result]
       #   The given block will be passed the results of the scan.
@@ -202,6 +208,9 @@ module Bundler
       # @option options [Array<String>] :ignore
       #   The advisories to ignore.
       #
+      # @option options [Array<String>] :exclude
+      #   The gem names to exclude from scanning.
+      #
       # @yield [result]
       #   The given block will be passed the results of the scan.
       #
@@ -224,7 +233,15 @@ module Bundler
                    config.ignore
                  end
 
+        exclude = if options[:exclude]
+                    Set.new(options[:exclude])
+                  else
+                    config.exclude
+                  end
+
         @lockfile.specs.each do |gem|
+          next if exclude.include?(gem.name)
+
           @database.check_gem(gem) do |advisory|
             is_ignored = ignore.intersect?(advisory.identifiers.to_set)
             next if is_ignored

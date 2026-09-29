@@ -169,6 +169,16 @@ describe Scanner do
           expect(ids).not_to include('CVE-2013-0156')
         end
       end
+
+      context "when the :exclude option is given" do
+        subject { super().scan(exclude: ['activerecord']) }
+
+        it "should not include results for the excluded gem" do
+          gem_names = subject.map { |result| result.gem.name }
+
+          expect(gem_names).not_to include('activerecord')
+        end
+      end
     end
 
     context "when auditing a bundle with insecure sources" do
@@ -189,6 +199,20 @@ describe Scanner do
 
       it "should print nothing when everything is fine" do
         expect(subject).to be_empty
+      end
+    end
+
+    context "when the exclude option is configured in .bundler-audit.yml" do
+      let(:bundle)    { 'unpatched_gems_with_exclude_configuration' }
+      let(:directory) { File.join('spec','bundle',bundle) }
+      let(:scanner)   { described_class.new(directory) }
+
+      subject { scanner.scan }
+
+      it "should not include results for the excluded gem" do
+        gem_names = subject.map { |result| result.gem.name }
+
+        expect(gem_names).not_to include('activerecord')
       end
     end
 
