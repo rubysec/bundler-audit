@@ -1,0 +1,4 @@
+inherit_from:
+  - ./middle.yml
+ignore:
+  - CVE-GRANDCHILD-1
