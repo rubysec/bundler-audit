@@ -1,0 +1,4 @@
+---
+ignore:
+  - id: CVE-123
+    expires: 2026-12-31

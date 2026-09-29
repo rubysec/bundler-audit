@@ -1,3 +1,7 @@
+### Unreleased
+
+* Added support for expiring advisory ignores in `.bundler-audit.yml`.
+
 ### 0.9.3 / 2025-11-28
 
 * Officially support Ruby 3.4, 3.5, and 4.0.
