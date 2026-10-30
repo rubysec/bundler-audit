@@ -27,5 +27,8 @@ PLATFORMS
 DEPENDENCIES
   activerecord (= 3.2.10)
 
+RUBY VERSION
+   ruby 2.3.0p0
+
 BUNDLED WITH
    2.2.0

@@ -37,7 +37,7 @@ module Bundler
           #   The output stream.
           #
           def print_report(report,output=$stdout)
-            hash = report.to_h
+            hash = prepare_data(report)
 
             if output.tty?
               output.puts(::JSON.pretty_generate(hash))
@@ -54,6 +54,37 @@ module Bundler
             when :high     then "high"
             when :critical then "critical"
             else "unknown"
+            end
+          end
+
+          private
+
+          #
+          # Prepares the data from the report into a hash before it is formatted as JSON.
+          #
+          # @param [Report] report
+          #   The results from the {Scanner}.
+          #
+          # @return [Hash]
+          #
+          def prepare_data(report)
+            hash = report.to_h
+            hash[:results].each do |result|
+              prepare_result(result)
+            end
+            hash
+          end
+
+          #
+          # Prepares a result hash before it is formatted as JSON.
+          #
+          # @param [Hash] result
+          #   A result
+          #
+          def prepare_result(result)
+            if (advisory = result[:advisory])
+              advisory.delete(:gem)
+              advisory.delete(:engine)
             end
           end
         end

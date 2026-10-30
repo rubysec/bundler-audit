@@ -42,8 +42,8 @@ module Bundler
               case result
               when Results::InsecureSource
                 print_warning "Insecure Source URI found: #{result.source}"
-              when Results::UnpatchedGem
-                print_advisory result.gem, result.advisory
+              else
+                print_advisory result
               end
             end
 
@@ -62,13 +62,14 @@ module Bundler
             say message, :yellow
           end
 
-          def print_advisory(gem, advisory)
+          def print_advisory(result)
             say "Name: ", :red
-            say gem.name
+            say result.vulnerable_name
 
             say "Version: ", :red
-            say gem.version
+            say result.vulnerable_version
 
+            advisory = result.advisory
             if advisory.cve
               say "CVE: ", :red
               say advisory.cve_id
@@ -108,7 +109,7 @@ module Bundler
               say advisory.patched_versions.map { |v| "'#{v}'" }.join(', ')
             else
               say "Solution: ", :red
-              say "remove or disable this gem until a patch is available!", [:red, :bold]
+              say "remove or disable this #{result.short_type} until a patch is available!", [:red, :bold]
             end
 
             say

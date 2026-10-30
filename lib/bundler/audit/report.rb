@@ -37,6 +37,11 @@ module Bundler
       # @return [Array<Results::UnpatchedGems>]
       attr_reader :unpatched_gems
 
+      # The unpatched engines results.
+      #
+      # @return [Array<Results::UnpatchedEngine>]
+      attr_reader :unpatched_engines
+
       #
       # Initializes the report.
       #
@@ -49,6 +54,7 @@ module Bundler
         @results = []
         @insecure_sources = []
         @unpatched_gems = []
+        @unpatched_engines = []
 
         results.each { |result| self << result }
       end
@@ -58,7 +64,7 @@ module Bundler
       #
       # @yield [result]
       #
-      # @yieldparam [Results::InsecureSource, Results::UnpatchedGem] result
+      # @yieldparam [Results::InsecureSource, Results::UnpatchedGem, Results::UnpatchedEngine] result
       #
       # @return [Enumerator]
       #
@@ -69,7 +75,7 @@ module Bundler
       #
       # Appends a result to the report.
       #
-      # @param [InsecureSource, UnpatchedGem] result
+      # @param [InsecureSource, UnpatchedGem, UnpatchedEngine] result
       #
       def <<(result)
         @results << result
@@ -79,6 +85,8 @@ module Bundler
           @insecure_sources << result
         when Results::UnpatchedGem
           @unpatched_gems << result
+        when Results::UnpatchedEngine
+          @unpatched_engines << result
         end
 
         return self
@@ -103,14 +111,14 @@ module Bundler
       def each_advisory
         return enum_for(__method__) unless block_given?
 
-        @unpatched_gems.each { |result| yield result.advisory }
+        (@unpatched_gems + @unpatched_engines).each { |result| yield result.advisory }
       end
 
       #
       # @return [Array<Advisory>]
       #
       def advisories
-        @unpatched_gems.map(&:advisory)
+        each_advisory.to_a
       end
 
       #
