@@ -46,7 +46,7 @@ GEM
     base64 (0.3.0)
     builder (3.2.4)
     concurrent-ruby (1.1.10)
-    crass (1.0.7)
+    crass (1.0.8)
     date (3.5.1)
     erubi (1.10.0)
     globalid (1.0.1)
