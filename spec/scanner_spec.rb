@@ -90,7 +90,7 @@ describe Scanner do
 
       it "must load the configuration from the config file" do
         expect(subject.config).to be_kind_of(Configuration)
-        expect(subject.config.ignore).to include('OSVDB-89025')
+        expect(subject.config.ignore).to include('OSVDB-89025', 'CVE-2018-8779')
       end
     end
 
@@ -104,7 +104,7 @@ describe Scanner do
 
         it "must load the configuration from the absolute path" do
           expect(subject.config).to be_kind_of(Configuration)
-          expect(subject.config.ignore).to include('OSVDB-89025')
+          expect(subject.config.ignore).to include('OSVDB-89025', 'CVE-2018-8779')
         end
       end
 
@@ -115,7 +115,7 @@ describe Scanner do
 
         it "must load the configuration from the relative path" do
           expect(subject.config).to be_kind_of(Configuration)
-          expect(subject.config.ignore).to include('OSVDB-89025')
+          expect(subject.config.ignore).to include('OSVDB-89025', 'CVE-2018-8779')
         end
       end
     end
@@ -128,6 +128,46 @@ describe Scanner do
       it "must set #config to a default empty Configuration" do
         expect(subject.config).to be_kind_of(Configuration)
         expect(subject.config.ignore).to be_empty
+      end
+    end
+
+    context "when bundler does not support ruby version in lockfile (bundler < 1.12.0.pre.1)" do
+      before do
+        allow_any_instance_of(Scanner).to receive(:supports_ruby_version_in_lockfile?).and_return(false)
+      end
+
+      it "must set ruby_version to nil" do
+        expect(subject.ruby_version).to be_nil
+      end
+    end
+
+    context "when bundler supports ruby version in lockfile (bundler >= 1.12.0.pre.1)" do
+      context "when lockfile does not contain ruby version" do
+        it "must set ruby_version to nil" do
+          expect(subject.ruby_version).to be_nil
+        end
+      end
+
+      context "when lockfile contains ruby version" do
+        let(:bundle) { 'unpatched_ruby' }
+
+        context "when RubyVersion.from_string not available (bundler < 1.13.0.pre.1)" do
+          before do
+            expect(Bundler::RubyVersion).to receive(:respond_to?).with(:from_string).and_return(false)
+          end
+
+          it "sets ruby_version to a RubyVersion" do
+            expect(subject.ruby_version).to be_an_instance_of(Bundler::RubyVersion)
+              .and have_attributes(engine: 'ruby', engine_gem_version: Gem::Version.new('2.3.0'))
+          end
+        end
+
+        context "when RubyVersion.from_string available (bundler >= 1.13.0.pre.1)" do
+          it "sets ruby_version to a RubyVersion" do
+            expect(subject.ruby_version).to be_an_instance_of(Bundler::RubyVersion)
+              .and have_attributes(engine: 'ruby', engine_gem_version: Gem::Version.new('2.3.0'))
+          end
+        end
       end
     end
   end
@@ -171,6 +211,33 @@ describe Scanner do
       end
     end
 
+    context "when auditing a bundle with unpatched ruby version" do
+      let(:bundle) { 'unpatched_ruby' }
+
+      context "with defaults" do
+        subject { super().scan.to_a }
+
+        it "should match unpatched ruby version to its advisories" do
+          expect(subject).not_to be_empty
+          expect(subject.all? { |result|
+            advisory = result.advisory
+            ruby_version = result.ruby_version
+            advisory.vulnerable?(ruby_version.engine_gem_version) && advisory.engine == ruby_version.engine
+          }).to be_truthy
+        end
+      end
+
+      context "when the :ignore option is given" do
+        subject { super().scan(ignore: ['CVE-2018-8779']) }
+
+        it "should ignore the specified advisories" do
+          ids = subject.map { |result| result.advisory.id }
+
+          expect(ids).not_to include('CVE-2018-8779')
+        end
+      end
+    end
+
     context "when auditing a bundle with insecure sources" do
       let(:bundle) { 'insecure_sources' }
 
@@ -202,7 +269,7 @@ describe Scanner do
       it "should ignore the specified advisories" do
         ids = subject.map { |result| result.advisory.id }
 
-        expect(ids).not_to include('OSVDB-89025')
+        expect(ids).not_to include('OSVDB-89025', 'CVE-2018-8779')
       end
 
       context "when config path is absolute" do
@@ -213,7 +280,7 @@ describe Scanner do
         it "should read the config just fine" do
           ids = subject.map { |result| result.advisory.id }
 
-          expect(ids).not_to include('OSVDB-89025')
+          expect(ids).not_to include('OSVDB-89025', 'CVE-2018-8779')
         end
       end
 
@@ -225,7 +292,7 @@ describe Scanner do
         it "should read the config just fine" do
           ids = subject.map { |result| result.advisory.id }
 
-          expect(ids).not_to include('OSVDB-89025')
+          expect(ids).not_to include('OSVDB-89025', 'CVE-2018-8779')
         end
       end
     end
