@@ -1,0 +1,7 @@
+---
+ignore:
+  - CVE-123
+  - CVE-456
+exclude:
+  - activestorage
+  - actiontext

@@ -1,0 +1,4 @@
+---
+exclude:
+  - activestorage
+  - hello: world
