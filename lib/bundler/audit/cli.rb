@@ -71,6 +71,9 @@ module Bundler
                    rescue Bundler::GemfileLockNotFound => exception
                      say exception.message, :red
                      exit 1
+                   rescue Scanner::InvalidGemfileLock => exception
+                     say_error exception.message, :red
+                     exit 1
                    end
 
         report = scanner.report(ignore: options.ignore)
