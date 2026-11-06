@@ -2,3 +2,7 @@
 ignore:
   - CVE-123
   - CVE-456
+  - id: CVE-789
+    until: 2999-12-31
+  - id: CVE-EXPIRED
+    until: 2000-01-01
