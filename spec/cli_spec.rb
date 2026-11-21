@@ -161,4 +161,35 @@ describe Bundler::Audit::CLI do
       end
     end
   end
+
+  describe "#check" do
+    context "when --gemfile-lock is not a valid lock file" do
+      let(:bundle_dir)    { File.expand_path(File.join('spec','bundle','unpatched_gems')) }
+      let(:database_path) { Fixtures::Database::PATH }
+
+      it "must print an error message to stderr" do
+        expect {
+          begin
+            described_class.start ['check', bundle_dir,
+                                   '--gemfile-lock', 'Gemfile',
+                                   '--database', database_path,
+                                   '--no-update']
+          rescue SystemExit
+          end
+        }.to output(/is not a valid Gemfile\.lock/).to_stderr
+      end
+
+      it "must exit with status 1" do
+        expect {
+          described_class.start ['check', bundle_dir,
+                                 '--gemfile-lock', 'Gemfile',
+                                 '--database', database_path,
+                                 '--no-update']
+        }.to raise_error(SystemExit) do |error|
+          expect(error.success?).to eq(false)
+          expect(error.status).to eq(1)
+        end
+      end
+    end
+  end
 end
