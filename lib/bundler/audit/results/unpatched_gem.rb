@@ -28,6 +28,8 @@ module Bundler
       #
       class UnpatchedGem < Result
 
+        SHORT_TYPE = 'gem'.freeze
+
         # The specification of the vulnerable gem.
         #
         # @return [Gem::Specification]
@@ -50,6 +52,33 @@ module Bundler
         def initialize(gem,advisory)
           @gem      = gem
           @advisory = advisory
+        end
+
+        #
+        # The name of the vulnerable gem.
+        #
+        # @return [String]
+        #
+        def vulnerable_name
+          @gem.name
+        end
+
+        #
+        # The version of the vulnerable gem.
+        #
+        # @return [String]
+        #
+        def vulnerable_version
+          @gem.version
+        end
+
+        #
+        # A short human-friendly type to output in warnings, returns 'gem'.
+        #
+        # @return [String]
+        #
+        def short_type
+          SHORT_TYPE
         end
 
         #
@@ -85,8 +114,8 @@ module Bundler
           {
             type: :unpatched_gem,
             gem:  {
-              name: @gem.name,
-              version: @gem.version
+              name: vulnerable_name,
+              version: vulnerable_version
             },
             advisory: @advisory.to_h
           }

@@ -78,17 +78,17 @@ module Bundler
                 %{      <failure message="Insecure Source URI found: #{xml(result.source)}" type="Unknown"></failure>},
                 %{    </testcase>}
               )
-            when Results::UnpatchedGem
+            else
               say_xml(
-                %{    <testcase id="#{xml(result.gem.name)}" name="#{xml(bundle_title(result))}">},
+                %{    <testcase id="#{xml(result.vulnerable_name)}" name="#{xml(bundle_title(result))}">},
                 %{      <failure message="#{xml(result.advisory.title)}" type="#{xml(result.advisory.criticality)}">},
-                %{        Name: #{xml(result.gem.name)}},
-                %{        Version: #{xml(result.gem.version)}},
+                %{        Name: #{xml(result.vulnerable_name)}},
+                %{        Version: #{xml(result.vulnerable_version)}},
                 %{        Advisory: #{xml(advisory_ref(result.advisory))}},
                 %{        Criticality: #{xml(advisory_criticality(result.advisory))}},
                 %{        URL: #{xml(result.advisory.url)}},
                 %{        Title: #{xml(result.advisory.title)}},
-                %{        Solution: #{xml(advisory_solution(result.advisory))}},
+                %{        Solution: #{xml(advisory_solution(result))}},
                 %{      </failure>},
                 %{    </testcase>}
               )
@@ -96,14 +96,15 @@ module Bundler
           end
 
           def bundle_title(result)
-            "#{advisory_criticality(result.advisory).upcase} #{result.gem.name}(#{result.gem.version}) #{result.advisory.title}"
+            "#{advisory_criticality(result.advisory).upcase} #{result.vulnerable_name}(#{result.vulnerable_version}) #{result.advisory.title}"
           end
 
-          def advisory_solution(advisory)
+          def advisory_solution(result)
+            advisory = result.advisory
             unless advisory.patched_versions.empty?
               "update to #{advisory.patched_versions.map { |v| "'#{v}'" }.join(', ')}"
             else
-              "remove or disable this gem until a patch is available!"
+              "remove or disable this #{result.short_type} until a patch is available!"
             end
           end
 
