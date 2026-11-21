@@ -68,15 +68,16 @@ module Bundler
         doc.root.children.each_slice(2) do |key,value|
           case key.value
           when 'ignore'
-            unless value.is_a?(YAML::Nodes::Sequence)
+            if value.is_a?(YAML::Nodes::Sequence)
+              unless value.children.all? { |node| node.is_a?(YAML::Nodes::Scalar) }
+                raise(InvalidConfigurationError,"'ignore' array in config file contains a non-String")
+              end
+              config[:ignore] = value.children.map(&:value)
+            elsif value.is_a?(YAML::Nodes::Mapping)
               raise(InvalidConfigurationError,"'ignore' key found in config file, but is not an Array")
+            else
+              config[:ignore] = []
             end
-
-            unless value.children.all? { |node| node.is_a?(YAML::Nodes::Scalar) }
-              raise(InvalidConfigurationError,"'ignore' array in config file contains a non-String")
-            end
-
-            config[:ignore] = value.children.map(&:value)
           end
         end
 
